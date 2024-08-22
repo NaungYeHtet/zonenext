@@ -1,0 +1,102 @@
+[
+    {
+        "code": "MMR001",
+        "slug": "kachin",
+        "name": "{\"en\": \"Kachin\", \"my\": \"ကချင်ပြည်နယ်\"}"
+    },
+    {
+        "code": "MMR002",
+        "slug": "kayah",
+        "name": "{\"en\": \"Kayah\", \"my\": \"ကယားပြည်နယ်\"}"
+    },
+    {
+        "code": "MMR003",
+        "slug": "kayin",
+        "name": "{\"en\": \"Kayin\", \"my\": \"ကရင်ပြည်နယ်\"}"
+    },
+    {
+        "code": "MMR004",
+        "slug": "chin",
+        "name": "{\"en\": \"Chin\", \"my\": \"ချင်းပြည်နယ်\"}"
+    },
+    {
+        "code": "MMR005",
+        "slug": "sagaing",
+        "name": "{\"en\": \"Sagaing\", \"my\": \"စစ်ကိုင်းတိုင်းဒေသကြီး\"}"
+    },
+    {
+        "code": "MMR006",
+        "slug": "tanintharyi",
+        "name": "{\"en\": \"Tanintharyi\", \"my\": \"တနင်္သာရီတိုင်းဒေသကြီး\"}"
+    },
+    {
+        "code": "MMR007",
+        "slug": "bago-east",
+        "name": "{\"en\": \"Bago {East)\", \"my\": \"ပဲခူးတိုင်းဒေသကြီး {အရှေ့)\"}"
+    },
+    {
+        "code": "MMR008",
+        "slug": "bago-west",
+        "name": "{\"en\": \"Bago {West)\", \"my\": \"ပဲခူးတိုင်းဒေသကြီး {အနောက်)\"}"
+    },
+    {
+        "code": "MMR009",
+        "slug": "magway",
+        "name": "{\"en\": \"Magway\", \"my\": \"မကွေးတိုင်းဒေသကြီး\"}"
+    },
+    {
+        "code": "MMR010",
+        "slug": "mandalay",
+        "name": "{\"en\": \"Mandalay\", \"my\": \"မန္တလေးတိုင်းဒေသကြီး\"}"
+    },
+    {
+        "code": "MMR011",
+        "slug": "mon",
+        "name": "{\"en\": \"Mon\", \"my\": \"မွန်ပြည်နယ်\"}"
+    },
+    {
+        "code": "MMR012",
+        "slug": "rakhine",
+        "name": "{\"en\": \"Rakhine\", \"my\": \"ရခိုင်ပြည်နယ်\"}"
+    },
+    {
+        "code": "MMR013",
+        "slug": "yangon",
+        "name": "{\"en\": \"Yangon\", \"my\": \"ရန်ကုန်တိုင်းဒေသကြီး\"}"
+    },
+    {
+        "code": "MMR014",
+        "slug": "shan-south",
+        "name": "{\"en\": \"Shan {South)\", \"my\": \"ရှမ်းပြည်နယ် {တောင်)\"}"
+    },
+    {
+        "code": "MMR015",
+        "slug": "shan-north",
+        "name": "{\"en\": \"Shan {North)\", \"my\": \"ရှမ်းပြည်နယ် {မြောက်)\"}"
+    },
+    {
+        "code": "MMR016",
+        "slug": "shan-east",
+        "name": "{\"en\": \"Shan {East)\", \"my\": \"ရှမ်းပြည်နယ် {အရှေ့)\"}"
+    },
+    {
+        "code": "MMR017",
+        "slug": "ayeyarwady",
+        "name": "{\"en\": \"Ayeyarwady\", \"my\": \"ဧရာဝတီတိုင်းဒေသကြီး\"}"
+    },
+    {
+        "code": "MMR018",
+        "slug": "nay-pyi-taw",
+        "name": "{\"en\": \"Nay Pyi Taw\", \"my\": \"နေပြည်တော်\"}"
+    },
+    {
+        "code": "MMR111",
+        "slug": "bago",
+        "name": "{\"en\": \"Bago\", \"my\": \"ပဲခူးတိုင်းဒေသကြီး\"}"
+    },
+    {
+        "code": "MMR222",
+        "slug": "shan",
+        "name": "{\"en\": \"Shan\", \"my\": \"ရှမ်းပြည်နယ်\"}"
+    }
+]
