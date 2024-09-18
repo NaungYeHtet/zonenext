@@ -1,0 +1,10 @@
+created:
+    - database/factories/StateFactory.php
+    - database/factories/TownshipFactory.php
+    - database/migrations/2024_09_18_084428_create_states_table.php
+    - database/migrations/2024_09_18_084429_create_townships_table.php
+    - app/Models/State.php
+    - app/Models/Township.php
+models:
+    State: { code: 'string:30', slug: 'string:30', name: 'json:30', indexes: [{ unique: 'code, slug' }] }
+    Township: { state_id: 'id foreign', code: 'string:30', slug: 'string:30', name: 'json:30', indexes: [{ unique: 'code, slug' }] }
