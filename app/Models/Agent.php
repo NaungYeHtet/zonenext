@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Agent extends Model
+class Agent extends Authenticatable
 {
     use HasFactory;
 
@@ -43,6 +43,7 @@ class Agent extends Model
         'id' => 'integer',
         'email_verified_at' => 'datetime',
         'phone_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
     public function properties(): BelongsToMany
