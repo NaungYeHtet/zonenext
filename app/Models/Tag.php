@@ -4,16 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
-use Spatie\Translatable\HasTranslations;
 
-class Township extends Model
+class Tag extends Model
 {
-    use HasFactory, HasSlug, HasTranslations;
-
-    public $translatable = ['name'];
+    use HasFactory, HasSlug;
 
     /**
      * The attributes that are mass assignable.
@@ -21,10 +17,9 @@ class Township extends Model
      * @var array
      */
     protected $fillable = [
-        'state_id',
-        'code',
-        'slug',
         'name',
+        'slug',
+        'icon',
     ];
 
     /**
@@ -34,14 +29,7 @@ class Township extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'state_id' => 'integer',
-        'name' => 'array',
     ];
-
-    public function state(): BelongsTo
-    {
-        return $this->belongsTo(State::class);
-    }
 
     /**
      * Get the options for generating the slug.

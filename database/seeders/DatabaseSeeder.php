@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AgentProperty;
 use App\Models\State;
 use App\Models\Township;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -26,5 +27,18 @@ class DatabaseSeeder extends Seeder
         foreach ($townships as $township) {
             Township::create($township);
         }
+
+        $this->call([
+            BedroomTypeSeeder::class,
+            AdminSeeder::class,
+            UserSeeder::class,
+            AgentSeeder::class,
+        ]);
+
+        $this->command->info('Seeding Agent factory....');
+        \App\Models\Agent::factory(rand(30, 80))
+            ->create();
+        $this->command->info('Seeding Agent Property factory....');
+        AgentProperty::factory(300)->create();
     }
 }
