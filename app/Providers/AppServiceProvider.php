@@ -21,9 +21,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::enforceMorphMap([
-            // map words must lower than 30 characters
             'property' => \App\Models\Property::class,
             'user' => \App\Models\User::class,
+            'project' => \App\Models\Project::class,
         ]);
     }
 }

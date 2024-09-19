@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('taggables', function (Blueprint $table) {
+        Schema::create('projectables', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tag_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->morphs('taggable');
+            $table->foreignId('project_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->morphs('projectables', 'projectable_morpf_keys');
             $table->timestamps();
         });
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('taggables');
+        Schema::dropIfExists('projectables');
     }
 };

@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('taggables', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tag_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->morphs('taggable');
+            $table->json('name');
+            $table->string('slug')->unique();
+            $table->string('image');
             $table->timestamps();
         });
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('taggables');
+        Schema::dropIfExists('projects');
     }
 };

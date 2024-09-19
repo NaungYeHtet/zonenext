@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use League\CommonMark\Node\Block\Document;
 use Spatie\Sluggable\HasSlug;
@@ -105,6 +106,16 @@ class Property extends Model
             ->as('agent_property')
             ->withPivot('id')
             ->withTimestamps();
+    }
+
+    public function groups(): MorphToMany
+    {
+        return $this->morphToMany(Group::class, 'groupable');
+    }
+
+    public function projects(): MorphToMany
+    {
+        return $this->morphToMany(Project::class, 'projectable');
     }
 
     public function documents(): HasMany

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('status', 30);
             $table->json('address');
+            $table->string('cover_image');
             $table->float('latitude');
             $table->float('longitude');
             $table->dateTime('posted_at')->nullable();

@@ -46,6 +46,7 @@ class PropertyFactory extends Factory
             'type' => $this->faker->randomElement(PropertyType::cases()),
             'status' => $this->faker->randomElement(PropertyStatus::cases()),
             'latitude' => $this->faker->latitude(),
+            'cover_image' => $this->faker->word,
             'longitude' => $this->faker->longitude(),
         ];
     }

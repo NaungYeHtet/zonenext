@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\AgentProperty;
+use App\Models\Project;
 use App\Models\State;
 use App\Models\Township;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -40,5 +41,10 @@ class DatabaseSeeder extends Seeder
             ->create();
         $this->command->info('Seeding Agent Property factory....');
         AgentProperty::factory(300)->create();
+        Project::factory(50)->create();
+
+        $this->call([
+            GroupSeeder::class,
+        ]);
     }
 }
