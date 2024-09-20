@@ -87,3 +87,10 @@ if (! function_exists('number_format_short')) {
         return round($number, 1).$units[$i];
     }
 }
+
+if (! function_exists('is_valid_url')) {
+    function is_valid_url(string $string): bool
+    {
+        return (bool) filter_var($string, FILTER_VALIDATE_URL);
+    }
+}

@@ -2,9 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Enums\GroupType;
+use App\Http\Requests\GroupRequest;
+use App\Http\Resources\GroupResource;
+use App\Models\Group;
 
 class GroupController extends Controller
 {
-    //
+    public function __invoke(GroupRequest $request)
+    {
+        $groupType = GroupType::from($request->type);
+
+        return $this->responseSuccess([
+            'data' => new GroupResource(Group::filterType($groupType)->with($groupType->getGroupableRelationship())->first()),
+        ]);
+    }
 }

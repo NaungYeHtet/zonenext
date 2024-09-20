@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\GroupType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -34,6 +36,7 @@ class Group extends Model
     protected $casts = [
         'name' => 'array',
         'updatable' => 'boolean',
+        'type' => GroupType::class,
     ];
 
     public function getRouteKeyName(): string
@@ -51,6 +54,17 @@ class Group extends Model
             ->saveSlugsTo('slug');
     }
 
+    /**
+     * Scopes
+     */
+    public function scopeFilterType(Builder $query, GroupType $type)
+    {
+        $query->where('type', $type);
+    }
+
+    /**
+     * Relationships
+     */
     public function properties(): MorphToMany
     {
         return $this->morphedByMany(Property::class, 'groupable');

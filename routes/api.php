@@ -13,6 +13,4 @@ Route::prefix('properties')->controller(PropertyController::class)->group(functi
     Route::get('/', 'index');
 });
 
-Route::prefix('groups')->controller(GroupController::class)->group(function () {
-    Route::get('/', 'index');
-});
+Route::get('groups', GroupController::class);

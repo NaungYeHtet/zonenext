@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
@@ -237,6 +238,20 @@ class Property extends Model
 
                 return $detail;
             },
+        );
+    }
+
+    protected function gallery(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->documents->map(fn ($item) => is_valid_url($item->document) ? $item->document : Storage::disk('public')->url($item->document))
+        );
+    }
+
+    protected function coverImageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => is_valid_url($this->cover_image) ? $this->cover_image : Storage::disk('public')->url($this->cover_image)
         );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\GroupType;
 use App\Models\Group;
 use Illuminate\Database\Seeder;
 
@@ -20,6 +21,7 @@ class GroupSeeder extends Seeder
                 ],
                 'updatable' => true,
                 'is_project' => true,
+                'type' => GroupType::FeaturedProjects,
             ],
             [
                 'name' => [
@@ -28,6 +30,7 @@ class GroupSeeder extends Seeder
                 ],
                 'updatable' => true,
                 'is_project' => true,
+                'type' => GroupType::TopTenProjects,
             ],
             [
                 'name' => [
@@ -36,6 +39,7 @@ class GroupSeeder extends Seeder
                 ],
                 'updatable' => false,
                 'is_project' => false,
+                'type' => GroupType::MostPopularProperties,
             ],
             [
                 'name' => [
@@ -44,6 +48,7 @@ class GroupSeeder extends Seeder
                 ],
                 'updatable' => true,
                 'is_project' => true,
+                'type' => GroupType::UnderConstruction,
             ],
             [
                 'name' => [
@@ -52,6 +57,7 @@ class GroupSeeder extends Seeder
                 ],
                 'updatable' => true,
                 'is_project' => false,
+                'type' => GroupType::TopRatedListing,
             ],
         ];
 
@@ -64,12 +70,14 @@ class GroupSeeder extends Seeder
                     Group::factory()->hasAttached($projects)->create([
                         'name' => $group['name'],
                         'updatable' => $group['updatable'],
+                        'type' => $group['type'],
                     ]);
                 } else {
-                    $properties = \App\Models\Property::inRandomOrder()->limit(rand(10, 15))->get();
+                    $properties = \App\Models\Property::posted()->inRandomOrder()->limit(rand(10, 15))->get();
                     Group::factory()->hasAttached($properties)->create([
                         'name' => $group['name'],
                         'updatable' => $group['updatable'],
+                        'type' => $group['type'],
                     ]);
                 }
             }

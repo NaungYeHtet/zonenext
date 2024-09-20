@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->json('name');
+            $table->string('type', 30);
             $table->string('slug')->unique();
             $table->boolean('updatable')->default(true);
             $table->timestamps();

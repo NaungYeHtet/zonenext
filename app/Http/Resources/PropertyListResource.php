@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PropertyResource extends JsonResource
+class PropertyListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,10 +18,9 @@ class PropertyResource extends JsonResource
             'slug' => $this->slug,
             'title' => $this->title,
             'description' => $this->description,
-            'coverImage' => $this->cover_image_url,
+            'coverImage' => $this->cover_image,
             'price' => $this->price_detail,
             'address' => $this->address,
-            'gallery' => $this->gallery,
             'posted_at' => $this->posted_at->shortRelativeDiffForHumans(),
         ];
     }
