@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('language', 5)->default('en');
             $table->string('social_id')->nullable();
             $table->string('password');
             $table->json('preferred_notification_channels')->nullable();

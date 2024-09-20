@@ -29,8 +29,10 @@ class PropertyFactory extends Factory
      */
     public function definition(): array
     {
+        $createdAt = $this->faker->dateTimeBetween(now()->subMonths(12), now()->subMonths(3));
+
         return [
-            'township_id' => Township::factory(),
+            'township_id' => Township::whereRelation('state', 'slug', 'yangon')->get()->random(),
             'title' => [
                 'en' => $this->faker->sentence,
                 'my' => $this->faker->sentence,
@@ -46,8 +48,10 @@ class PropertyFactory extends Factory
             'type' => $this->faker->randomElement(PropertyType::cases()),
             'status' => $this->faker->randomElement(PropertyStatus::cases()),
             'latitude' => $this->faker->latitude(),
-            'cover_image' => $this->faker->word,
+            'cover_image' => $this->faker->imageUrl(),
             'longitude' => $this->faker->longitude(),
+            'created_at' => $createdAt,
+            'updated_at' => $createdAt,
         ];
     }
 
@@ -91,9 +95,9 @@ class PropertyFactory extends Factory
             $completedAt = null;
 
             if ($status != PropertyStatus::Draft) {
-                $postedAt = fake()->dateTimeBetween(startDate: $property->created_at, endDate: Carbon::parse($property->created_at)->addYear());
+                $postedAt = fake()->dateTimeBetween(startDate: $property->created_at, endDate: Carbon::parse($property->created_at)->addMonth(1));
 
-                $endDate = Carbon::parse($postedAt)->addYear();
+                $endDate = Carbon::parse($postedAt)->addMonth(2);
 
                 if ($status == PropertyStatus::SoldOut) {
                     $soldAt = fake()->dateTimeBetween(startDate: $postedAt, endDate: $endDate);

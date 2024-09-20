@@ -31,6 +31,11 @@ class Tag extends Model
         'id' => 'integer',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     /**
      * Get the options for generating the slug.
      */

@@ -19,7 +19,7 @@ class PropertyDocumentFactory extends Factory
     {
         return [
             'property_id' => Property::factory(),
-            'document' => fake()->word(),
+            'document' => $this->faker->imageUrl(),
         ];
     }
 }

@@ -6,4 +6,9 @@ enum PropertyAcquisitionType: string
 {
     case Sell = 'Sell';
     case Rent = 'Rent';
+
+    public function getLabel(): string
+    {
+        return __($this->value);
+    }
 }

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('cover_image');
             $table->float('latitude');
             $table->float('longitude');
+            $table->unsignedInteger('views_count')->default(0);
             $table->dateTime('posted_at')->nullable();
             $table->dateTime('sold_at')->nullable();
             $table->dateTime('rent_at')->nullable();

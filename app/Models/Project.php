@@ -34,6 +34,11 @@ class Project extends Model
         'name' => 'array',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     /**
      * Get the options for generating the slug.
      */

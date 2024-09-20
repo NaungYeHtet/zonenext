@@ -21,8 +21,8 @@ return new class extends Migration
             $table->integer('price_from');
             $table->integer('price_to')->nullable();
             $table->boolean('negotiable')->default(false);
-            $table->decimal('owner_commission', 3, 2)->default(0);
-            $table->decimal('customer_commission', 3, 2)->default(0);
+            $table->decimal('owner_commission', 5, 2)->default(0);
+            $table->decimal('customer_commission', 5, 2)->default(0);
             $table->timestamps();
         });
 

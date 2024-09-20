@@ -15,7 +15,7 @@ return new class extends Migration
 
         Schema::create('viewables', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->morphs('viewable');
             $table->timestamps();
         });

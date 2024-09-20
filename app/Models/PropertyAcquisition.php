@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PropertyAcquisitionType;
 use App\Enums\PropertyPriceType;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,5 +47,22 @@ class PropertyAcquisition extends Model
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class);
+    }
+
+    protected function price(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attributes): string {
+                if ($attributes['price_type'] == PropertyPriceType::Fix->value) {
+                    return number_format_price($attributes['price_from']);
+                }
+
+                if ($attributes['price_type'] == PropertyPriceType::Range->value) {
+                    return number_format_price($attributes['price_from']).' - '.number_format_price($attributes['price_to']);
+                }
+
+                return '';
+            },
+        );
     }
 }

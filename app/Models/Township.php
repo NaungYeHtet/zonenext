@@ -43,6 +43,11 @@ class Township extends Model
         return $this->belongsTo(State::class);
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     /**
      * Get the options for generating the slug.
      */

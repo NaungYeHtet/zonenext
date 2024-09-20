@@ -36,6 +36,11 @@ class Group extends Model
         'updatable' => 'boolean',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     /**
      * Get the options for generating the slug.
      */
