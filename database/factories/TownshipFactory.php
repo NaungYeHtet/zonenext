@@ -2,10 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\State;
 use App\Models\Township;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TownshipFactory extends Factory
 {

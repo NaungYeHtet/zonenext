@@ -2,11 +2,10 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Appointment;
 use App\Models\Property;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AppointmentFactory extends Factory
 {
