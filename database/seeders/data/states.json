@@ -2,101 +2,161 @@
     {
         "code": "MMR001",
         "slug": "kachin",
-        "name": "{\"en\": \"Kachin\", \"my\": \"ကချင်ပြည်နယ်\"}"
+        "name": {
+            "en": "Kachin",
+            "my": "\u1000\u1001\u103b\u1004\u103a\u1015\u103c\u100a\u103a\u1014\u101a\u103a"
+        }
     },
     {
         "code": "MMR002",
         "slug": "kayah",
-        "name": "{\"en\": \"Kayah\", \"my\": \"ကယားပြည်နယ်\"}"
+        "name": {
+            "en": "Kayah",
+            "my": "\u1000\u101a\u102c\u1038\u1015\u103c\u100a\u103a\u1014\u101a\u103a"
+        }
     },
     {
         "code": "MMR003",
         "slug": "kayin",
-        "name": "{\"en\": \"Kayin\", \"my\": \"ကရင်ပြည်နယ်\"}"
+        "name": {
+            "en": "Kayin",
+            "my": "\u1000\u101b\u1004\u103a\u1015\u103c\u100a\u103a\u1014\u101a\u103a"
+        }
     },
     {
         "code": "MMR004",
         "slug": "chin",
-        "name": "{\"en\": \"Chin\", \"my\": \"ချင်းပြည်နယ်\"}"
+        "name": {
+            "en": "Chin",
+            "my": "\u1001\u103b\u1004\u103a\u1038\u1015\u103c\u100a\u103a\u1014\u101a\u103a"
+        }
     },
     {
         "code": "MMR005",
         "slug": "sagaing",
-        "name": "{\"en\": \"Sagaing\", \"my\": \"စစ်ကိုင်းတိုင်းဒေသကြီး\"}"
+        "name": {
+            "en": "Sagaing",
+            "my": "\u1005\u1005\u103a\u1000\u102d\u102f\u1004\u103a\u1038\u1010\u102d\u102f\u1004\u103a\u1038\u1012\u1031\u101e\u1000\u103c\u102e\u1038"
+        }
     },
     {
         "code": "MMR006",
         "slug": "tanintharyi",
-        "name": "{\"en\": \"Tanintharyi\", \"my\": \"တနင်္သာရီတိုင်းဒေသကြီး\"}"
+        "name": {
+            "en": "Tanintharyi",
+            "my": "\u1010\u1014\u1004\u103a\u1039\u101e\u102c\u101b\u102e\u1010\u102d\u102f\u1004\u103a\u1038\u1012\u1031\u101e\u1000\u103c\u102e\u1038"
+        }
     },
     {
         "code": "MMR007",
         "slug": "bago-east",
-        "name": "{\"en\": \"Bago {East)\", \"my\": \"ပဲခူးတိုင်းဒေသကြီး {အရှေ့)\"}"
+        "name": {
+            "en": "Bago {East)",
+            "my": "\u1015\u1032\u1001\u1030\u1038\u1010\u102d\u102f\u1004\u103a\u1038\u1012\u1031\u101e\u1000\u103c\u102e\u1038 {\u1021\u101b\u103e\u1031\u1037)"
+        }
     },
     {
         "code": "MMR008",
         "slug": "bago-west",
-        "name": "{\"en\": \"Bago {West)\", \"my\": \"ပဲခူးတိုင်းဒေသကြီး {အနောက်)\"}"
+        "name": {
+            "en": "Bago {West)",
+            "my": "\u1015\u1032\u1001\u1030\u1038\u1010\u102d\u102f\u1004\u103a\u1038\u1012\u1031\u101e\u1000\u103c\u102e\u1038 {\u1021\u1014\u1031\u102c\u1000\u103a)"
+        }
     },
     {
         "code": "MMR009",
         "slug": "magway",
-        "name": "{\"en\": \"Magway\", \"my\": \"မကွေးတိုင်းဒေသကြီး\"}"
+        "name": {
+            "en": "Magway",
+            "my": "\u1019\u1000\u103d\u1031\u1038\u1010\u102d\u102f\u1004\u103a\u1038\u1012\u1031\u101e\u1000\u103c\u102e\u1038"
+        }
     },
     {
         "code": "MMR010",
         "slug": "mandalay",
-        "name": "{\"en\": \"Mandalay\", \"my\": \"မန္တလေးတိုင်းဒေသကြီး\"}"
+        "name": {
+            "en": "Mandalay",
+            "my": "\u1019\u1014\u1039\u1010\u101c\u1031\u1038\u1010\u102d\u102f\u1004\u103a\u1038\u1012\u1031\u101e\u1000\u103c\u102e\u1038"
+        }
     },
     {
         "code": "MMR011",
         "slug": "mon",
-        "name": "{\"en\": \"Mon\", \"my\": \"မွန်ပြည်နယ်\"}"
+        "name": {
+            "en": "Mon",
+            "my": "\u1019\u103d\u1014\u103a\u1015\u103c\u100a\u103a\u1014\u101a\u103a"
+        }
     },
     {
         "code": "MMR012",
         "slug": "rakhine",
-        "name": "{\"en\": \"Rakhine\", \"my\": \"ရခိုင်ပြည်နယ်\"}"
+        "name": {
+            "en": "Rakhine",
+            "my": "\u101b\u1001\u102d\u102f\u1004\u103a\u1015\u103c\u100a\u103a\u1014\u101a\u103a"
+        }
     },
     {
         "code": "MMR013",
         "slug": "yangon",
-        "name": "{\"en\": \"Yangon\", \"my\": \"ရန်ကုန်တိုင်းဒေသကြီး\"}"
+        "name": {
+            "en": "Yangon",
+            "my": "\u101b\u1014\u103a\u1000\u102f\u1014\u103a\u1010\u102d\u102f\u1004\u103a\u1038\u1012\u1031\u101e\u1000\u103c\u102e\u1038"
+        }
     },
     {
         "code": "MMR014",
         "slug": "shan-south",
-        "name": "{\"en\": \"Shan {South)\", \"my\": \"ရှမ်းပြည်နယ် {တောင်)\"}"
+        "name": {
+            "en": "Shan {South)",
+            "my": "\u101b\u103e\u1019\u103a\u1038\u1015\u103c\u100a\u103a\u1014\u101a\u103a {\u1010\u1031\u102c\u1004\u103a)"
+        }
     },
     {
         "code": "MMR015",
         "slug": "shan-north",
-        "name": "{\"en\": \"Shan {North)\", \"my\": \"ရှမ်းပြည်နယ် {မြောက်)\"}"
+        "name": {
+            "en": "Shan {North)",
+            "my": "\u101b\u103e\u1019\u103a\u1038\u1015\u103c\u100a\u103a\u1014\u101a\u103a {\u1019\u103c\u1031\u102c\u1000\u103a)"
+        }
     },
     {
         "code": "MMR016",
         "slug": "shan-east",
-        "name": "{\"en\": \"Shan {East)\", \"my\": \"ရှမ်းပြည်နယ် {အရှေ့)\"}"
+        "name": {
+            "en": "Shan {East)",
+            "my": "\u101b\u103e\u1019\u103a\u1038\u1015\u103c\u100a\u103a\u1014\u101a\u103a {\u1021\u101b\u103e\u1031\u1037)"
+        }
     },
     {
         "code": "MMR017",
         "slug": "ayeyarwady",
-        "name": "{\"en\": \"Ayeyarwady\", \"my\": \"ဧရာဝတီတိုင်းဒေသကြီး\"}"
+        "name": {
+            "en": "Ayeyarwady",
+            "my": "\u1027\u101b\u102c\u101d\u1010\u102e\u1010\u102d\u102f\u1004\u103a\u1038\u1012\u1031\u101e\u1000\u103c\u102e\u1038"
+        }
     },
     {
         "code": "MMR018",
         "slug": "nay-pyi-taw",
-        "name": "{\"en\": \"Nay Pyi Taw\", \"my\": \"နေပြည်တော်\"}"
+        "name": {
+            "en": "Nay Pyi Taw",
+            "my": "\u1014\u1031\u1015\u103c\u100a\u103a\u1010\u1031\u102c\u103a"
+        }
     },
     {
         "code": "MMR111",
         "slug": "bago",
-        "name": "{\"en\": \"Bago\", \"my\": \"ပဲခူးတိုင်းဒေသကြီး\"}"
+        "name": {
+            "en": "Bago",
+            "my": "\u1015\u1032\u1001\u1030\u1038\u1010\u102d\u102f\u1004\u103a\u1038\u1012\u1031\u101e\u1000\u103c\u102e\u1038"
+        }
     },
     {
         "code": "MMR222",
         "slug": "shan",
-        "name": "{\"en\": \"Shan\", \"my\": \"ရှမ်းပြည်နယ်\"}"
+        "name": {
+            "en": "Shan",
+            "my": "\u101b\u103e\u1019\u103a\u1038\u1015\u103c\u100a\u103a\u1014\u101a\u103a"
+        }
     }
 ]

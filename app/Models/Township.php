@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -37,6 +38,29 @@ class Township extends Model
         'state_id' => 'integer',
         'name' => 'array',
     ];
+
+    // Scope for search functionality
+    public function scopeSearch(Builder $query, $search)
+    {
+        if ($search) {
+            $keywords = explode(' ', $search);
+
+            $query->where(function (Builder $q) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $q->where('name->en', 'like', "%{$keyword}%")
+                        ->orWhere('name->my', 'like', "%{$keyword}%");
+                }
+            });
+        }
+    }
+
+    // Scope for filtering by township
+    public function scopeFilterState(Builder $query, $state)
+    {
+        if ($state) {
+            $query->whereRelation('state', 'slug', $state);
+        }
+    }
 
     public function state(): BelongsTo
     {
