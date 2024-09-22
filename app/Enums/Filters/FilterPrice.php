@@ -17,7 +17,6 @@ enum FilterPrice: int
     case SevenLakh = 700000;
     case EightLakh = 800000;
     case NineLakh = 900000;
-    case TenLakh = 10000000;
     case HundredLakh = 10000000;
     case TwoHundredLakh = 20000000;
     case ThreeHundredLakh = 30000000;

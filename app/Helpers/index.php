@@ -46,7 +46,7 @@ if (! function_exists('number_format_price')) {
         if ($locale != 'my') {
             $numberFormatted = number_format_short($number);
 
-            return "MMK {$numberFormatted}";
+            return "{$numberFormatted} Ks";
         }
 
         $formatted = '';

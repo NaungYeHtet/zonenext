@@ -16,10 +16,10 @@ class PropertyFilterController extends Controller
     public function index()
     {
         return $this->responseSuccess([
-            'list_types' => FilterListType::getOptions(),
+            'listTypes' => FilterListType::getOptions(),
             'states' => StateOptionResource::collection(State::all()),
-            'type' => PropertyType::getOptions(),
-            'price_ranges' => FilterPrice::getRangeOptions(),
+            'types' => PropertyType::getOptions(),
+            'priceRanges' => FilterPrice::getRangeOptions(),
         ]);
     }
 

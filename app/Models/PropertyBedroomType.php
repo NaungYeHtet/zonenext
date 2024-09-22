@@ -10,6 +10,8 @@ class PropertyBedroomType extends Model
 {
     use HasFactory;
 
+    protected $table = 'property_bedroom_types';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -30,6 +32,7 @@ class PropertyBedroomType extends Model
         'id' => 'integer',
         'property_id' => 'integer',
         'bedroom_type_id' => 'integer',
+        'quantity' => 'integer',
     ];
 
     public function property(): BelongsTo

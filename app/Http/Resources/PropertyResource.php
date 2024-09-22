@@ -22,7 +22,11 @@ class PropertyResource extends JsonResource
             'price' => $this->price_detail,
             'address' => $this->address,
             'gallery' => $this->gallery,
-            'posted_at' => $this->posted_at->shortRelativeDiffForHumans(),
+            'squareFeet' => number_format($this->square_feet),
+            'areaDescription' => $this->area_description,
+            'bedroomsCount' => (int) $this->bedroomTypes()->sum('quantity'),
+            'bathroomsCount' => $this->bathrooms_count,
+            'postedAt' => $this->posted_at->shortRelativeDiffForHumans(),
         ];
     }
 }

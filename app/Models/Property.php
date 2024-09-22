@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\AreaType;
+use App\Enums\AreaUnit;
 use App\Enums\Filters\FilterListType;
 use App\Enums\PropertyAcquisitionType;
+use App\Enums\PropertyPriceType;
 use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,7 +28,7 @@ class Property extends Model
 {
     use HasFactory, HasSlug, HasTranslations, SoftDeletes;
 
-    public $translatable = ['title', 'description'];
+    public $translatable = ['title', 'description', 'address'];
 
     /**
      * The attributes that are mass assignable.
@@ -67,6 +70,22 @@ class Property extends Model
         'completed_at' => 'datetime',
         'type' => PropertyType::class,
         'status' => PropertyStatus::class,
+        'area_type' => AreaType::class,
+        'area_unit' => AreaUnit::class,
+        'bathrooms_count' => 'integer',
+        'is_rentable' => 'boolean',
+        'rent_price_type' => PropertyPriceType::class,
+        'rent_price_from' => 'integer',
+        'rent_price_to' => 'integer',
+        'rent_negotiable' => 'boolean',
+        'rent_owner_commission' => 'float',
+        'rent_customer_commission' => 'float',
+        'is_sellable' => 'boolean',
+        'sell_price_type' => PropertyPriceType::class,
+        'sell_price_from' => 'integer',
+        'sell_price_to' => 'integer',
+        'sell_negotiable' => 'boolean',
+        'sell_owner_commission' => 'float',
     ];
 
     public function getRouteKeyName(): string
@@ -89,7 +108,7 @@ class Property extends Model
      */
     public function scopePosted(Builder $query)
     {
-        $query->where('status', PropertyStatus::Posted->value)->whereHas('acquisitions');
+        $query->where('status', PropertyStatus::Posted->value);
     }
 
     // Scope for list type filtering (Newest, ForSale, ForRent)
@@ -100,9 +119,9 @@ class Property extends Model
         if ($filterListType == FilterListType::Newest) {
             $query->orderBy('posted_at', 'desc');
         } elseif ($filterListType == FilterListType::ForSale) {
-            $query->whereHas('acquisitions', fn (Builder $q) => $q->where('type', PropertyAcquisitionType::Sell->value));
+            $query->where('is_sellable', true);
         } elseif ($filterListType == FilterListType::ForRent) {
-            $query->whereHas('acquisitions', fn (Builder $q) => $q->where('type', PropertyAcquisitionType::Rent->value));
+            $query->where('is_rentable', true);
         }
     }
 
@@ -180,7 +199,7 @@ class Property extends Model
 
     public function bedroomTypes(): BelongsToMany
     {
-        return $this->belongsToMany(BedroomType::class)
+        return $this->belongsToMany(BedroomType::class, 'property_bedroom_types')
             ->using(PropertyBedroomType::class)
             ->as('property_bedroom_type')
             ->withPivot('id', 'quantity')
@@ -216,24 +235,59 @@ class Property extends Model
         return $this->belongsTo(Township::class);
     }
 
-    public function acquisitions(): HasMany
-    {
-        return $this->hasMany(PropertyAcquisition::class);
-    }
-
     /**
      * Accessors
      */
+    protected function sellPrice(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attributes): string {
+                if ($attributes['sell_price_type'] == PropertyPriceType::Fix->value) {
+                    return number_format_price($attributes['sell_price_from']);
+                }
+
+                if ($attributes['sell_price_type'] == PropertyPriceType::Range->value) {
+                    return number_format_price($attributes['sell_price_from']).' - '.number_format_price($attributes['sell_price_to']);
+                }
+
+                return '';
+            },
+        );
+    }
+
+    protected function rentPrice(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attributes): string {
+                if ($attributes['rent_price_type'] == PropertyPriceType::Fix->value) {
+                    return number_format_price($attributes['rent_price_from']);
+                }
+
+                if ($attributes['rent_price_type'] == PropertyPriceType::Range->value) {
+                    return number_format_price($attributes['rent_price_from']).' - '.number_format_price($attributes['rent_price_to']);
+                }
+
+                return '';
+            },
+        );
+    }
+
     protected function priceDetail(): Attribute
     {
         return Attribute::make(
             get: function () {
-                $acquisitions = $this->acquisitions()->get();
-
                 $detail = [];
 
-                foreach ($acquisitions as $acquisition) {
-                    $detail[$acquisition->type->value] = $acquisition->price." ({$acquisition->type->getLabel()})";
+                if ($this->is_sellable) {
+                    $acquisitionType = PropertyAcquisitionType::Sell;
+
+                    $detail[str($acquisitionType->value)->camel()->toString()] = "{$this->sell_price} ({$acquisitionType->getLabel()})";
+                }
+
+                if ($this->is_rentable) {
+                    $acquisitionType = PropertyAcquisitionType::Rent;
+
+                    $detail[str($acquisitionType->value)->camel()->toString()] = "{$this->rent_price} ({$acquisitionType->getLabel()})";
                 }
 
                 return $detail;
@@ -252,6 +306,19 @@ class Property extends Model
     {
         return Attribute::make(
             get: fn () => is_valid_url($this->cover_image) ? $this->cover_image : Storage::disk('public')->url($this->cover_image)
+        );
+    }
+
+    protected function areaDescription(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if ($this->area_type === AreaType::LengthWidth) {
+                    return number_format_tran($this->length).' x '.number_format_tran($this->width).' '.__('sqft');
+                }
+
+                return number_format_tran($this->area).' '.$this->area_unit->getLabel();
+            },
         );
     }
 }

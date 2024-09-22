@@ -15,7 +15,7 @@ class Group extends Model
 {
     use HasFactory, HasSlug, HasTranslations;
 
-    public $translatable = ['name'];
+    public $translatable = ['name', 'description'];
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +26,7 @@ class Group extends Model
         'name',
         'slug',
         'updatable',
+        'description',
     ];
 
     /**

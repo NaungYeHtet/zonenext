@@ -17,6 +17,7 @@ class GroupResource extends JsonResource
         return [
             'name' => $this->name,
             'slug' => $this->slug,
+            'description' => $this->description,
             'items' => $this->whenLoaded('projects', function () {
                 return ProjectResource::collection($this->projects);
             }, PropertyResource::collection($this->whenLoaded('properties'))),

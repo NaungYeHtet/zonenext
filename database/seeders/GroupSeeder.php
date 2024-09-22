@@ -16,17 +16,21 @@ class GroupSeeder extends Seeder
         $groups = [
             [
                 'name' => [
-                    'en' => 'Featured projects',
-                    'my' => 'အိမ်ခြံမြေပရော့ဂျက်များ',
+                    'en' => 'Check Our Featured Listings',
+                    'my' => 'အထူးအိမ်ခြံမြေစာရင်းများ',
+                ],
+                'description' => [
+                    'en' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit aperiam obcaecati minima temporibus magni dolores ullam',
+                    'my' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit aperiam obcaecati minima temporibus magni dolores ullam',
                 ],
                 'updatable' => true,
-                'is_project' => true,
-                'type' => GroupType::FeaturedProjects,
+                'is_project' => false,
+                'type' => GroupType::FeaturedListings,
             ],
             [
                 'name' => [
-                    'en' => 'Top 10 projects',
-                    'my' => 'ထိပ်တန်းပရော့ဂျက် ဆယ်ခု',
+                    'en' => 'Top projects',
+                    'my' => 'ထိပ်တန်းပရော့ဂျက်များ',
                 ],
                 'updatable' => true,
                 'is_project' => true,
@@ -70,6 +74,7 @@ class GroupSeeder extends Seeder
                     Group::factory()->hasAttached($projects)->create([
                         'name' => $group['name'],
                         'updatable' => $group['updatable'],
+                        'description' => $group['description'] ?? null,
                         'type' => $group['type'],
                     ]);
                 } else {
@@ -77,6 +82,7 @@ class GroupSeeder extends Seeder
                     Group::factory()->hasAttached($properties)->create([
                         'name' => $group['name'],
                         'updatable' => $group['updatable'],
+                        'description' => $group['description'] ?? null,
                         'type' => $group['type'],
                     ]);
                 }

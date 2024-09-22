@@ -14,7 +14,7 @@ class GroupController extends Controller
         $groupType = GroupType::from($request->type);
 
         return $this->responseSuccess([
-            'data' => new GroupResource(Group::filterType($groupType)->with($groupType->getGroupableRelationship())->first()),
+            'group' => new GroupResource(Group::filterType($groupType)->with($groupType->getGroupableRelationship())->first()),
         ]);
     }
 }

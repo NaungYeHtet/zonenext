@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum GroupType: string
 {
-    case FeaturedProjects = 'FeaturedProjects';
+    case FeaturedListings = 'FeaturedListings';
     case TopTenProjects = 'TopTenProjects';
     case MostPopularProperties = 'MostPopularProperties';
     case UnderConstruction = 'UnderConstruction';
@@ -13,7 +13,7 @@ enum GroupType: string
     public function getGroupableRelationship(): string
     {
         return match ($this) {
-            self::FeaturedProjects => 'projects',
+            self::FeaturedListings => 'properties',
             self::TopTenProjects => 'projects',
             self::MostPopularProperties => 'properties',
             self::UnderConstruction => 'projects',
