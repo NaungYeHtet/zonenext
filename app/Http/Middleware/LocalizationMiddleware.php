@@ -28,7 +28,8 @@ class LocalizationMiddleware
             $this->validateHidden([
                 'language' => ['required', 'string', new Enum(Language::class)],
             ]);
-            $language = $request->language;
+
+            $language = $request->input('language');
         } else {
             $language = $user->language->value;
         }

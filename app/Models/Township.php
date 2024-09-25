@@ -62,6 +62,13 @@ class Township extends Model
         }
     }
 
+    public function scopeFilterSlug(Builder $query, $slug)
+    {
+        if ($slug) {
+            $query->where('slug', $slug);
+        }
+    }
+
     public function state(): BelongsTo
     {
         return $this->belongsTo(State::class);

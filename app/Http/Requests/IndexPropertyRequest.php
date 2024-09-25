@@ -37,10 +37,14 @@ class IndexPropertyRequest extends FormRequest
             'search' => ['string'],
             'list_type' => ['required', 'string', new Enum(FilterListType::class)],
             'state' => ['string', 'exists:states,slug'],
-            'township' => ['string', 'exists:township,slug'],
+            'township' => ['string', 'exists:townships,slug'],
             'type' => ['string', new Enum(PropertyType::class)],
             'price_from' => ['integer'],
-            'price_to' => ['integer', 'lt:price_from'],
+            'price_to' => ['integer', function ($attribute, $value, $fail) {
+                if ($this->price_from && $value < $this->price_from) {
+                    $fail(__('validation.gt.numeric', ['attribute' => __('Price to'), 'value' => $this->price_from]));
+                }
+            }],
         ];
     }
 
@@ -50,7 +54,7 @@ class IndexPropertyRequest extends FormRequest
             function (Validator $validator) {
                 $state = $validator->safe()->state;
                 $township = $validator->safe()->township;
-                if ($state && $township && Township::findBySlug($township)->state->id != $state) {
+                if ($state && $township && Township::findBySlug($township)->state->slug != $state) {
                     $validator->errors()->add(
                         'township',
                         __('validation.exists', [

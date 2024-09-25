@@ -144,15 +144,14 @@ class Property extends Model
     // Scope for filtering by price range
     public function scopeFilterPrice(Builder $query, $priceFrom, $priceTo)
     {
-        $query->whereHas('acquisitions', function (Builder $q) use ($priceFrom, $priceTo) {
-            if ($priceFrom) {
-                $q->where('price_from', '>=', $priceFrom * 100000);
-            }
-
-            if ($priceTo) {
-                $q->where('price_from', '<=', $priceTo * 100000);
-            }
-        });
+        if ($priceFrom) {
+            $query->where('rent_price_from', '>=', $priceFrom);
+            $query->where('sell_price_from', '>=', $priceFrom);
+        }
+        if ($priceTo) {
+            $query->where('rent_price_to', '<=', $priceTo);
+            $query->where('sell_price_to', '<=', $priceTo);
+        }
     }
 
     // Scope for filtering by state

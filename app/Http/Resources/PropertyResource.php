@@ -18,15 +18,15 @@ class PropertyResource extends JsonResource
             'slug' => $this->slug,
             'title' => $this->title,
             'description' => $this->description,
-            'coverImage' => $this->cover_image_url,
+            'cover_image' => $this->cover_image_url,
             'price' => $this->price_detail,
             'address' => $this->address,
             'gallery' => $this->gallery,
-            'squareFeet' => number_format($this->square_feet),
-            'areaDescription' => $this->area_description,
-            'bedroomsCount' => (int) $this->bedroomTypes()->sum('quantity'),
-            'bathroomsCount' => $this->bathrooms_count,
-            'postedAt' => $this->posted_at->shortRelativeDiffForHumans(),
+            'square_feet' => number_format($this->square_feet),
+            'area_description' => $this->area_description,
+            'bedrooms_count' => (int) $this->bedroomTypes()->sum('quantity'),
+            'bathrooms_count' => $this->bathrooms_count,
+            'posted_at' => $this->posted_at->shortRelativeDiffForHumans(),
         ];
     }
 }

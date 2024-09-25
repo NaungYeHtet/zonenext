@@ -24,6 +24,7 @@ class TownshipRequest extends FormRequest
         return [
             'search' => ['string'],
             'state' => ['string', 'exists:states,slug'],
+            'slug' => ['string', 'exists:townships,slug'],
         ];
     }
 }

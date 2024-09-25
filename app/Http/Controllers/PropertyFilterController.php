@@ -16,24 +16,25 @@ class PropertyFilterController extends Controller
     public function index()
     {
         return $this->responseSuccess([
-            'listTypes' => FilterListType::getOptions(),
+            'list_types' => FilterListType::getOptions(),
             'states' => StateOptionResource::collection(State::all()),
             'types' => PropertyType::getOptions(),
-            'priceRanges' => FilterPrice::getRangeOptions(),
+            'price_ranges' => FilterPrice::getRangeOptions(),
         ]);
     }
 
     public function townships(TownshipRequest $request)
     {
         $townships = Township::search($request->validated('search'))
+            ->filterSlug($request->validated('slug'))
             ->filterState($request->validated('state'))
             ->paginate(10);
 
         return $this->responseSuccess([
             'townships' => TownshipOptionResource::collection($townships),
             'meta' => [
-                'hasMore' => $townships->hasMorePages(),
-                'nextPage' => $townships->nextPageUrl(),
+                'has_more' => $townships->hasMorePages(),
+                'next_page' => $townships->nextPageUrl(),
             ],
         ]);
     }

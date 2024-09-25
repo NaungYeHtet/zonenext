@@ -18,7 +18,7 @@ class PropertyListResource extends JsonResource
             'slug' => $this->slug,
             'title' => $this->title,
             'description' => $this->description,
-            'coverImage' => $this->cover_image,
+            'cover_image' => $this->cover_image,
             'price' => $this->price_detail,
             'address' => $this->address,
             'posted_at' => $this->posted_at->shortRelativeDiffForHumans(),
