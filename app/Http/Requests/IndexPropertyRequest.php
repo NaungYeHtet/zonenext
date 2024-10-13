@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\Filters\FilterListType;
+use App\Enums\Filters\FilterPrice;
 use App\Enums\PropertyType;
 use App\Models\Township;
 use Illuminate\Foundation\Http\FormRequest;
@@ -39,9 +40,9 @@ class IndexPropertyRequest extends FormRequest
             'state' => ['string', 'exists:states,slug'],
             'township' => ['string', 'exists:townships,slug'],
             'type' => ['string', new Enum(PropertyType::class)],
-            'price_from' => ['integer'],
-            'price_to' => ['integer', function ($attribute, $value, $fail) {
-                if ($this->price_from && $value < $this->price_from) {
+            'price_from' => ['string', new Enum(FilterPrice::class)],
+            'price_to' => ['string', new Enum(FilterPrice::class), function ($attribute, $value, $fail) {
+                if ($this->price_from && FilterPrice::from($value)->getValue() < FilterPrice::from($this->price_from)->getValue()) {
                     $fail(__('validation.gt.numeric', ['attribute' => __('Price to'), 'value' => $this->price_from]));
                 }
             }],

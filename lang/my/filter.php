@@ -2,8 +2,8 @@
 
 return [
     'list_type' => [
-        'for_sale' => 'ရောင်းရန်',
-        'for_rent' => 'ငှားရန်',
+        'for-sale' => 'ရောင်းရန်',
+        'for-rent' => 'ငှားရန်',
         'newest' => 'အသစ်ရောက်ရှိ',
     ],
 ];

@@ -5,71 +5,107 @@ namespace App\Enums\Filters;
 use App\Traits\HasOptions;
 use Illuminate\Support\Collection;
 
-enum FilterPrice: int
+enum FilterPrice: string
 {
     use HasOptions;
-    case OneLakh = 100000;
-    case TwoLakh = 200000;
-    case ThreeLakh = 300000;
-    case FourLakh = 400000;
-    case FiveLakh = 500000;
-    case SixLakh = 600000;
-    case SevenLakh = 700000;
-    case EightLakh = 800000;
-    case NineLakh = 900000;
-    case HundredLakh = 10000000;
-    case TwoHundredLakh = 20000000;
-    case ThreeHundredLakh = 30000000;
-    case FourHundredLakh = 40000000;
-    case FiveHundredLakh = 50000000;
-    case SixHundredLakh = 60000000;
-    case SevenHundredLakh = 70000000;
-    case EightHundredLakh = 80000000;
-    case NineHundredLakh = 90000000;
-    case OneCrore = 100000000;
-    case OneCroreFiftyThousand = 150000000;
-    case TwoCrore = 200000000;
-    case TwoCroreFiftyThousand = 250000000;
-    case ThreeCrore = 300000000;
-    case ThreeCroreFiftyThousand = 350000000;
-    case FourCrore = 400000000;
-    case FourCroreFiftyThousand = 450000000;
-    case FiveCrore = 500000000;
-    case SixCrore = 600000000;
-    case SevenCrore = 700000000;
-    case EightCrore = 800000000;
-    case NineCrore = 900000000;
-    case TenCrore = 1000000000;
-    case HundredCrore = 1000000000;
-    case TwoHundredCrore = 2000000000;
-    case ThreeHundredCrore = 3000000000;
+    case OneLakh = '1-lakh';
+    case TwoLakh = '2-lakh';
+    case ThreeLakh = '3-lakh';
+    case FourLakh = '4-lakh';
+    case FiveLakh = '5-lakh';
+    case SixLakh = '6-lakh';
+    case SevenLakh = '7-lakh';
+    case EightLakh = '8-lakh';
+    case NineLakh = '9-lakh';
+    case TenLakh = '10-lakh';
+    case HundredLakh = '100-lakh';
+    case TwoHundredLakh = '200-lakh';
+    case ThreeHundredLakh = '300-lakh';
+    case FourHundredLakh = '400-lakh';
+    case FiveHundredLakh = '500-lakh';
+    case SixHundredLakh = '600-lakh';
+    case SevenHundredLakh = '700-lakh';
+    case EightHundredLakh = '800-lakh';
+    case NineHundredLakh = '900-lakh';
+    case OneCrore = '1000-lakh';
+    case OneCroreFiftyThousand = '1500-lakh';
+    case TwoCrore = '2000-lakh';
+    case TwoCroreFiftyThousand = '2500-lakh';
+    case ThreeCrore = '3000-lakh';
+    case ThreeCroreFiftyThousand = '3500-lakh';
+    case FourCrore = '4000-lakh';
+    case FourCroreFiftyThousand = '4500-lakh';
+    case FiveCrore = '5000-lakh';
+    case SixCrore = '6000-lakh';
+    case SevenCrore = '7000-lakh';
+    case EightCrore = '8000-lakh';
+    case NineCrore = '9000-lakh';
+    case HundredCrore = '10000-lakh';
+    case TwoHundredCrore = '20000-lakh';
+    case ThreeHundredCrore = '30000-lakh';
+
+    public function getValue(): int
+    {
+        return match ($this) {
+            self::OneLakh => 100000,
+            self::TwoLakh => 200000,
+            self::ThreeLakh => 300000,
+            self::FourLakh => 400000,
+            self::FiveLakh => 500000,
+            self::SixLakh => 600000,
+            self::SevenLakh => 700000,
+            self::EightLakh => 800000,
+            self::NineLakh => 900000,
+            self::TenLakh => 1000000,
+            self::HundredLakh => 10000000,
+            self::TwoHundredLakh => 20000000,
+            self::ThreeHundredLakh => 30000000,
+            self::FourHundredLakh => 40000000,
+            self::FiveHundredLakh => 50000000,
+            self::SixHundredLakh => 60000000,
+            self::SevenHundredLakh => 70000000,
+            self::EightHundredLakh => 80000000,
+            self::NineHundredLakh => 90000000,
+            self::OneCrore => 100000000,
+            self::OneCroreFiftyThousand => 150000000,
+            self::TwoCrore => 200000000,
+            self::TwoCroreFiftyThousand => 250000000,
+            self::ThreeCrore => 300000000,
+            self::ThreeCroreFiftyThousand => 350000000,
+            self::FourCrore => 400000000,
+            self::FourCroreFiftyThousand => 450000000,
+            self::FiveCrore => 500000000,
+            self::SixCrore => 600000000,
+            self::SevenCrore => 700000000,
+            self::EightCrore => 800000000,
+            self::NineCrore => 900000000,
+            self::HundredCrore => 1000000000,
+            self::TwoHundredCrore => 2000000000,
+            self::ThreeHundredCrore => 3000000000,
+        };
+    }
 
     public function getLabel(): string
     {
-        return number_format_price($this->value);
+        return number_format_price($this->getValue());
     }
 
-    public static function getRangeOptions(): Collection
+    public static function getRangeOptions(FilterListType $filterListType): Collection
     {
-        $ranges = [];
         $filterPrices = collect(self::cases());
 
-        foreach (FilterListType::cases() as $filterListType) {
-            $ranges[$filterListType->value] = collect($filterPrices)->filter(function ($price) use ($filterListType) {
-                if ($price->value < $filterListType->getFilterPriceMinimum()) {
-                    return false;
-                }
+        return collect($filterPrices)->filter(function ($price) use ($filterListType) {
+            if ($price->getValue() < $filterListType->getFilterPriceMinimum()) {
+                return false;
+            }
 
-                $max = $filterListType->getFilterPriceMaximum();
+            $max = $filterListType->getFilterPriceMaximum();
 
-                if (! $max) {
-                    return true;
-                }
+            if (! $max) {
+                return true;
+            }
 
-                return $price->value <= $max;
-            })->values()->map(fn ($price) => $price->getOption());
-        }
-
-        return collect($ranges);
+            return $price->getValue() <= $max;
+        })->values()->map(fn ($price) => $price->getOption());
     }
 }

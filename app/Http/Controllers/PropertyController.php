@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Filters\FilterPrice;
 use App\Enums\PropertyStatus;
 use App\Http\Requests\IndexPropertyRequest;
 use App\Http\Resources\PropertyResource;
 use App\Models\Property;
+use Illuminate\Database\Eloquent\Builder;
 
 class PropertyController extends Controller
 {
@@ -17,7 +19,18 @@ class PropertyController extends Controller
         $properties = Property::posted()
             ->search($request->validated('search'))
             ->filterListType($request->validated('list_type'))
-            ->filterPrice($request->validated('price_from'), $request->validated('price_to'))
+            ->where(function (Builder $query) use ($request) {
+                $priceProm = null;
+                $priceTo = null;
+                if ($request->validated('price_from')) {
+                    $priceProm = FilterPrice::from($request->validated('price_from'))->getValue();
+                }
+                if ($request->validated('price_to')) {
+                    $priceTo = FilterPrice::from($request->validated('price_to'))->getValue();
+                }
+
+                $query->filterPrice($priceProm, $priceTo);
+            })
             ->filterState($request->validated('state'), $request->validated('township'))
             ->filterType($request->validated('type'))
             ->filterTownship($request->validated('township'));

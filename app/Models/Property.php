@@ -114,14 +114,16 @@ class Property extends Model
     // Scope for list type filtering (Newest, ForSale, ForRent)
     public function scopeFilterListType(Builder $query, $listType)
     {
-        $filterListType = FilterListType::from($listType);
+        if ($listType) {
+            $filterListType = FilterListType::from($listType);
 
-        if ($filterListType == FilterListType::Newest) {
-            $query->orderBy('posted_at', 'desc');
-        } elseif ($filterListType == FilterListType::ForSale) {
-            $query->where('is_sellable', true);
-        } elseif ($filterListType == FilterListType::ForRent) {
-            $query->where('is_rentable', true);
+            if ($filterListType == FilterListType::Newest) {
+                $query->orderBy('posted_at', 'desc');
+            } elseif ($filterListType == FilterListType::ForSale) {
+                $query->where('is_sellable', true);
+            } elseif ($filterListType == FilterListType::ForRent) {
+                $query->where('is_rentable', true);
+            }
         }
     }
 

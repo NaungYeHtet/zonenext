@@ -2,8 +2,8 @@
 
 return [
     'list_type' => [
-        'for_sale' => 'For sale',
-        'for_rent' => 'For rent',
+        'for-sale' => 'For sale',
+        'for-rent' => 'For rent',
         'newest' => 'Newest',
     ],
 ];

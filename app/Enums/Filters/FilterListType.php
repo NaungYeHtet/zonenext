@@ -8,8 +8,8 @@ enum FilterListType: string
 {
     use HasOptions;
 
-    case ForSale = 'for_sale';
-    case ForRent = 'for_rent';
+    case ForSale = 'for-sale';
+    case ForRent = 'for-rent';
     case Newest = 'newest';
 
     public function getLabel(): string

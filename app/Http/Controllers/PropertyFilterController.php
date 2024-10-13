@@ -19,7 +19,9 @@ class PropertyFilterController extends Controller
             'list_types' => FilterListType::getOptions(),
             'states' => StateOptionResource::collection(State::all()),
             'types' => PropertyType::getOptions(),
-            'price_ranges' => FilterPrice::getRangeOptions(),
+            'for_sale_options' => FilterPrice::getRangeOptions(FilterListType::ForSale),
+            'for_rent_options' => FilterPrice::getRangeOptions(FilterListType::ForRent),
+            'newest_options' => FilterPrice::getRangeOptions(FilterListType::Newest),
         ]);
     }
 
