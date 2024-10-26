@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class PropertyDocument extends Model
 {
@@ -24,5 +26,12 @@ class PropertyDocument extends Model
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class);
+    }
+
+    protected function documentUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => is_valid_url($this->document) ? $this->document : Storage::disk('public')->url($this->document)
+        );
     }
 }

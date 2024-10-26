@@ -296,6 +296,55 @@ class Property extends Model
         );
     }
 
+    protected function sellCommissionDescription(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attributes) {
+                return $this->getCommissionDescription(PropertyAcquisitionType::Sell, __('Owner'), $this->sell_owner_commission);
+            },
+        );
+    }
+
+    protected function rentCommissionDescription(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attributes) {
+                $ownerDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Owner'), $this->rent_owner_commission);
+                $customerDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Customer'), $this->rent_customer_commission);
+
+                return $ownerDescription.', '.$customerDescription;
+            },
+        );
+    }
+
+    private function getCommissionDescription(PropertyAcquisitionType $acquisitionType, string $by, ?float $commission)
+    {
+        if (! $commission) {
+            return '';
+        }
+
+        $commissionDescription = '';
+
+        if ($acquisitionType == PropertyAcquisitionType::Sell) {
+            $commissionDescription = number_format_tran($commission).'%';
+
+        } else {
+            $tranKey = 'by_month';
+            if (in_array($commission, [50, 100, 200, 300])) {
+                $tranKey = 'by_month_'.(int) ($commission);
+            }
+
+            $commissionDescription = __("property.acquisition.commission.{$tranKey}", [
+                'percentage' => number_format_tran($commission).'%',
+            ]);
+        }
+
+        return __('property.acquisition.commission.by', [
+            'commission' => $commissionDescription,
+            'commission_by' => $by,
+        ]);
+    }
+
     protected function gallery(): Attribute
     {
         return Attribute::make(
