@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('status', 30);
             $table->json('address');
             $table->string('cover_image');
+            $table->json('images')->nullable();
             $table->float('latitude');
             $table->float('longitude');
             $table->unsignedInteger('views_count')->default(0);

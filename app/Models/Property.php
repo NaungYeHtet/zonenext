@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -31,27 +30,6 @@ class Property extends Model
     public $translatable = ['title', 'description', 'address'];
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'township_id',
-        'title',
-        'description',
-        'type',
-        'slug',
-        'status',
-        'address',
-        'latitude',
-        'longitude',
-        'posted_at',
-        'sold_at',
-        'rent_at',
-        'completed_at',
-    ];
-
-    /**
      * The attributes that should be cast to native types.
      *
      * @var array
@@ -61,6 +39,7 @@ class Property extends Model
         'township_id' => 'integer',
         'title' => 'array',
         'description' => 'array',
+        'images' => 'array',
         'address' => 'array',
         'latitude' => 'float',
         'longitude' => 'float',
@@ -226,11 +205,6 @@ class Property extends Model
         return $this->morphToMany(Project::class, 'projectable');
     }
 
-    public function documents(): HasMany
-    {
-        return $this->hasMany(PropertyDocument::class);
-    }
-
     public function township(): BelongsTo
     {
         return $this->belongsTo(Township::class);
@@ -300,7 +274,7 @@ class Property extends Model
     {
         return Attribute::make(
             get: function ($value, $attributes) {
-                return $this->getCommissionDescription(PropertyAcquisitionType::Sell, __('Owner'), $this->sell_owner_commission);
+                return $this->getCommissionDescription(PropertyAcquisitionType::Sell, __('Owner'), $this->sell_price_type, $this->sell_price_from, $this->sell_owner_commission);
             },
         );
     }
@@ -309,21 +283,22 @@ class Property extends Model
     {
         return Attribute::make(
             get: function ($value, $attributes) {
-                $ownerDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Owner'), $this->rent_owner_commission);
-                $customerDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Customer'), $this->rent_customer_commission);
+                $ownerDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Owner'), $this->rent_price_type, $this->rent_price_from, $this->rent_owner_commission);
+                $customerDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Customer'), $this->rent_price_type, $this->rent_price_from, $this->rent_customer_commission);
 
                 return $ownerDescription.', '.$customerDescription;
             },
         );
     }
 
-    private function getCommissionDescription(PropertyAcquisitionType $acquisitionType, string $by, ?float $commission)
+    public static function getCommissionDescription(PropertyAcquisitionType $acquisitionType, string $by, PropertyPriceType $priceType, float $priceFrom, ?float $commission)
     {
         if (! $commission) {
             return '';
         }
 
         $commissionDescription = '';
+        $totalDescription = '';
 
         if ($acquisitionType == PropertyAcquisitionType::Sell) {
             $commissionDescription = number_format_tran($commission).'%';
@@ -339,16 +314,39 @@ class Property extends Model
             ]);
         }
 
+        if ($priceType == PropertyPriceType::Fix && $priceFrom > 0) {
+            $total = number_format($priceFrom * $commission / 100);
+            $totalDescription = " ({$total})";
+        }
+
         return __('property.acquisition.commission.by', [
             'commission' => $commissionDescription,
             'commission_by' => $by,
-        ]);
+        ]).$totalDescription;
     }
 
     protected function gallery(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->documents->map(fn ($item) => is_valid_url($item->document) ? $item->document : Storage::disk('public')->url($item->document))
+            get: fn () => collect($this->images)->map(fn ($item) => is_valid_url($item) ? $item : Storage::disk('public')->url($item))->toArray()
+        );
+    }
+
+    protected function squareFeet(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value,
+            set: function () {
+                if ($this->area_type === AreaType::LengthWidth) {
+                    return $this->length * $this->width;
+                }
+
+                if ($this->area_unit === AreaUnit::Acre) {
+                    return $this->area * 43560;
+                }
+
+                return $this->area;
+            }
         );
     }
 

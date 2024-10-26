@@ -21,7 +21,7 @@ class PropertyResource extends JsonResource
             'cover_image' => $this->cover_image_url,
             'price' => $this->price_detail,
             'address' => $this->address,
-            'gallery' => $this->gallery,
+            'gallery' => $this->images,
             'square_feet' => number_format($this->square_feet),
             'area_description' => $this->area_description,
             'bedrooms_count' => (int) $this->bedroomTypes()->sum('quantity'),

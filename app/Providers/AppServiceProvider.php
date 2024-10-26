@@ -4,12 +4,17 @@ namespace App\Providers;
 
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs\Tab as FormsTab;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Columns\Column;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
@@ -29,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Model::unguard();
         FilamentColor::register([
             'danger' => Color::Red,
             'gray' => Color::Zinc,
@@ -71,20 +77,33 @@ class AppServiceProvider extends ServiceProvider
         JsonResource::withoutWrapping();
 
         // filament configurations
-        Field::configureUsing(function (Field $field) {
-            $field->translateLabel();
+        Field::configureUsing(function (Field $component) {
+            $component->translateLabel();
         });
-        Column::configureUsing(function (Column $field) {
-            $field->translateLabel();
+        Column::configureUsing(function (Column $component) {
+            $component->translateLabel();
         });
-        Entry::configureUsing(function (Entry $field) {
-            $field->translateLabel();
+        Entry::configureUsing(function (Entry $component) {
+            $component->translateLabel();
         });
-        Tab::configureUsing(function (Tab $field) {
-            $field->translateLabel();
+        Tab::configureUsing(function (Tab $component) {
+            $component->translateLabel();
         });
-        Fieldset::configureUsing(function (Fieldset $field) {
-            $field->translateLabel();
+        FormsTab::configureUsing(function (FormsTab $component) {
+            $component->translateLabel();
+        });
+        Fieldset::configureUsing(function (Fieldset $component) {
+            $component->translateLabel();
+        });
+        Section::configureUsing(function (Section $component) {
+            $component->translateLabel();
+        });
+        Step::configureUsing(function (Step $component) {
+            $component->translateLabel();
+        });
+
+        Select::configureUsing(function (Select $component) {
+            $component->native(false);
         });
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {

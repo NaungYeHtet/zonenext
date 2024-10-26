@@ -9,7 +9,6 @@ use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
 use App\Models\Property;
 use App\Models\PropertyBedroomType;
-use App\Models\PropertyDocument;
 use App\Models\Rateable;
 use App\Models\Township;
 use App\Models\Viewable;
@@ -70,7 +69,7 @@ class PropertyFactory extends Factory
 
             $dateDetails = $this->setDateDetails($property, $status);
 
-            $this->createPropertyDocuments($property);
+            $images = $this->createPropertyImages($property);
             $this->attachTags($property);
             $bathroomsCount = $this->createBedroomTypes($property);
             $this->createRateable($property);
@@ -81,6 +80,7 @@ class PropertyFactory extends Factory
             $property->update(array_merge($dateDetails, $priceDetails, $areaDetails, [
                 'bathrooms_count' => $bathroomsCount,
                 'status' => $status,
+                'images' => $images,
             ]));
         });
     }
@@ -169,9 +169,17 @@ class PropertyFactory extends Factory
         ];
     }
 
-    protected function createPropertyDocuments(Property $property)
+    protected function createPropertyImages(Property $property): array
     {
-        PropertyDocument::factory(rand(1, 5))->create(['property_id' => $property->id]);
+        $count = fake()->randomNumber(1);
+        $images = [];
+
+        while ($count > 0) {
+            $images[] = $this->faker->imageUrl();
+            $count--;
+        }
+
+        return $images;
     }
 
     protected function attachTags(Property $property)

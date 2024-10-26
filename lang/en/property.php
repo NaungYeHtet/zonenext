@@ -10,15 +10,15 @@ return [
         'commission' => [
             'by_month' => ':percentage of monthly price',
             'by_month_50' => 'half of monthly price',
-            'by_month_100' => 'monthly price',
-            'by_month_200' => 'tow month price',
-            'by_month_300' => 'three month price',
+            'by_month_100' => 'one month price',
+            'by_month_200' => 'tow months price',
+            'by_month_300' => 'three months price',
             'by' => ':commission by :commission_by',
         ],
         'negotiable' => [
             'yes' => 'Yes',
             'no' => 'No',
-        ]
+        ],
     ],
     'actions' => [
         'post' => [
