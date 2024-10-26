@@ -32,11 +32,12 @@
 
     "Sold out": "ရောင်းပြီး",
     "Rent": "အငှား",
+    "Rented": "ငှားပြီး",
     "Rented out": "ငှားပြီး",
     "Buy": "အဝယ်",
-    "Sell": "အရောင်း",
+    "Sale": "အရောင်း",
     "Bought": "ဝယ်ပြီး",
-    "Rent & Sold out": "ငှားပြီး၊ရောင်းပြီး",
+    "Rented & Sold out": "ငှားပြီး၊ရောင်းပြီး",
 
     "Seller": "ရောင်းသူ",
     "Buyer": "ဝယ်သူ",
@@ -75,6 +76,7 @@
     "Floor": "အလွှာ",
     "Bathroom": "ရေချိုးခန်း",
     "Posted at": "တင်ခဲ့သည့်အချိန်",
+    "Post": "တင်မည်",
     "Amenities": "ပါဝင်မှုများ",
     "Lease type": "အငှားအမျိုးအစား",
     "Storage type": "ဂိုထောင်အမျိုးအစား",
@@ -83,6 +85,12 @@
     "Furnish type": "ပြင်ဆင်ပြီး",
     "No": "နံပါတ်",
     "Acquisition type": "ဝယ်/ငှား",
+    "Trashed": "ဖျက်ထားသည်",
+    "Restore": "ပြန်ယူမည်",
+    "Sold price": "ရောင်းစျေး",
+    "Sold commission": "အရောင်းပွဲစားခ",
+    "Rented price": "ငှားစျေး",
+    "Rented commission": "အငှားပွဲစားခ",
 
     "Price": "စျေးနှုန်း",
     "Price from": "စျေးနှုန်းမှ",
@@ -122,5 +130,7 @@
     "Help": "အကူအညီ",
     "Settings": "ဆက်တင်များ",
     "English": "အင်္ဂလိပ်",
-    "Myanmar": "မြန်မာ"
+    "Myanmar": "မြန်မာ",
+    "Update property status": "အိမ်ခြံမြေ အခြေအနေပြင်ဆင်ခြင်း",
+    "Property": "အိမ်ခြံမြေ"
 }

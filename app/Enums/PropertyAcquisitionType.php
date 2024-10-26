@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum PropertyAcquisitionType: string
 {
-    case Sell = 'Sell';
+    case Sale = 'Sale';
     case Rent = 'Rent';
 
     public function getLabel(): string

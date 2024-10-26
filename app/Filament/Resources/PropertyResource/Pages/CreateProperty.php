@@ -20,6 +20,7 @@ class CreateProperty extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['status'] = PropertyStatus::Draft;
+        $data['square_feet'] = null;
 
         return $data;
     }

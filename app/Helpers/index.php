@@ -6,7 +6,7 @@ if (! function_exists('get_stepped_random_number')) {
         int $max,
         int $step = 1,
     ): int {
-        if ($min >= $max) {
+        if ($min > $max) {
             throw new Exception('Min value cannot be greater than or equal max value');
         }
 
@@ -16,6 +16,10 @@ if (! function_exists('get_stepped_random_number')) {
 
         if ($step > $max) {
             throw new Exception('Step value cannot be greater than max value');
+        }
+
+        if ($min == $max) {
+            return $min;
         }
 
         // Calculate the range of possible values
@@ -68,7 +72,7 @@ if (! function_exists('number_format_price')) {
                 $symbolBefore = substr($number, -1) == '0' ? true : false;
         }
 
-        $formatted = number_format_tran($number, $locale);
+        $formatted = number_format_tran(floatval($number), $locale);
 
         $formatted = $symbolBefore ? $symbol.' '.$formatted : $formatted.' '.$symbol;
 

@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             BedroomTypeSeeder::class,
+            ShieldSeeder::class,
             AdminSeeder::class,
             UserSeeder::class,
             AgentSeeder::class,

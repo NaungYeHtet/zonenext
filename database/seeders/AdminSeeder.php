@@ -12,11 +12,13 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        Admin::create([
-            'name' => 'Admin',
-            'email' => 'admin@zonenext.com',
+        $admin = Admin::create([
+            'name' => 'Naung Ye Htet',
+            'email' => 'naungyehtet@zonenext.com',
             'password' => bcrypt('admin@123'),
             'email_verified_at' => now(),
         ]);
+
+        $admin->assignRole('Super admin');
     }
 }

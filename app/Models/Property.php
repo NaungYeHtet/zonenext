@@ -55,16 +55,18 @@ class Property extends Model
         'is_rentable' => 'boolean',
         'rent_price_type' => PropertyPriceType::class,
         'rent_price_from' => 'integer',
+        'rented_price' => 'integer',
         'rent_price_to' => 'integer',
         'rent_negotiable' => 'boolean',
         'rent_owner_commission' => 'float',
         'rent_customer_commission' => 'float',
-        'is_sellable' => 'boolean',
-        'sell_price_type' => PropertyPriceType::class,
-        'sell_price_from' => 'integer',
-        'sell_price_to' => 'integer',
-        'sell_negotiable' => 'boolean',
-        'sell_owner_commission' => 'float',
+        'is_saleable' => 'boolean',
+        'sold_price' => 'integer',
+        'sale_price_type' => PropertyPriceType::class,
+        'sale_price_from' => 'integer',
+        'sale_price_to' => 'integer',
+        'sale_negotiable' => 'boolean',
+        'sale_owner_commission' => 'float',
     ];
 
     public function getRouteKeyName(): string
@@ -99,7 +101,7 @@ class Property extends Model
             if ($filterListType == FilterListType::Newest) {
                 $query->orderBy('posted_at', 'desc');
             } elseif ($filterListType == FilterListType::ForSale) {
-                $query->where('is_sellable', true);
+                $query->where('is_saleable', true);
             } elseif ($filterListType == FilterListType::ForRent) {
                 $query->where('is_rentable', true);
             }
@@ -127,11 +129,11 @@ class Property extends Model
     {
         if ($priceFrom) {
             $query->where('rent_price_from', '>=', $priceFrom);
-            $query->where('sell_price_from', '>=', $priceFrom);
+            $query->where('sale_price_from', '>=', $priceFrom);
         }
         if ($priceTo) {
             $query->where('rent_price_to', '<=', $priceTo);
-            $query->where('sell_price_to', '<=', $priceTo);
+            $query->where('sale_price_to', '<=', $priceTo);
         }
     }
 
@@ -188,11 +190,7 @@ class Property extends Model
 
     public function agents(): BelongsToMany
     {
-        return $this->belongsToMany(Agent::class)
-            ->using(AgentProperty::class)
-            ->as('agent_property')
-            ->withPivot('id')
-            ->withTimestamps();
+        return $this->belongsToMany(Agent::class, 'agent_properties');
     }
 
     public function groups(): MorphToMany
@@ -213,16 +211,16 @@ class Property extends Model
     /**
      * Accessors
      */
-    protected function sellPrice(): Attribute
+    protected function salePrice(): Attribute
     {
         return Attribute::make(
             get: function ($value, $attributes): string {
-                if ($attributes['sell_price_type'] == PropertyPriceType::Fix->value) {
-                    return number_format_price($attributes['sell_price_from']);
+                if ($attributes['sale_price_type'] == PropertyPriceType::Fix->value) {
+                    return number_format_price($attributes['sale_price_from']);
                 }
 
-                if ($attributes['sell_price_type'] == PropertyPriceType::Range->value) {
-                    return number_format_price($attributes['sell_price_from']).' - '.number_format_price($attributes['sell_price_to']);
+                if ($attributes['sale_price_type'] == PropertyPriceType::Range->value) {
+                    return number_format_price($attributes['sale_price_from']).' - '.number_format_price($attributes['sale_price_to']);
                 }
 
                 return '';
@@ -253,10 +251,10 @@ class Property extends Model
             get: function () {
                 $detail = [];
 
-                if ($this->is_sellable) {
-                    $acquisitionType = PropertyAcquisitionType::Sell;
+                if ($this->is_saleable) {
+                    $acquisitionType = PropertyAcquisitionType::Sale;
 
-                    $detail[str($acquisitionType->value)->camel()->toString()] = "{$this->sell_price} ({$acquisitionType->getLabel()})";
+                    $detail[str($acquisitionType->value)->camel()->toString()] = "{$this->sale_price} ({$acquisitionType->getLabel()})";
                 }
 
                 if ($this->is_rentable) {
@@ -270,11 +268,11 @@ class Property extends Model
         );
     }
 
-    protected function sellCommissionDescription(): Attribute
+    protected function saleCommissionDescription(): Attribute
     {
         return Attribute::make(
             get: function ($value, $attributes) {
-                return $this->getCommissionDescription(PropertyAcquisitionType::Sell, __('Owner'), $this->sell_price_type, $this->sell_price_from, $this->sell_owner_commission);
+                return $this->getCommissionDescription(PropertyAcquisitionType::Sale, __('Owner'), $this->sale_price_type, $this->sale_price_from, $this->sale_owner_commission);
             },
         );
     }
@@ -300,7 +298,7 @@ class Property extends Model
         $commissionDescription = '';
         $totalDescription = '';
 
-        if ($acquisitionType == PropertyAcquisitionType::Sell) {
+        if ($acquisitionType == PropertyAcquisitionType::Sale) {
             $commissionDescription = number_format_tran($commission).'%';
 
         } else {
@@ -350,10 +348,10 @@ class Property extends Model
         );
     }
 
-    protected function coverImageUrl(): Attribute
+    protected function coverImage(): Attribute
     {
         return Attribute::make(
-            get: fn () => is_valid_url($this->cover_image) ? $this->cover_image : Storage::disk('public')->url($this->cover_image)
+            get: fn (string $value) => is_valid_url($value) ? $value : Storage::disk('public')->url($value)
         );
     }
 

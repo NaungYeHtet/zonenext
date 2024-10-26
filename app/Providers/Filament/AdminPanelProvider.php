@@ -59,6 +59,18 @@ class AdminPanelProvider extends PanelProvider
                         'en' => __('English'),
                         'my' => __('Myanmar'),
                     ]),
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
+                    ->gridColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 3,
+                    ])
+                    ->sectionColumnSpan(1)
+                    ->checkboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 2,
+                    ]),
             ])
             ->viteTheme('resources/css/filament/admin/theme.css');
     }

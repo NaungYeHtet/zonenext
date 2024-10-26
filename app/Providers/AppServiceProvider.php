@@ -13,6 +13,7 @@ use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -71,6 +72,8 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             'property' => \App\Models\Property::class,
             'user' => \App\Models\User::class,
+            'admin' => \App\Models\Admin::class,
+            'agent' => \App\Models\Agent::class,
             'project' => \App\Models\Project::class,
         ]);
 
@@ -99,6 +102,9 @@ class AppServiceProvider extends ServiceProvider
             $component->translateLabel();
         });
         Step::configureUsing(function (Step $component) {
+            $component->translateLabel();
+        });
+        TableAction::configureUsing(function (TableAction $component) {
             $component->translateLabel();
         });
 

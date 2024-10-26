@@ -1,0 +1,60 @@
+[
+    {
+        "name": "Super admin",
+        "guard_name": "admin",
+        "direct": false,
+        "permissions": {
+            "property": [
+                "view_property",
+                "create_property",
+                "update_property",
+                "delete_property",
+                "restore_property"
+            ],
+            "update_property_status": [
+                "posted_update::property::status",
+                "rented_update::property::status",
+                "sold_out_update::property::status"
+            ],
+            "role": ["view_role", "create_role", "update_role", "delete_role"],
+            "admin": [
+                "view_admin",
+                "create_admin",
+                "update_admin",
+                "delete_admin"
+            ],
+            "agent": [
+                "view_agent",
+                "create_agent",
+                "update_agent",
+                "delete_agent"
+            ],
+            "user": ["view_user"],
+            "project": [
+                "view_project",
+                "create_project",
+                "update_project",
+                "delete_project"
+            ],
+            "state": [
+                "view_state",
+                "create_state",
+                "update_state",
+                "delete_state"
+            ],
+            "township": [
+                "view_township",
+                "create_township",
+                "update_township",
+                "delete_township"
+            ],
+            "tag": ["view_tag", "create_tag", "update_tag", "delete_tag"],
+            "group": [
+                "view_group",
+                "create_group",
+                "update_group",
+                "delete_group"
+            ]
+        }
+    }
+]

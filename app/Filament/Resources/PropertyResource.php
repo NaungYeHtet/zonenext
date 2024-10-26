@@ -6,14 +6,17 @@ use App\Enums\AreaType;
 use App\Enums\AreaUnit;
 use App\Enums\PropertyAcquisitionType;
 use App\Enums\PropertyPriceType;
+use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
 use App\Filament\Resources\PropertyResource\Pages;
 use App\Models\Property;
 use App\Models\Township;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -58,17 +61,17 @@ class PropertyResource extends Resource
                             ]),
                         Infolists\Components\Tabs\Tab::make('Price')
                             ->schema([
-                                Infolists\Components\Fieldset::make('Sell')
+                                Infolists\Components\Fieldset::make('Sale')
                                     ->schema([
-                                        Infolists\Components\TextEntry::make('sell_price')
+                                        Infolists\Components\TextEntry::make('sale_price')
                                             ->label(__('Price')),
-                                        Infolists\Components\IconEntry::make('sell_negotiable')
+                                        Infolists\Components\IconEntry::make('sale_negotiable')
                                             ->label(__('Negotiable'))
                                             ->boolean(),
-                                        Infolists\Components\TextEntry::make('sell_commission_description')
+                                        Infolists\Components\TextEntry::make('sale_commission_description')
                                             ->label(__('Commission')),
                                     ])
-                                    ->visible(fn (Model $record) => $record->is_sellable),
+                                    ->visible(fn (Model $record) => $record->is_saleable),
                                 Infolists\Components\Fieldset::make('Rent')
                                     ->schema([
                                         Infolists\Components\TextEntry::make('rent_price')
@@ -282,8 +285,8 @@ BLADE))),
     {
         return Forms\Components\Wizard\Step::make('Price')
             ->schema([
-                Forms\Components\Toggle::make('is_sellable')
-                    ->label(__('Sell'))
+                Forms\Components\Toggle::make('is_saleable')
+                    ->label(__('Sale'))
                     ->rules([
                         'required_if:rentable,false',
                         'boolean',
@@ -291,9 +294,9 @@ BLADE))),
                     ->default(true)
                     ->live()
                     ->afterStateUpdated(fn (bool $state, Forms\Set $set) => ! $state ? $set('is_rentable', true) : ''),
-                Forms\Components\Section::make(__('Sell'))
+                Forms\Components\Section::make(__('Sale'))
                     ->schema([
-                        Forms\Components\Select::make('sell_price_type')
+                        Forms\Components\Select::make('sale_price_type')
                             ->label(__('Type'))
                             ->options(PropertyPriceType::class)
                             ->default(PropertyPriceType::Fix->value)
@@ -302,8 +305,8 @@ BLADE))),
                                 'required',
                             ])
                             ->live(),
-                        Forms\Components\TextInput::make('sell_price_from')
-                            ->label(fn (Forms\Get $get) => $get('sell_price_type') === PropertyPriceType::Range->value ? __('From') : __('Price'))
+                        Forms\Components\TextInput::make('sale_price_from')
+                            ->label(fn (Forms\Get $get) => $get('sale_price_type') === PropertyPriceType::Range->value ? __('From') : __('Price'))
                             ->default(get_stepped_random_number(60000000, 600000000 / 2, 5000000))
                             ->required()
                             ->numeric()
@@ -313,7 +316,7 @@ BLADE))),
                                 'min:1',
                             ])
                             ->live(true),
-                        Forms\Components\TextInput::make('sell_price_to')
+                        Forms\Components\TextInput::make('sale_price_to')
                             ->label(__('To'))
                             ->required()
                             ->numeric()
@@ -322,8 +325,8 @@ BLADE))),
                                 'integer',
                                 'min:1',
                             ])
-                            ->visible(fn (Forms\Get $get) => $get('sell_price_type') === PropertyPriceType::Range->value),
-                        Forms\Components\Toggle::make('sell_negotiable')
+                            ->visible(fn (Forms\Get $get) => $get('sale_price_type') === PropertyPriceType::Range->value),
+                        Forms\Components\Toggle::make('sale_negotiable')
                             ->label(__('Negotiable'))
                             ->required()
                             ->rules([
@@ -331,7 +334,7 @@ BLADE))),
                                 'boolean',
                             ])
                             ->columnStart(1),
-                        Forms\Components\TextInput::make('sell_owner_commission')
+                        Forms\Components\TextInput::make('sale_owner_commission')
                             ->label(__('Commission').' ('.__('Owner').')')
                             ->required()
                             ->default(1)
@@ -346,29 +349,29 @@ BLADE))),
                         Forms\Components\Placeholder::make('commission_detail')
                             ->label('')
                             ->content(function (Forms\Get $get): string {
-                                $ownerCommission = (float) $get('sell_owner_commission') ?? 0;
-                                $priceType = PropertyPriceType::from($get('sell_price_type'));
-                                $price = (float) $get('sell_price_from') ?? 0;
+                                $ownerCommission = (float) $get('sale_owner_commission') ?? 0;
+                                $priceType = PropertyPriceType::from($get('sale_price_type'));
+                                $price = (float) $get('sale_price_from') ?? 0;
 
-                                $ownerDescription = Property::getCommissionDescription(PropertyAcquisitionType::Sell, __('Owner'), $priceType, $price, $ownerCommission);
+                                $ownerDescription = Property::getCommissionDescription(PropertyAcquisitionType::Sale, __('Owner'), $priceType, $price, $ownerCommission);
 
                                 return $ownerDescription;
                             })
                             ->columnSpanFull(),
                     ])
-                    ->visible(fn (Forms\Get $get) => (bool) $get('is_sellable'))
+                    ->visible(fn (Forms\Get $get) => (bool) $get('is_saleable'))
                     ->columns(3),
                 Forms\Components\Toggle::make('is_rentable')
                     ->label(__('Rent'))
                     ->required()
                     ->rules([
-                        'required_if:is_sellable,false',
+                        'required_if:is_saleable,false',
                         'required',
                         'boolean',
                     ])
                     ->live()
                     ->columnStart(1)
-                    ->afterStateUpdated(fn (bool $state, Forms\Set $set) => ! $state ? $set('is_sellable', true) : '')
+                    ->afterStateUpdated(fn (bool $state, Forms\Set $set) => ! $state ? $set('is_saleable', true) : '')
                     ->default(true),
                 Forms\Components\Section::make(__('Rent'))
                     ->schema([
@@ -460,18 +463,84 @@ BLADE))),
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at', 'desc'))
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('title')
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('type')
                     ->badge(),
-                Tables\Columns\ImageColumn::make('cover_image_url')
-                    ->label(__('Cover image')),
+                Tables\Columns\TextColumn::make('address')
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('price_detail')
+                    ->label(__('Price'))
+                    ->formatStateUsing(fn (string $state) => $state)
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('sold_price')
+                    ->label(__('Sold price'))
+                    ->formatStateUsing(fn (string $state) => number_format_price($state))
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('rented_price')
+                    ->label(__('Rented price'))
+                    ->formatStateUsing(fn (int $state) => $state == '' ? '' : number_format_price($state))
+                    ->wrap(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make()
+                        ->color('warning'),
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\Action::make('post')
+                        ->color('primary')
+                        ->successNotification(Notification::make()->title(__('Posted successfully'))->success())
+                        ->visible(fn (Model $record): bool => Filament::auth()->user()->can('post', $record))
+                        ->fillForm(fn (Model $record): array => [
+                            'agents' => $record->agents()->pluck('agent_id'),
+                        ])
+                        ->form([
+                            Forms\Components\Select::make('agents')
+                                ->relationship('agents', 'name')
+                                ->multiple()
+                                ->required()
+                                ->searchable()
+                                ->preload(),
+                        ])
+                        ->icon('gmdi-post-add-o')
+                        ->action(function (Model $record, Tables\Actions\Action $action): void {
+                            $record->update([
+                                'status' => PropertyStatus::Posted,
+                            ]);
+                            $action->success();
+                        }),
+                ])
+                    ->visible(fn (Model $record) => ! $record->trashed()),
+                Tables\Actions\Action::make('trash')
+                    ->iconButton()
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->successNotification(Notification::make()->title(__('Trashed successfully'))->success())
+                    ->action(function (Model $record, Tables\Actions\Action $action) {
+                        $record->delete();
+
+                        $action->success();
+                    })
+                    ->visible(fn (Model $record) => ! $record->trashed()),
+                Tables\Actions\Action::make('restore')
+                    ->icon('gmdi-refresh-o')
+                    ->color('gray')
+                    ->successNotification(Notification::make()->title(__('Restored successfully'))->success())
+                    ->action(function (Model $record, Tables\Actions\Action $action) {
+                        $record->restore();
+                        $record->update([
+                            'status' => PropertyStatus::Draft,
+                        ]);
+                        $record->agents()->detach();
+
+                        $action->success();
+                    })
+                    ->visible(fn (Model $record) => $record->trashed()),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

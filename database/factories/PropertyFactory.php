@@ -30,7 +30,7 @@ class PropertyFactory extends Factory
     public function definition(): array
     {
         $createdAt = $this->faker->dateTimeBetween(now()->subMonths(12), now()->subMonths(3));
-        $isSellable = $this->faker->boolean();
+        $isSaleable = $this->faker->boolean();
 
         return [
             'township_id' => Township::whereRelation('state', 'slug', 'yangon')->get()->random(),
@@ -53,8 +53,8 @@ class PropertyFactory extends Factory
             'longitude' => $this->faker->longitude(),
             'area_type' => $this->faker->randomElement(AreaType::cases()),
             'square_feet' => $this->faker->randomNumber(3),
-            'is_sellable' => $isSellable,
-            'is_rentable' => $isSellable ? $this->faker->boolean() : true,
+            'is_saleable' => $isSaleable,
+            'is_rentable' => $isSaleable ? $this->faker->boolean() : true,
             'created_at' => $createdAt,
             'updated_at' => $createdAt,
         ];
@@ -75,7 +75,7 @@ class PropertyFactory extends Factory
             $this->createRateable($property);
             $this->createViewable($property);
 
-            $priceDetails = $this->setPriceDetails($property);
+            $priceDetails = $this->setPriceDetails($property, $status);
 
             $property->update(array_merge($dateDetails, $priceDetails, $areaDetails, [
                 'bathrooms_count' => $bathroomsCount,
@@ -120,16 +120,9 @@ class PropertyFactory extends Factory
             PropertyStatus::Completed,
         ];
 
-        if ($property->is_sellable) {
+        if ($property->is_saleable && $property->is_rentable) {
             $statuses[] = PropertyStatus::SoldOut;
-        }
-
-        if ($property->is_rentable) {
-            $statuses[] = PropertyStatus::Rent;
-        }
-
-        if ($property->is_sellable && $property->is_rentable) {
-            $statuses[] = PropertyStatus::RentNSoldOut;
+            $statuses[] = PropertyStatus::Rented;
         }
 
         return $statuses;
@@ -148,13 +141,10 @@ class PropertyFactory extends Factory
 
             if ($status == PropertyStatus::SoldOut) {
                 $soldAt = fake()->dateTimeBetween(startDate: $postedAt, endDate: $endDate);
-            } elseif ($status == PropertyStatus::Rent) {
+            } elseif ($status == PropertyStatus::Rented) {
                 $rentAt = fake()->dateTimeBetween(startDate: $postedAt, endDate: $endDate);
-            } elseif ($status == PropertyStatus::RentNSoldOut) {
-                $rentAt = fake()->dateTimeBetween(startDate: $postedAt, endDate: $endDate);
-                $soldAt = fake()->dateTimeBetween(startDate: $postedAt, endDate: $endDate);
             } elseif ($status == PropertyStatus::Completed) {
-                $soldAt = $property->is_sellable ? fake()->dateTimeBetween(startDate: $postedAt, endDate: $endDate) : null;
+                $soldAt = $property->is_saleable ? fake()->dateTimeBetween(startDate: $postedAt, endDate: $endDate) : null;
                 $rentAt = $property->is_rentable ? fake()->dateTimeBetween(startDate: $postedAt, endDate: $endDate) : null;
                 $greaterDate = $soldAt > $rentAt ? $soldAt : $rentAt;
                 $completedAt = fake()->dateTimeBetween(startDate: $greaterDate, endDate: Carbon::parse($greaterDate)->addMonth());
@@ -225,43 +215,57 @@ class PropertyFactory extends Factory
         ]);
     }
 
-    protected function setPriceDetails(Property $property)
+    protected function setPriceDetails(Property $property, PropertyStatus $status)
     {
-        $sellPriceDetails = $this->getSellPriceDetails($property);
-        $rentPriceDetails = $this->getRentPriceDetails($property);
+        $salePriceDetails = $this->getSalePriceDetails($property, $status);
+        $rentPriceDetails = $this->getRentPriceDetails($property, $status);
 
-        return array_merge($sellPriceDetails, $rentPriceDetails);
+        return array_merge($salePriceDetails, $rentPriceDetails);
     }
 
-    protected function getSellPriceDetails(Property $property)
+    protected function getSalePriceDetails(Property $property, PropertyStatus $status)
     {
-        $sellPriceType = null;
-        $sellPriceFrom = 0;
-        $sellPriceTo = 0;
-        $sellOwnerCommission = 0;
-        $sellNegotiable = false;
+        $salePriceType = null;
+        $salePriceFrom = 0;
+        $salePriceTo = 0;
+        $saleOwnerCommission = 0;
+        $saleNegotiable = false;
+        $soldPrice = null;
+        $soldCommission = null;
 
-        if ($property->is_sellable) {
-            $sellPriceType = fake()->randomElement(PropertyPriceType::cases());
-            $sellOwnerCommission = fake()->randomNumber(1);
-            $sellNegotiable = fake()->boolean();
-            $sellPriceFrom = get_stepped_random_number(60000000, 600000000 / 2, 5000000);
+        if ($property->is_saleable) {
+            $salePriceType = fake()->randomElement(PropertyPriceType::cases());
+            $saleOwnerCommission = fake()->randomNumber(1);
+            $saleNegotiable = fake()->boolean();
+            $salePriceFrom = get_stepped_random_number(60000000, 600000000 / 2, 5000000);
 
-            if ($sellPriceType == PropertyPriceType::Range) {
-                $sellPriceTo = get_stepped_random_number($sellPriceFrom, $sellPriceFrom * 2, 5000000);
+            if ($salePriceType == PropertyPriceType::Range) {
+                $salePriceTo = get_stepped_random_number($salePriceFrom, $salePriceFrom * 2, 5000000);
+            }
+
+            if (in_array($status, [PropertyStatus::SoldOut, PropertyStatus::Completed])) {
+                if ($salePriceType === PropertyPriceType::Fix) {
+                    $soldPrice = $salePriceFrom;
+                } else {
+                    $soldPrice = get_stepped_random_number($salePriceFrom, $salePriceTo, 5000000);
+                }
+
+                $soldCommission = $soldPrice * $saleOwnerCommission / 100;
             }
         }
 
         return [
-            'sell_price_type' => $sellPriceType,
-            'sell_price_from' => $sellPriceFrom,
-            'sell_price_to' => $sellPriceTo,
-            'sell_negotiable' => $sellNegotiable,
-            'sell_owner_commission' => $sellOwnerCommission,
+            'sale_price_type' => $salePriceType,
+            'sale_price_from' => $salePriceFrom,
+            'sale_price_to' => $salePriceTo,
+            'sale_negotiable' => $saleNegotiable,
+            'sale_owner_commission' => $saleOwnerCommission,
+            'sold_price' => $soldPrice,
+            'sold_commission' => $soldCommission,
         ];
     }
 
-    protected function getRentPriceDetails(Property $property)
+    protected function getRentPriceDetails(Property $property, PropertyStatus $status)
     {
         $rentPriceType = null;
         $rentPriceFrom = 0;
@@ -269,6 +273,8 @@ class PropertyFactory extends Factory
         $rentOwnerCommission = 0;
         $rentCustomerCommission = 0;
         $rentNegotiable = false;
+        $rentPrice = null;
+        $rentCommission = null;
 
         if ($property->is_rentable) {
             $rentPriceType = fake()->randomElement(PropertyPriceType::cases());
@@ -280,6 +286,16 @@ class PropertyFactory extends Factory
             if ($rentPriceType == PropertyPriceType::Range) {
                 $rentPriceTo = get_stepped_random_number($rentPriceFrom, $rentPriceFrom * 2, 50000);
             }
+
+            if (in_array($status, [PropertyStatus::Rented, PropertyStatus::Completed])) {
+                if ($rentPriceType === PropertyPriceType::Fix) {
+                    $rentPrice = $rentPriceFrom;
+                } else {
+                    $rentPrice = get_stepped_random_number($rentPriceFrom, $rentPriceTo, 50000);
+                }
+
+                $rentCommission = ($rentPrice * $rentCustomerCommission / 100) + ($rentPrice * $rentOwnerCommission / 100);
+            }
         }
 
         return [
@@ -289,6 +305,8 @@ class PropertyFactory extends Factory
             'rent_negotiable' => $rentNegotiable,
             'rent_owner_commission' => $rentOwnerCommission,
             'rent_customer_commission' => $rentCustomerCommission,
+            'rented_price' => $rentPrice,
+            'rented_commission' => $rentCommission,
         ];
     }
 }

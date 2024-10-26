@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasPermissions;
 
 class Agent extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasPermissions;
 
     /**
      * The attributes that are mass assignable.

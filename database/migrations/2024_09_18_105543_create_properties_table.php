@@ -45,14 +45,18 @@ return new class extends Migration
             $table->boolean('rent_negotiable')->default(false);
             $table->decimal('rent_owner_commission', 5, 2)->default(0);
             $table->decimal('rent_customer_commission', 5, 2)->default(0);
+            $table->integer('rented_price')->nullable();
+            $table->integer('rented_commission')->nullable();
 
-            // sell price detail
-            $table->boolean('is_sellable')->default(false);
-            $table->string('sell_price_type', 30)->nullable();
-            $table->integer('sell_price_from')->default(0);
-            $table->integer('sell_price_to')->default(0);
-            $table->boolean('sell_negotiable')->default(false);
-            $table->decimal('sell_owner_commission', 5, 2)->default(0);
+            // sale price detail
+            $table->boolean('is_saleable')->default(false);
+            $table->string('sale_price_type', 30)->nullable();
+            $table->integer('sale_price_from')->default(0);
+            $table->integer('sale_price_to')->default(0);
+            $table->boolean('sale_negotiable')->default(false);
+            $table->decimal('sale_owner_commission', 5, 2)->default(0);
+            $table->integer('sold_price')->nullable();
+            $table->integer('sold_commission')->nullable();
 
             $table->dateTime('posted_at')->nullable();
             $table->dateTime('sold_at')->nullable();
