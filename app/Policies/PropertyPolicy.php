@@ -9,9 +9,16 @@ use App\Models\Property;
 
 class PropertyPolicy
 {
-    /**
-     * Create a new policy instance.
-     */
+    public function viewAny(Admin|Agent $user): bool
+    {
+        return $user->can('view_property');
+    }
+
+    public function view(Admin|Agent $user, Property $property): bool
+    {
+        return $user->can('view_property');
+    }
+
     public function create(Admin|Agent $user): bool
     {
         return $user->can('create_property');

@@ -14,18 +14,6 @@ class Admin extends Authenticatable implements FilamentUser
     use HasFactory, HasPanelShield, HasRoles;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'email_verified_at',
-        'password',
-    ];
-
-    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array

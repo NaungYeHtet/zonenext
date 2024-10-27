@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PropertyResource\Concerns\PropertyAction;
 use App\Filament\Resources\PropertyResource\Concerns\PropertyForm;
 use App\Filament\Resources\PropertyResource\Concerns\PropertyInfolist;
+use App\Filament\Resources\PropertyResource\Concerns\PropertyTable;
 use App\Filament\Resources\PropertyResource\Pages;
 use App\Models\Property;
 use Filament\Forms\Form;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PropertyResource extends Resource
 {
-    use PropertyAction, PropertyForm, PropertyInfolist;
+    use PropertyAction, PropertyForm, PropertyInfolist, PropertyTable;
 
     protected static ?string $model = Property::class;
 
@@ -44,27 +45,7 @@ class PropertyResource extends Resource
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at', 'desc'))
-            ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable()
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('type')
-                    ->badge(),
-                Tables\Columns\TextColumn::make('address')
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('price_detail')
-                    ->label(__('Price'))
-                    ->formatStateUsing(fn (string $state) => $state)
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('sold_price')
-                    ->label(__('Sold price'))
-                    ->formatStateUsing(fn (string $state) => number_format_price($state))
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('rented_price')
-                    ->label(__('Rented price'))
-                    ->formatStateUsing(fn (int $state) => $state == '' ? '' : number_format_price($state))
-                    ->wrap(),
-            ])
+            ->columns(self::getColumns())
             ->filters([
                 //
             ])

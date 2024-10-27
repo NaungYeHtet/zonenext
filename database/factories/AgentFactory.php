@@ -26,7 +26,7 @@ class AgentFactory extends Factory
             'phone' => $this->faker->phoneNumber(),
             'phone_verified_at' => $this->faker->dateTime(),
             'password' => $this->faker->password(),
-            'image' => $this->faker->word(),
+            'image' => $this->faker->imageUrl(),
         ];
     }
 }

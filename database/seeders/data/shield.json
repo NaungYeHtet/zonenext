@@ -4,18 +4,6 @@
         "guard_name": "admin",
         "direct": false,
         "permissions": {
-            "property": [
-                "view_property",
-                "create_property",
-                "update_property",
-                "delete_property",
-                "restore_property"
-            ],
-            "update_property_status": [
-                "posted_update::property::status",
-                "rented_update::property::status",
-                "sold_out_update::property::status"
-            ],
             "role": ["view_role", "create_role", "update_role", "delete_role"],
             "admin": [
                 "view_admin",
@@ -30,6 +18,18 @@
                 "delete_agent"
             ],
             "user": ["view_user"],
+            "property": [
+                "view_property",
+                "create_property",
+                "update_property",
+                "delete_property",
+                "restore_property"
+            ],
+            "update_property_status": [
+                "posted_update::property::status",
+                "rented_update::property::status",
+                "sold_out_update::property::status"
+            ],
             "project": [
                 "view_project",
                 "create_project",
@@ -54,7 +54,8 @@
                 "create_group",
                 "update_group",
                 "delete_group"
-            ]
+            ],
+            "leads": ["view_leads"]
         }
     }
 ]
