@@ -14,25 +14,22 @@ class PropertyPolicy
      */
     public function create(Admin|Agent $user): bool
     {
-        return $user instanceof Admin;
+        return $user->can('create_property');
     }
 
     public function update(Admin|Agent $user, Property $property): bool
     {
-        if ($user instanceof Agent) {
-            return false;
-        }
+        return $user->can('update_property') && $property->status != PropertyStatus::Completed;
+    }
 
-        return $property->status != PropertyStatus::Completed;
+    public function delete(Admin|Agent $user, Property $property): bool
+    {
+        return $user->can('delete_property') && ! $property->trashed();
     }
 
     public function restore(Admin|Agent $user, Property $property): bool
     {
-        if ($user instanceof Agent) {
-            return false;
-        }
-
-        return $property->trashed();
+        return $user->can('restore_property') && $property->trashed();
     }
 
     public function updatePosted(Admin|Agent $user, Property $property): bool
@@ -41,16 +38,16 @@ class PropertyPolicy
             return false;
         }
 
-        return $property->status == PropertyStatus::Draft;
+        return $user->can('posted_update::property::status') && $property->status == PropertyStatus::Draft;
     }
 
     public function updateSoldOut(Admin|Agent $user, Property $property): bool
     {
-        return $property->status == PropertyStatus::Posted && $property->is_saleable;
+        return $user->can('sold_out_update::property::status') && ($property->status == PropertyStatus::Posted || $property->status == PropertyStatus::Rented) && $property->is_saleable;
     }
 
     public function updateRented(Admin|Agent $user, Property $property): bool
     {
-        return $property->status == PropertyStatus::Posted && $property->is_rentable;
+        return $user->can('sold_out_update::property::status') && ($property->status == PropertyStatus::Posted || $property->status == PropertyStatus::SoldOut) && $property->is_rentable;
     }
 }

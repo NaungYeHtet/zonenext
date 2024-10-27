@@ -29,17 +29,9 @@ class ListProperties extends ListRecords
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PropertyStatus::Draft))
                 ->badgeColor(PropertyStatus::Draft->getColor()),
             'posted' => Tab::make(PropertyStatus::Posted->getLabel())
-                ->badge(Property::query()->where('status', PropertyStatus::Posted)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PropertyStatus::Posted))
+                ->badge(Property::query()->whereIn('status', [PropertyStatus::Posted, PropertyStatus::Rented, PropertyStatus::SoldOut])->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [PropertyStatus::Posted, PropertyStatus::Rented, PropertyStatus::SoldOut]))
                 ->badgeColor(PropertyStatus::Posted->getColor()),
-            'sold_out' => Tab::make(PropertyStatus::SoldOut->getLabel())
-                ->badge(Property::query()->where('status', PropertyStatus::SoldOut)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PropertyStatus::SoldOut))
-                ->badgeColor(PropertyStatus::SoldOut->getColor()),
-            'rented' => Tab::make(PropertyStatus::Rented->getLabel())
-                ->badge(Property::query()->where('status', PropertyStatus::Rented)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PropertyStatus::Rented))
-                ->badgeColor(PropertyStatus::Rented->getColor()),
             'completed' => Tab::make(PropertyStatus::Completed->getLabel())
                 ->badge(Property::query()->where('status', PropertyStatus::Completed)->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PropertyStatus::Completed))
