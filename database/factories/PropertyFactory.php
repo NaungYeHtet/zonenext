@@ -11,6 +11,7 @@ use App\Models\Property;
 use App\Models\PropertyBedroomType;
 use App\Models\Rateable;
 use App\Models\Township;
+use App\Models\User;
 use App\Models\Viewable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -31,8 +32,11 @@ class PropertyFactory extends Factory
     {
         $createdAt = $this->faker->dateTimeBetween(now()->subMonths(12), now()->subMonths(3));
         $isSaleable = $this->faker->boolean();
+        $owner = User::all()->random();
 
         return [
+            'owner_id' => $owner,
+            'customer_id' => User::where('id', '!=', $owner->id)->get()->random(),
             'township_id' => Township::whereRelation('state', 'slug', 'yangon')->get()->random(),
             'title' => [
                 'en' => $this->faker->sentence,
@@ -228,14 +232,14 @@ class PropertyFactory extends Factory
         $salePriceType = null;
         $salePriceFrom = 0;
         $salePriceTo = 0;
-        $saleOwnerCommission = 0;
+        $sellerCommission = 0;
         $saleNegotiable = false;
         $soldPrice = null;
         $soldCommission = null;
 
         if ($property->is_saleable) {
             $salePriceType = fake()->randomElement(PropertyPriceType::cases());
-            $saleOwnerCommission = fake()->randomNumber(1);
+            $sellerCommission = fake()->randomNumber(1);
             $saleNegotiable = fake()->boolean();
             $salePriceFrom = get_stepped_random_number(60000000, 600000000 / 2, 5000000);
 
@@ -250,7 +254,7 @@ class PropertyFactory extends Factory
                     $soldPrice = get_stepped_random_number($salePriceFrom, $salePriceTo, 5000000);
                 }
 
-                $soldCommission = $soldPrice * $saleOwnerCommission / 100;
+                $soldCommission = $soldPrice * $sellerCommission / 100;
             }
         }
 
@@ -259,7 +263,7 @@ class PropertyFactory extends Factory
             'sale_price_from' => $salePriceFrom,
             'sale_price_to' => $salePriceTo,
             'sale_negotiable' => $saleNegotiable,
-            'sale_owner_commission' => $saleOwnerCommission,
+            'seller_commission' => $sellerCommission,
             'sold_price' => $soldPrice,
             'sold_commission' => $soldCommission,
         ];
@@ -270,16 +274,16 @@ class PropertyFactory extends Factory
         $rentPriceType = null;
         $rentPriceFrom = 0;
         $rentPriceTo = 0;
-        $rentOwnerCommission = 0;
-        $rentCustomerCommission = 0;
+        $landlordCommission = 0;
+        $renterCommission = 0;
         $rentNegotiable = false;
         $rentPrice = null;
         $rentCommission = null;
 
         if ($property->is_rentable) {
             $rentPriceType = fake()->randomElement(PropertyPriceType::cases());
-            $rentOwnerCommission = fake()->randomElement([30, 50, 70, 100, 200]);
-            $rentCustomerCommission = fake()->randomElement([30, 50, 70, 100, 200]);
+            $landlordCommission = fake()->randomElement([30, 50, 70, 100, 200]);
+            $renterCommission = fake()->randomElement([30, 50, 70, 100, 200]);
             $rentNegotiable = fake()->boolean();
             $rentPriceFrom = get_stepped_random_number(300000, 6000000 / 2, 50000);
 
@@ -294,7 +298,7 @@ class PropertyFactory extends Factory
                     $rentPrice = get_stepped_random_number($rentPriceFrom, $rentPriceTo, 50000);
                 }
 
-                $rentCommission = ($rentPrice * $rentCustomerCommission / 100) + ($rentPrice * $rentOwnerCommission / 100);
+                $rentCommission = ($rentPrice * $renterCommission / 100) + ($rentPrice * $landlordCommission / 100);
             }
         }
 
@@ -303,8 +307,8 @@ class PropertyFactory extends Factory
             'rent_price_from' => $rentPriceFrom,
             'rent_price_to' => $rentPriceTo,
             'rent_negotiable' => $rentNegotiable,
-            'rent_owner_commission' => $rentOwnerCommission,
-            'rent_customer_commission' => $rentCustomerCommission,
+            'landlord_commission' => $landlordCommission,
+            'renter_commission' => $renterCommission,
             'rented_price' => $rentPrice,
             'rented_commission' => $rentCommission,
         ];

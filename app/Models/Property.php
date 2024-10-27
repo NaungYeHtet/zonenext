@@ -58,15 +58,15 @@ class Property extends Model
         'rented_price' => 'integer',
         'rent_price_to' => 'integer',
         'rent_negotiable' => 'boolean',
-        'rent_owner_commission' => 'float',
-        'rent_customer_commission' => 'float',
+        'landlord_commission' => 'float',
+        'renter_commission' => 'float',
         'is_saleable' => 'boolean',
         'sold_price' => 'integer',
         'sale_price_type' => PropertyPriceType::class,
         'sale_price_from' => 'integer',
         'sale_price_to' => 'integer',
         'sale_negotiable' => 'boolean',
-        'sale_owner_commission' => 'float',
+        'seller_commission' => 'float',
     ];
 
     public function getRouteKeyName(): string
@@ -208,6 +208,16 @@ class Property extends Model
         return $this->belongsTo(Township::class);
     }
 
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     /**
      * Accessors
      */
@@ -272,7 +282,7 @@ class Property extends Model
     {
         return Attribute::make(
             get: function ($value, $attributes) {
-                return $this->getCommissionDescription(PropertyAcquisitionType::Sale, __('Owner'), $this->sale_price_type, $this->sale_price_from, $this->sale_owner_commission);
+                return $this->getCommissionDescription(PropertyAcquisitionType::Sale, __('Seller'), $this->sale_price_type, $this->sale_price_from, $this->seller_commission);
             },
         );
     }
@@ -281,10 +291,10 @@ class Property extends Model
     {
         return Attribute::make(
             get: function ($value, $attributes) {
-                $ownerDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Owner'), $this->rent_price_type, $this->rent_price_from, $this->rent_owner_commission);
-                $customerDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Customer'), $this->rent_price_type, $this->rent_price_from, $this->rent_customer_commission);
+                $landloardDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Landloard'), $this->rent_price_type, $this->rent_price_from, $this->landlord_commission);
+                $renterDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Renter'), $this->rent_price_type, $this->rent_price_from, $this->renter_commission);
 
-                return $ownerDescription.', '.$customerDescription;
+                return $landloardDescription.', '.$renterDescription;
             },
         );
     }

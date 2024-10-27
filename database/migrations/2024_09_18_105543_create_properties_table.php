@@ -15,6 +15,8 @@ return new class extends Migration
 
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('customer_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('township_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->json('title');
             $table->json('description');
@@ -43,8 +45,8 @@ return new class extends Migration
             $table->integer('rent_price_from')->default(0);
             $table->integer('rent_price_to')->default(0);
             $table->boolean('rent_negotiable')->default(false);
-            $table->decimal('rent_owner_commission', 5, 2)->default(0);
-            $table->decimal('rent_customer_commission', 5, 2)->default(0);
+            $table->decimal('landlord_commission', 5, 2)->default(0);
+            $table->decimal('renter_commission', 5, 2)->default(0);
             $table->integer('rented_price')->nullable();
             $table->integer('rented_commission')->nullable();
 
@@ -54,7 +56,7 @@ return new class extends Migration
             $table->integer('sale_price_from')->default(0);
             $table->integer('sale_price_to')->default(0);
             $table->boolean('sale_negotiable')->default(false);
-            $table->decimal('sale_owner_commission', 5, 2)->default(0);
+            $table->decimal('seller_commission', 5, 2)->default(0);
             $table->integer('sold_price')->nullable();
             $table->integer('sold_commission')->nullable();
 
