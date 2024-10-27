@@ -1,0 +1,255 @@
+{
+    "Property type": [
+        {
+            "name": {
+                "en": "Apartment",
+                "my": "တိုက်ခန်း"
+            },
+            "icon": "apartment.svg"
+        },
+        {
+            "name": {
+                "en": "Condo",
+                "my": "ကွန်ဒို"
+            },
+            "icon": "condo.svg"
+        },
+        {
+            "name": {
+                "en": "Bungalow",
+                "my": "ဘန်ဂလို"
+            },
+            "icon": "bungalow.svg"
+        },
+        {
+            "name": {
+                "en": "Studio",
+                "my": "စတူဒီယို"
+            },
+            "icon": "apartment.svg"
+        },
+        {
+            "name": {
+                "en": "Loft",
+                "my": "လော့ဖ်"
+            },
+            "icon": "loft.svg"
+        },
+        {
+            "name": {
+                "en": "Cottage",
+                "my": "အိမ်ငယ်"
+            },
+            "icon": "cottage.svg"
+        },
+        {
+            "name": {
+                "en": "Duplex",
+                "my": "ဒူပလက်စ်"
+            },
+            "icon": "duplex.svg"
+        },
+        {
+            "name": {
+                "en": "Triplex",
+                "my": "ထရစ်ပလက်စ်"
+            },
+            "icon": "triplex.svg"
+        }
+    ],
+    "Listing type": [
+        {
+            "name": {
+                "en": "For Sale",
+                "my": "ရောင်းရန်"
+            },
+            "icon": "sale.svg"
+        },
+        {
+            "name": {
+                "en": "For Rent",
+                "my": "ငှားရန်"
+            },
+            "icon": "rent.svg"
+        },
+        {
+            "name": {
+                "en": "For Lease",
+                "my": "အငှားစာချုပ်"
+            },
+            "icon": "contract.svg"
+        },
+        {
+            "name": {
+                "en": "New Construction",
+                "my": "တည်ဆောက်နေဆဲ"
+            },
+            "icon": "construction.svg"
+        },
+        {
+            "name": {
+                "en": "Under Construction",
+                "my": "တည်ဆောက်ဆဲ"
+            },
+            "icon": "construction.svg"
+        },
+        {
+            "name": {
+                "en": "Pre-owned",
+                "my": "အရင်ပိုင်ဆိုင်မှု"
+            },
+            "icon": "pre_owned.svg"
+        },
+        {
+            "name": {
+                "en": "Foreclosed",
+                "my": "သက်တမ်းပြည့်အိမ်"
+            },
+            "icon": "foreclosed.svg"
+        },
+        {
+            "name": {
+                "en": "Short Sale",
+                "my": "တိုက်ရိုက်ရောင်းချ"
+            },
+            "icon": "short_sale.svg"
+        }
+    ],
+    "Features and amenities": [
+        {
+            "name": {
+                "en": "Furnished",
+                "my": "ပရိဘောဂဖြင့်"
+            },
+            "icon": "furnished.svg"
+        },
+        {
+            "name": {
+                "en": "Unfurnished",
+                "my": "ပရိဘောဂမပါ"
+            },
+            "icon": "unfurnished.svg"
+        },
+        {
+            "name": {
+                "en": "Semi-Furnished",
+                "my": "တစ်ဝက်ပရိဘောဂပါ"
+            },
+            "icon": "semi_furnished.svg"
+        },
+        {
+            "name": {
+                "en": "Pet-Friendly",
+                "my": "ခွေးများခွင့်ပြု"
+            },
+            "icon": "pet_friendly.svg"
+        },
+        {
+            "name": {
+                "en": "Balcony",
+                "my": "ရင်ပြင်"
+            },
+            "icon": "balcony.svg"
+        },
+        {
+            "name": {
+                "en": "Terrace",
+                "my": "လသာဆောင်"
+            },
+            "icon": "terrace.svg"
+        },
+        {
+            "name": {
+                "en": "Garden",
+                "my": "ဥယျာဉ်"
+            },
+            "icon": "garden.svg"
+        },
+        {
+            "name": {
+                "en": "Private Pool",
+                "my": "ကိုယ်ပိုင်ရေကူးကန်"
+            },
+            "icon": "pool.svg"
+        },
+        {
+            "name": {
+                "en": "Shared Pool",
+                "my": "အများသုံးရေကူးကန်"
+            },
+            "icon": "pool.svg"
+        },
+        {
+            "name": {
+                "en": "Gym",
+                "my": "ဂျင်မ်"
+            },
+            "icon": "gym.svg"
+        }
+    ],
+    "Location specific": [
+        {
+            "name": {
+                "en": "City Center",
+                "my": "မြို့၏အလယ်ပိုင်း"
+            },
+            "icon": "city_center.svg"
+        },
+        {
+            "name": {
+                "en": "Suburbs",
+                "my": "မြို့ပြင်"
+            },
+            "icon": "suburbs.svg"
+        },
+        {
+            "name": {
+                "en": "Waterfront",
+                "my": "ရေဘေး"
+            },
+            "icon": "waterfront.svg"
+        },
+        {
+            "name": {
+                "en": "Beachfront",
+                "my": "ကမ်းခြေဘေး"
+            },
+            "icon": "beachfront.svg"
+        },
+        {
+            "name": {
+                "en": "Near School",
+                "my": "ကျောင်းအနီး"
+            },
+            "icon": "near_school.svg"
+        },
+        {
+            "name": {
+                "en": "Near Park",
+                "my": "ပန်းခြံအနီး"
+            },
+            "icon": "near_park.svg"
+        },
+        {
+            "name": {
+                "en": "Near Hospital",
+                "my": "ဆေးရုံအနီး"
+            },
+            "icon": "near_hospital.svg"
+        },
+        {
+            "name": {
+                "en": "Near Metro Station",
+                "my": "မက်ထရိုဘူတာအနီး"
+            },
+            "icon": "near_metro_station.svg"
+        },
+        {
+            "name": {
+                "en": "Near Shopping Mall",
+                "my": "ဈေးအနီး"
+            },
+            "icon": "near_shopping_mall.svg"
+        }
+    ]
+}

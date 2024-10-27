@@ -28,6 +28,10 @@ trait PropertyInfolist
                                 ->default(fn (Model $record) => $record->latitude.' | '.$record->longitude)
                                 ->url(fn (Model $record) => "https://www.google.com/maps/?q={$record->latitude},{$record->longitude}", true)
                                 ->color('primary'),
+                            Infolists\Components\TextEntry::make('tags.name')
+                                ->badge()
+                                ->label(__('Tags')),
+                            Infolists\Components\TextEntry::make('views_count'),
                         ]),
                     Infolists\Components\Tabs\Tab::make('Price')
                         ->schema([
@@ -56,10 +60,8 @@ trait PropertyInfolist
                         ]),
                     Infolists\Components\Tabs\Tab::make('Gallery')
                         ->schema([
-                            Infolists\Components\ImageEntry::make('cover_image_url')
-                                ->label(__('Cover image')),
-                            Infolists\Components\ImageEntry::make('gallery')
-                                ->label(__('Images'))
+                            Infolists\Components\ImageEntry::make('cover_image'),
+                            Infolists\Components\ImageEntry::make('images')
                                 ->height(100),
                         ]),
                 ])->columns(2),

@@ -62,7 +62,7 @@ return new class extends Migration
 
             $table->dateTime('posted_at')->nullable();
             $table->dateTime('sold_at')->nullable();
-            $table->dateTime('rent_at')->nullable();
+            $table->dateTime('rented_at')->nullable();
             $table->dateTime('completed_at')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -15,10 +15,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
@@ -45,7 +43,7 @@ class Property extends Model
         'longitude' => 'float',
         'posted_at' => 'datetime',
         'sold_at' => 'datetime',
-        'rent_at' => 'datetime',
+        'rented_at' => 'datetime',
         'completed_at' => 'datetime',
         'type' => PropertyType::class,
         'status' => PropertyStatus::class,
@@ -164,19 +162,19 @@ class Property extends Model
     /**
      * Relationships
      */
-    public function tags(): MorphMany
+    public function tags(): MorphToMany
     {
-        return $this->morphMany(Tag::class, 'taggable');
+        return $this->morphToMany(Tag::class, 'taggable');
     }
 
-    public function ratings(): MorphMany
+    public function ratings(): MorphToMany
     {
-        return $this->morphMany(Rateable::class, 'rateable');
+        return $this->morphToMany(Rateable::class, 'rateable');
     }
 
-    public function views(): MorphMany
+    public function views(): MorphToMany
     {
-        return $this->morphMany(Viewable::class, 'viewable');
+        return $this->morphToMany(Viewable::class, 'viewable');
     }
 
     public function bedroomTypes(): BelongsToMany
@@ -333,13 +331,6 @@ class Property extends Model
         ]).$totalDescription;
     }
 
-    protected function gallery(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => collect($this->images)->map(fn ($item) => is_valid_url($item) ? $item : Storage::disk('public')->url($item))->toArray()
-        );
-    }
-
     protected function squareFeet(): Attribute
     {
         return Attribute::make(
@@ -355,13 +346,6 @@ class Property extends Model
 
                 return $this->area;
             }
-        );
-    }
-
-    protected function coverImage(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value) => is_valid_url($value) ? $value : Storage::disk('public')->url($value)
         );
     }
 

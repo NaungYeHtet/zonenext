@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -77,6 +78,21 @@ class Township extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    protected function fullAddressDetail(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $townshipNames = $this->getTranslations('name');
+                $stateNames = $this->state->getTranslations('name');
+
+                return [
+                    'en' => $townshipNames['en'].', '.$stateNames['en'],
+                    'my' => $townshipNames['my'].', '.$stateNames['my'],
+                ];
+            }
+        );
     }
 
     /**

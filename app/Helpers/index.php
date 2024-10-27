@@ -42,6 +42,20 @@ if (! function_exists('number_format_tran')) {
     }
 }
 
+if (! function_exists('get_weighted_random_element')) {
+    function get_weighted_random_element(array $weightedItems): string
+    {
+        $choices = [];
+        foreach ($weightedItems as $key => $weight) {
+            for ($i = 0; $i < $weight; $i++) {
+                $choices[] = $key;
+            }
+        }
+
+        return $choices[array_rand($choices)];
+    }
+}
+
 if (! function_exists('number_format_price')) {
     function number_format_price(float $number, $locale = null): string
     {

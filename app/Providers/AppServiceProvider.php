@@ -116,8 +116,8 @@ class AppServiceProvider extends ServiceProvider
             $switch
                 ->locales(['en', 'my'])
                 ->flags([
-                    'en' => asset('flags/english.png'),
-                    'my' => asset('flags/myanmar.png'),
+                    'en' => asset('images/flags/english.png'),
+                    'my' => asset('images/flags/myanmar.png'),
                 ])
                 ->circular();
         });

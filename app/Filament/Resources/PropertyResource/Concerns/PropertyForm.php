@@ -26,7 +26,7 @@ trait PropertyForm
                 self::getGalleryFormStep(),
             ])
                 ->skippable()
-                ->startOnStep(5)
+                ->startOnStep(1)
                 ->submitAction(self::getSubmitAction()),
         ];
     }
@@ -43,6 +43,13 @@ trait PropertyForm
                     ->relationship('owner', 'name')
                     ->searchable()
                     ->preload(),
+                Forms\Components\Select::make('tags')
+                    ->multiple()
+                    ->relationship('tags', 'name')
+                    ->preload()
+                    ->searchable()
+                    ->maxItems(5)
+                    ->required(),
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->default(fake()->sentence)

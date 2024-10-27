@@ -2,25 +2,18 @@
 
 namespace App\Models;
 
+use App\Enums\TagType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use Spatie\Translatable\HasTranslations;
 
 class Tag extends Model
 {
-    use HasFactory, HasSlug;
+    use HasFactory, HasSlug, HasTranslations;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'slug',
-        'icon',
-    ];
+    public $translatable = ['name'];
 
     /**
      * The attributes that should be cast to native types.
@@ -28,7 +21,7 @@ class Tag extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
+        'type' => TagType::class,
     ];
 
     public function getRouteKeyName(): string

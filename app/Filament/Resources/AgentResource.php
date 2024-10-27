@@ -73,7 +73,7 @@ class AgentResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label(__('Avatar'))
-                    ->defaultImageUrl(asset('avatars/agent.png'))
+                    ->defaultImageUrl(asset('images/avatars/agent.png'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()

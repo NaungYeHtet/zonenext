@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\AgentProperty;
 use App\Models\Project;
+use App\Models\Property;
 use App\Models\State;
 use App\Models\Township;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
+            TagSeeder::class,
             BedroomTypeSeeder::class,
             ShieldSeeder::class,
             AdminSeeder::class,
@@ -40,8 +41,12 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Seeding Agent factory....');
         \App\Models\Agent::factory(rand(30, 80))
             ->create();
-        $this->command->info('Seeding Agent Property factory....');
-        AgentProperty::factory(300)->create();
+        $this->command->info('Seeding Property factory....');
+        Property::factory(200)->create();
+        // $this->call([
+        //     PropertySeeder::class,
+        // ]);
+        $this->command->info('Seeding Project factory....');
         Project::factory(50)->create();
 
         $this->call([

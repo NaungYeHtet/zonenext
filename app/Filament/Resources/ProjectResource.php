@@ -23,7 +23,7 @@ class ProjectResource extends Resource
             ->schema([
                 Forms\Components\FileUpload::make('image')
                     ->image()
-                    ->directory('projects')
+                    ->directory('images/projects')
                     ->maxSize(5000)
                     ->imageEditor(),
                 Forms\Components\TextInput::make('name')

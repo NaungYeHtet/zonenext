@@ -34,10 +34,16 @@ class PropertyFactory extends Factory
         $isSaleable = $this->faker->boolean();
         $owner = User::all()->random();
 
+        $township = Township::whereRelation('state', 'slug', 'yangon')->get()->random();
+        $address = [
+            'en' => $this->faker->streetAddress().', '.$township->full_address_detail['en'],
+            'my' => $this->faker->streetAddress().', '.$township->full_address_detail['my'],
+        ];
+
         return [
             'owner_id' => $owner,
             'customer_id' => User::where('id', '!=', $owner->id)->get()->random(),
-            'township_id' => Township::whereRelation('state', 'slug', 'yangon')->get()->random(),
+            'township_id' => $township,
             'title' => [
                 'en' => $this->faker->sentence,
                 'my' => $this->faker->sentence,
@@ -46,11 +52,16 @@ class PropertyFactory extends Factory
                 'en' => $this->faker->paragraph,
                 'my' => $this->faker->paragraph,
             ],
-            'address' => [
-                'en' => $this->faker->address,
-                'my' => $this->faker->address,
-            ],
-            'type' => $this->faker->randomElement(PropertyType::cases()),
+            'address' => $address,
+            'type' => get_weighted_random_element([
+                PropertyType::Independent->value => 20,
+                PropertyType::Condo->value => 20,
+                PropertyType::MiniCondo->value => 20,
+                PropertyType::Apartment->value => 25,
+                PropertyType::Commercial->value => 5,
+                PropertyType::Land->value => 5,
+                PropertyType::Storage->value => 5,
+            ]),
             'status' => $this->faker->randomElement(PropertyStatus::cases()),
             'latitude' => $this->faker->latitude(),
             'cover_image' => $this->faker->imageUrl(),
@@ -73,18 +84,19 @@ class PropertyFactory extends Factory
 
             $dateDetails = $this->setDateDetails($property, $status);
 
-            $images = $this->createPropertyImages($property);
+            $imageDetails = $this->createPropertyImages($property);
             $this->attachTags($property);
+            $this->attachAgents($property, $status);
             $bathroomsCount = $this->createBedroomTypes($property);
-            $this->createRateable($property);
-            $this->createViewable($property);
+            $this->createRateable($property, $status);
+            $viewsCount = $this->createViewable($property, $status);
 
             $priceDetails = $this->setPriceDetails($property, $status);
 
-            $property->update(array_merge($dateDetails, $priceDetails, $areaDetails, [
+            $property->update(array_merge($dateDetails, $priceDetails, $areaDetails, $imageDetails, [
                 'bathrooms_count' => $bathroomsCount,
+                'views_count' => $viewsCount,
                 'status' => $status,
-                'images' => $images,
             ]));
         });
     }
@@ -158,30 +170,51 @@ class PropertyFactory extends Factory
         return [
             'posted_at' => $postedAt,
             'sold_at' => $soldAt,
-            'rent_at' => $rentAt,
+            'rented_at' => $rentAt,
             'completed_at' => $completedAt,
         ];
     }
 
     protected function createPropertyImages(Property $property): array
     {
-        $count = fake()->randomNumber(1);
+        $count = rand(1, 5);
         $images = [];
+        $coverImage = $property->cover_image;
+
+        $coverImage = match ($property->type) {
+            PropertyType::Apartment, PropertyType::Condo, PropertyType::MiniCondo => 'images/property/condo'.rand(1, 36).'.jpg',
+            PropertyType::Independent => 'images/property/independent'.rand(1, 29).'.jpg',
+            default => $coverImage
+        };
 
         while ($count > 0) {
-            $images[] = $this->faker->imageUrl();
+            $images[] = match ($property->type) {
+                PropertyType::Apartment, PropertyType::Condo, PropertyType::MiniCondo, PropertyType::Independent => 'images/property/condo'.rand(1, 36).'.jpg',
+                default => $this->faker->imageUrl()
+            };
             $count--;
         }
 
-        return $images;
+        return [
+            'images' => $images,
+            'cover_image' => $coverImage,
+        ];
     }
 
     protected function attachTags(Property $property)
     {
-        $tags = \App\Models\Tag::inRandomOrder()->limit(fake()->randomNumber(1))->get();
-        foreach ($tags as $tag) {
-            $property->tags()->attach($tag->id);
+        $tags = \App\Models\Tag::inRandomOrder()->limit(rand(1, 5))->pluck('id');
+        $property->tags()->attach($tags);
+    }
+
+    protected function attachAgents(Property $property, PropertyStatus $status)
+    {
+        if ($status == PropertyStatus::Draft) {
+            return;
         }
+
+        $agents = \App\Models\Agent::inRandomOrder()->limit(rand(1, 3))->pluck('id');
+        $property->agents()->attach($agents);
     }
 
     protected function createBedroomTypes(Property $property)
@@ -203,20 +236,32 @@ class PropertyFactory extends Factory
         return $bathroomsCount;
     }
 
-    protected function createRateable(Property $property)
+    protected function createRateable(Property $property, PropertyStatus $status)
     {
+        if ($status == PropertyStatus::Draft) {
+            return 0;
+        }
+
         Rateable::factory(rand(0, 10))->create([
             'rateable_id' => $property->id,
             'rateable_type' => $property->getMorphClass(),
         ]);
     }
 
-    protected function createViewable(Property $property)
+    protected function createViewable(Property $property, PropertyStatus $status): int
     {
-        Viewable::factory(rand(5, 30))->create([
+        if ($status == PropertyStatus::Draft) {
+            return 0;
+        }
+
+        $count = rand(5, 30);
+
+        Viewable::factory($count)->create([
             'viewable_id' => $property->id,
             'viewable_type' => $property->getMorphClass(),
         ]);
+
+        return $count;
     }
 
     protected function setPriceDetails(Property $property, PropertyStatus $status)
