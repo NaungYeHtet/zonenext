@@ -180,8 +180,6 @@ class Property extends Model
     public function bedroomTypes(): BelongsToMany
     {
         return $this->belongsToMany(BedroomType::class, 'property_bedroom_types')
-            ->using(PropertyBedroomType::class)
-            ->as('property_bedroom_type')
             ->withPivot('id', 'quantity')
             ->withTimestamps();
     }

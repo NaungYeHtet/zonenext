@@ -31,7 +31,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'nav.group' => 'Authorization',
+    'nav.group' => 'လုပ်ပိုင်ခွင့်များ',
     'nav.role.label' => 'Role များ',
     'nav.role.icon' => 'heroicon-o-shield-check',
     'resource.label.role' => 'role',

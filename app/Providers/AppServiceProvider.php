@@ -75,6 +75,7 @@ class AppServiceProvider extends ServiceProvider
             'admin' => \App\Models\Admin::class,
             'agent' => \App\Models\Agent::class,
             'project' => \App\Models\Project::class,
+            'lead' => \App\Models\Lead::class,
         ]);
 
         JsonResource::withoutWrapping();

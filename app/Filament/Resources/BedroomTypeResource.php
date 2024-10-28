@@ -2,24 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProjectResource\Pages;
-use App\Models\Project;
+use App\Filament\Resources\BedroomTypeResource\Pages;
+use App\Models\BedroomType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
-class ProjectResource extends Resource
+class BedroomTypeResource extends Resource
 {
-    protected static ?string $model = Project::class;
+    protected static ?string $model = BedroomType::class;
 
-    protected static ?string $navigationIcon = 'gmdi-business-center-o';
+    protected static ?string $navigationIcon = 'gmdi-bed-o';
 
     public static function getModelLabel(): string
     {
-        return __('Project');
+        return __('Bedroom type');
     }
 
     public static function getNavigationGroup(): ?string
@@ -31,38 +30,30 @@ class ProjectResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\FileUpload::make('image')
-                    ->image()
-                    ->directory('images/projects')
-                    ->maxSize(5000)
-                    ->imageEditor(),
                 Forms\Components\TextInput::make('name')
-                    ->default(fake()->sentence())
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->translatable(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at', 'desc'))
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
-                    ->height(100),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                //
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
@@ -76,9 +67,9 @@ class ProjectResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProjects::route('/'),
-            'create' => Pages\CreateProject::route('/create'),
-            'edit' => Pages\EditProject::route('/{record}/edit'),
+            'index' => Pages\ListBedroomTypes::route('/'),
+            'create' => Pages\CreateBedroomType::route('/create'),
+            'edit' => Pages\EditBedroomType::route('/{record}/edit'),
         ];
     }
 }

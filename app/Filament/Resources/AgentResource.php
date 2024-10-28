@@ -16,7 +16,12 @@ class AgentResource extends Resource
 {
     protected static ?string $model = Agent::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'gmdi-support-agent-o';
+
+    public static function getModelLabel(): string
+    {
+        return __('Agents');
+    }
 
     public static function getNavigationGroup(): ?string
     {

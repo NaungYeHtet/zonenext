@@ -4,9 +4,11 @@ namespace Database\Factories;
 
 use App\Enums\AreaType;
 use App\Enums\AreaUnit;
+use App\Enums\Lead\LeadInterest;
 use App\Enums\PropertyPriceType;
 use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
+use App\Models\Lead;
 use App\Models\Property;
 use App\Models\PropertyBedroomType;
 use App\Models\Rateable;
@@ -32,7 +34,6 @@ class PropertyFactory extends Factory
     {
         $createdAt = $this->faker->dateTimeBetween(now()->subMonths(12), now()->subMonths(3));
         $isSaleable = $this->faker->boolean();
-        $owner = User::all()->random();
 
         $township = Township::whereRelation('state', 'slug', 'yangon')->get()->random();
         $address = [
@@ -41,8 +42,6 @@ class PropertyFactory extends Factory
         ];
 
         return [
-            'owner_id' => $owner,
-            'customer_id' => User::where('id', '!=', $owner->id)->get()->random(),
             'township_id' => $township,
             'title' => [
                 'en' => $this->faker->sentence,
@@ -90,15 +89,69 @@ class PropertyFactory extends Factory
             $bathroomsCount = $this->createBedroomTypes($property);
             $this->createRateable($property, $status);
             $viewsCount = $this->createViewable($property, $status);
+            $ownerDetails = $this->createOwner($property, $status);
+            $customerDetails = $this->createCustomer($property, $status);
 
             $priceDetails = $this->setPriceDetails($property, $status);
 
-            $property->update(array_merge($dateDetails, $priceDetails, $areaDetails, $imageDetails, [
+            $property->update(array_merge($dateDetails, $priceDetails, $areaDetails, $imageDetails, $ownerDetails, $customerDetails, [
                 'bathrooms_count' => $bathroomsCount,
                 'views_count' => $viewsCount,
                 'status' => $status,
             ]));
         });
+    }
+
+    protected function createOwner(Property $property, PropertyStatus $status)
+    {
+        $type = $this->faker->randomElement([null, 'user', 'lead']);
+        $owner = match ($type) {
+            'user' => User::all()->random(),
+            'lead' => Lead::where('property_type', $property->type->value)->where('is_owner', true)->get()->random(),
+            default => null,
+        };
+
+        return [
+            'owner_type' => $type,
+            'owner_id' => $owner ? $owner->id : null,
+        ];
+    }
+
+    protected function createCustomer(Property $property, PropertyStatus $status)
+    {
+        if ($status == PropertyStatus::Draft || $status == PropertyStatus::Posted) {
+            return [];
+        }
+
+        if ($property->is_saleable && ($status === PropertyStatus::SoldOut || $status === PropertyStatus::Completed)) {
+            $type = $this->faker->randomElement([null, 'user', 'lead']);
+
+            $customer = match ($type) {
+                'user' => User::all()->random(),
+                'lead' => Lead::where('property_type', $property->type->value)->where('interest', LeadInterest::Buying->value)->where('is_owner', false)->get()->random(),
+                default => null,
+            };
+
+            return [
+                'customer_sale_type' => $type,
+                'customer_sale_id' => $customer ? $customer->id : null,
+            ];
+        }
+
+        if ($property->is_rentable && ($status === PropertyStatus::Rented || $status === PropertyStatus::Completed)) {
+            $type = $this->faker->randomElement([null, 'user', 'lead']);
+
+            $customer = match ($type) {
+                'user' => User::all()->random(),
+                'lead' => Lead::where('property_type', $property->type->value)->where('interest', LeadInterest::Renting->value)->where('is_owner', false)->get()->random(),
+                default => null,
+            };
+
+            return [
+                'customer_rent_type' => $type,
+                'customer_rent_id' => $customer ? $customer->id : null,
+            ];
+        }
     }
 
     protected function getAreaDetails(Property $property)
@@ -266,15 +319,14 @@ class PropertyFactory extends Factory
 
     protected function setPriceDetails(Property $property, PropertyStatus $status)
     {
-        $salePriceDetails = $this->getSalePriceDetails($property, $status);
-        $rentPriceDetails = $this->getRentPriceDetails($property, $status);
+        $salePriceDetails = $this->fakeSalePriceDetails($status, $property->is_saleable);
+        $rentPriceDetails = $this->fakeRentPriceDetails($status, $property->is_rentable);
 
         return array_merge($salePriceDetails, $rentPriceDetails);
     }
 
-    protected function getSalePriceDetails(Property $property, PropertyStatus $status)
+    public static function fakeSalePriceDetails(?PropertyStatus $status = null, bool $generate = true, ?PropertyPriceType $salePriceType = null)
     {
-        $salePriceType = null;
         $salePriceFrom = 0;
         $salePriceTo = 0;
         $sellerCommission = 0;
@@ -282,8 +334,8 @@ class PropertyFactory extends Factory
         $soldPrice = null;
         $soldCommission = null;
 
-        if ($property->is_saleable) {
-            $salePriceType = fake()->randomElement(PropertyPriceType::cases());
+        if ($generate) {
+            $salePriceType = $salePriceType ?? fake()->randomElement(PropertyPriceType::cases());
             $sellerCommission = fake()->randomNumber(1);
             $saleNegotiable = fake()->boolean();
             $salePriceFrom = get_stepped_random_number(60000000, 600000000 / 2, 5000000);
@@ -314,9 +366,8 @@ class PropertyFactory extends Factory
         ];
     }
 
-    protected function getRentPriceDetails(Property $property, PropertyStatus $status)
+    public static function fakeRentPriceDetails(?PropertyStatus $status = null, bool $generate = true, ?PropertyPriceType $rentPriceType = null)
     {
-        $rentPriceType = null;
         $rentPriceFrom = 0;
         $rentPriceTo = 0;
         $landlordCommission = 0;
@@ -325,8 +376,8 @@ class PropertyFactory extends Factory
         $rentPrice = null;
         $rentCommission = null;
 
-        if ($property->is_rentable) {
-            $rentPriceType = fake()->randomElement(PropertyPriceType::cases());
+        if ($generate) {
+            $rentPriceType = $rentPriceType ?? fake()->randomElement(PropertyPriceType::cases());
             $landlordCommission = fake()->randomElement([30, 50, 70, 100, 200]);
             $renterCommission = fake()->randomElement([30, 50, 70, 100, 200]);
             $rentNegotiable = fake()->boolean();

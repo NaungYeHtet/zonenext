@@ -15,7 +15,17 @@ class GroupResource extends Resource
 {
     protected static ?string $model = Group::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'gmdi-business-s';
+
+    public static function getModelLabel(): string
+    {
+        return __('Group');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Property management');
+    }
 
     public static function form(Form $form): Form
     {

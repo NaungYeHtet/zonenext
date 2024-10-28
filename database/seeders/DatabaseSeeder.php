@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Property;
 use App\Models\State;
@@ -41,8 +42,10 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Seeding Agent factory....');
         \App\Models\Agent::factory(rand(30, 80))
             ->create();
+        $this->command->info('Seeding Lead factory....');
+        Lead::factory(rand(300, 400))->create();
         $this->command->info('Seeding Property factory....');
-        Property::factory(200)->create();
+        Property::factory(rand(200, 300))->create();
         // $this->call([
         //     PropertySeeder::class,
         // ]);

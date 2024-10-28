@@ -21,7 +21,12 @@ class PropertyResource extends Resource
 
     protected static ?string $model = Property::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'gmdi-house-o';
+
+    public static function getModelLabel(): string
+    {
+        return __('Property');
+    }
 
     public static function getNavigationGroup(): ?string
     {

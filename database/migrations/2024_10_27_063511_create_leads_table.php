@@ -14,12 +14,24 @@ return new class extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('property_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->string('township_id')->nullable()->constrained();
+            $table->string('property_type');
+            $table->string('interest');
+            $table->boolean('is_owner');
+            $table->string('address')->nullable();
             $table->string('name');
             $table->string('status')->default(LeadStatus::New);
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
+            $table->string('preferred_contact_method')->nullable();
+            $table->string('preferred_contact_time')->nullable();
             $table->boolean('send_updates')->default(false);
+            $table->integer('max_price')->nullable();
+            $table->mediumInteger('square_feet')->nullable();
+            $table->integer('bedrooms')->nullable();
+            $table->integer('bathrooms')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
