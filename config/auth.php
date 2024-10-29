@@ -41,11 +41,6 @@ return [
             'provider' => 'admins',
         ],
 
-        'agent' => [
-            'driver' => 'session',
-            'provider' => 'agents',
-        ],
-
         'user' => [
             'driver' => 'sanctum',
             'provider' => 'users',
@@ -77,10 +72,6 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
-        ],
-        'agents' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Agent::class,
         ],
 
         // 'users' => [

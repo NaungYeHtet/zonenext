@@ -8,6 +8,7 @@ use App\Filament\Resources\PropertyResource\Concerns\PropertyInfolist;
 use App\Filament\Resources\PropertyResource\Concerns\PropertyTable;
 use App\Filament\Resources\PropertyResource\Pages;
 use App\Models\Property;
+use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -48,8 +49,15 @@ class PropertyResource extends Resource
 
     public static function table(Table $table): Table
     {
+
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at', 'desc'))
+            ->modifyQueryUsing(function (Builder $query) {
+                if (Filament::auth()->user()->hasRole('Agent')) {
+                    $query->whereRelation('leads', 'admin_id', Filament::auth()->id());
+                }
+
+                $query->orderBy('created_at', 'desc');
+            })
             ->columns(self::getColumns())
             ->filters([
                 //

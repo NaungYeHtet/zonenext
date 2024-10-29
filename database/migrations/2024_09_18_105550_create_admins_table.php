@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Language;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,8 +18,18 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('email_verified_at')->nullable();
+            $table->dateTime('email_verified_at')->nullable();
+            $table->string('phone')->nullable();
+            $table->dateTime('phone_verified_at')->nullable();
             $table->string('password');
+            $table->string('image')->nullable();
+            $table->string('language')->default(Language::English);
+
+            $table->json('preferred_notification_channels')->nullable();
+            $table->json('preferred_lead_interests')->nullable();
+            $table->json('preferred_property_types')->nullable();
+            $table->json('preferred_townships')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });

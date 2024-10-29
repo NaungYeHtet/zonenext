@@ -36,11 +36,11 @@ class DatabaseSeeder extends Seeder
             ShieldSeeder::class,
             AdminSeeder::class,
             UserSeeder::class,
-            AgentSeeder::class,
         ]);
 
         $this->command->info('Seeding Agent factory....');
-        \App\Models\Agent::factory(rand(30, 80))
+        \App\Models\Admin::factory(rand(30, 80))
+            ->role('Agent')
             ->create();
         $this->command->info('Seeding Lead factory....');
         Lead::factory(rand(500, 700))->create();

@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\LeadSubmitted;
-use App\Models\Agent;
+use App\Models\Admin;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -23,7 +23,7 @@ class SendLeadSubmittedNotification implements ShouldQueue
     public function handle(LeadSubmitted $event): void
     {
         $lead = $event->lead;
-        $agent = Agent::withCount('leads')->where(function (Builder $query) use ($lead) {
+        $admin = Admin::withCount('leads')->whereRelation('roles', 'name', 'Agent')->where(function (Builder $query) use ($lead) {
             $query->whereJsonContains('preferred_lead_interests', $lead->interest->value)
                 ->orWhere('preferred_lead_interests', null);
         })->where(function (Builder $query) use ($lead) {
@@ -36,14 +36,13 @@ class SendLeadSubmittedNotification implements ShouldQueue
             }
         })->orderBy('leads_count', 'asc')->first();
 
-        if ($agent) {
+        if ($admin) {
             $lead->update([
-                'agent_id' => $agent->id,
+                'admin_id' => $admin->id,
             ]);
-            $agent->notify(new \App\Notifications\LeadAssignedNotification($lead));
+            $admin->notify(new \App\Notifications\LeadAssignedNotification($lead));
 
             return;
         }
-
     }
 }

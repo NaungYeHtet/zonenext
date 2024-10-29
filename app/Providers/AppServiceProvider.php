@@ -74,7 +74,6 @@ class AppServiceProvider extends ServiceProvider
             'property' => \App\Models\Property::class,
             'user' => \App\Models\User::class,
             'admin' => \App\Models\Admin::class,
-            'agent' => \App\Models\Agent::class,
             'project' => \App\Models\Project::class,
             'lead' => \App\Models\Lead::class,
         ]);

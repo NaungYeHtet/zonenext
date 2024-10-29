@@ -15,10 +15,8 @@ return new class extends Migration
 
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
-            $table->nullableMorphs('owner');
-            $table->nullableMorphs('customer_rent');
-            $table->nullableMorphs('customer_sale');
-            $table->foreignId('township_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('owner_id')->nullable()->constrained('leads');
+            $table->foreignId('customer_id')->nullable()->constrained('leads');
             $table->json('title');
             $table->json('description');
             $table->string('type', 30);

@@ -69,7 +69,7 @@ class PropertyFactory extends Factory
             'area_type' => $this->faker->randomElement(AreaType::cases()),
             'square_feet' => $this->faker->randomNumber(3),
             'is_saleable' => $isSaleable,
-            'is_rentable' => $isSaleable ? $this->faker->boolean() : true,
+            'is_rentable' => $isSaleable ? false : true,
             'created_at' => $createdAt,
             'updated_at' => $createdAt,
         ];
@@ -86,12 +86,12 @@ class PropertyFactory extends Factory
 
             $imageDetails = $this->createPropertyImages($property);
             $this->attachTags($property);
-            $this->attachAgents($property, $status);
             $bathroomsCount = $this->createBedroomTypes($property);
             $this->createRateable($property, $status);
             $viewsCount = $this->createViewable($property, $status);
             $ownerDetails = $this->createOwner($property, $status);
             $customerDetails = $this->createCustomer($property, $status);
+            $this->updateLead($property, $status);
 
             $priceDetails = $this->setPriceDetails($property, $status);
 
@@ -128,7 +128,6 @@ class PropertyFactory extends Factory
             $type = $this->faker->randomElement([null, 'user', 'lead']);
 
             $customer = match ($type) {
-                'user' => User::all()->random(),
                 'lead' => Lead::where('property_type', $property->type->value)->where('interest', LeadInterest::Buying->value)->whereIn('status', [LeadStatus::Converted->value, LeadStatus::Closed->value])->where('is_owner', false)->get()->random(),
                 default => null,
             };
@@ -259,16 +258,6 @@ class PropertyFactory extends Factory
     {
         $tags = \App\Models\Tag::inRandomOrder()->limit(rand(1, 5))->pluck('id');
         $property->tags()->attach($tags);
-    }
-
-    protected function attachAgents(Property $property, PropertyStatus $status)
-    {
-        if ($status == PropertyStatus::Draft) {
-            return;
-        }
-
-        $agents = \App\Models\Agent::inRandomOrder()->limit(rand(1, 3))->pluck('id');
-        $property->agents()->attach($agents);
     }
 
     protected function createBedroomTypes(Property $property)

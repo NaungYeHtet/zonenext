@@ -26,17 +26,6 @@ trait PropertyAction
                 ->color('primary')
                 ->successNotification(Notification::make()->title(__('Posted successfully'))->success())
                 ->visible(fn (Model $record): bool => Filament::auth()->user()->can('updatePosted', $record))
-                ->fillForm(fn (Model $record): array => [
-                    'agents' => $record->agents()->pluck('agent_id'),
-                ])
-                ->form([
-                    Forms\Components\Select::make('agents')
-                        ->relationship('agents', 'name')
-                        ->multiple()
-                        ->required()
-                        ->searchable()
-                        ->preload(),
-                ])
                 ->icon('gmdi-post-add-o')
                 ->action(function (Model $record, Tables\Actions\Action $action): void {
                     $record->update([
@@ -158,7 +147,6 @@ trait PropertyAction
                     $record->update([
                         'status' => PropertyStatus::Draft,
                     ]);
-                    $record->agents()->detach();
 
                     $action->success();
                 })

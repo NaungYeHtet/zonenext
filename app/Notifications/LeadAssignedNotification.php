@@ -2,9 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Filament\Agent\Resources\LeadResource;
+use App\Filament\Resources\LeadResource;
 use App\Models\Lead;
-use Filament\Facades\Filament;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
@@ -36,7 +35,6 @@ class LeadAssignedNotification extends Notification
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         app()->setLocale($notifiable->language->value);
-        Filament::setCurrentPanel('agent');
 
         return FilamentNotification::make()
             ->success()
@@ -49,7 +47,7 @@ class LeadAssignedNotification extends Notification
             ]))
             ->action([
                 Action::make('view_lead')
-                    ->url(LeadResource::getUrl('edit', ['record' => $this->lead], panel: 'agent'))
+                    ->url(LeadResource::getUrl('edit', ['record' => $this->lead]))
                     ->color('info')
                     ->button(),
             ])
@@ -75,7 +73,7 @@ class LeadAssignedNotification extends Notification
             ]))
             ->actions([
                 Action::make('view_lead')
-                    ->url(LeadResource::getUrl('edit', ['record' => $this->lead], panel: 'agent'))
+                    ->url(LeadResource::getUrl('edit', ['record' => $this->lead]))
                     ->color('info')
                     ->button(),
             ])

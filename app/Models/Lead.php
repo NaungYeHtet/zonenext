@@ -25,9 +25,9 @@ class Lead extends Model
         'send_updates' => 'boolean',
     ];
 
-    public function agent(): BelongsTo
+    public function admin(): BelongsTo
     {
-        return $this->belongsTo(Agent::class);
+        return $this->belongsTo(Admin::class);
     }
 
     public function property(): BelongsTo

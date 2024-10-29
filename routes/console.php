@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\PropertyType;
+use App\Models\Lead;
 use App\Models\Property;
 use App\Models\Township;
 use Illuminate\Foundation\Inspiring;
@@ -11,8 +12,9 @@ Artisan::command('inspire', function () {
     // dd(PropertyType::getOptions());
 
     // dd(Property::latest()->first()->cover_image, Property::first()->cover_image);
-    $township = Township::first();
+    // $township = Township::first();
 
-    dd($township->getTranslations('name', ['en']));
+    // dd($township->getTranslations('name', ['en']));
     // dd($owner);
+    dd(Lead::whereNotNull('property_id')->count());
 })->purpose('Display an inspiring quote')->hourly();

@@ -10,7 +10,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Validation\Rules\Password;
-use Spatie\Permission\Models\Role;
 
 class AdminResource extends Resource
 {
@@ -32,23 +31,29 @@ class AdminResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\FileUpload::make('image')
+                    ->image()
+                    ->directory('avatars/admins')
+                    ->maxSize(2000)
+                    ->avatar()
+                    ->imageEditor()
+                    ->circleCropper(),
                 Forms\Components\TextInput::make('name')
                     ->default(fake()->name())
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('roles')
-                    ->relationship('roles', 'name')
-                    ->options(Role::all()->pluck('name', 'id'))
-                    ->preload()
-                    ->multiple()
-                    ->maxItems(3)
-                    ->searchable()
-                    ->required(),
                 Forms\Components\TextInput::make('email')
                     ->default(fake()->email())
                     ->autocomplete('new-email')
                     ->unique(ignoreRecord: true)
                     ->email()
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('phone')
+                    ->default(fake()->e164PhoneNumber())
+                    ->tel()
+                    ->autocomplete('new-phone')
+                    ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
@@ -69,11 +74,19 @@ class AdminResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('image')
+                    ->label(__('Avatar'))
+                    ->defaultImageUrl(asset('images/avatars/admin.png'))
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('roles.name'),
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('phone')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
                 //

@@ -20,5 +20,14 @@ class AdminSeeder extends Seeder
         ]);
 
         $admin->assignRole('Super admin');
+
+        $admin = Admin::factory()->role('Agent')->create([
+            'name' => 'Naung Ye Htet',
+            'email' => 'naungyehtet.zonenextagent@gmail.com',
+            'phone' => '09775330805',
+            'password' => bcrypt('admin@123'),
+            'email_verified_at' => now(),
+            'phone_verified_at' => now(),
+        ]);
     }
 }

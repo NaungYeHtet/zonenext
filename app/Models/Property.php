@@ -15,8 +15,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
@@ -184,11 +186,6 @@ class Property extends Model
             ->withTimestamps();
     }
 
-    public function agents(): BelongsToMany
-    {
-        return $this->belongsToMany(Agent::class, 'agent_properties');
-    }
-
     public function groups(): MorphToMany
     {
         return $this->morphToMany(Group::class, 'groupable');
@@ -204,19 +201,21 @@ class Property extends Model
         return $this->belongsTo(Township::class);
     }
 
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Lead::class, 'owner_id');
     }
 
-    /**
-     * Accessors
-     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Lead::class, 'customer_id');
+    }
+
+    public function leads(): HasMany
+    {
+        return $this->hasMany(Lead::class);
+    }
+
     protected function salePrice(): Attribute
     {
         return Attribute::make(
@@ -358,5 +357,20 @@ class Property extends Model
                 return number_format_tran($this->area).' '.$this->area_unit->getLabel();
             },
         );
+    }
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('agent', function (Builder $builder) {
+            if (Auth::check()) {
+                $user = Auth::user();
+                if ($user instanceof Admin && $user->hasRole('Agent')) {
+                    $builder->whereRelation('leads', 'admin_id', $user->id);
+                }
+            }
+        });
     }
 }
