@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\LeadStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('admin_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('property_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('township_id')->nullable()->constrained();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->boolean('is_owner')->default(true);
             $table->string('address')->nullable();
-            $table->string('status')->default(LeadStatus::New);
+            $table->string('status');
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->string('preferred_contact_method')->nullable();

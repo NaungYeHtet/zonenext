@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Lead\LeadInterest;
 use App\Models\Lead;
 use App\Models\Project;
-use App\Models\Property;
 use App\Models\State;
 use App\Models\Township;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -38,14 +38,16 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
         ]);
 
-        $this->command->info('Seeding Agent factory....');
-        \App\Models\Admin::factory(rand(30, 80))
+        $this->command->info('Seeding Admin factory....');
+        \App\Models\Admin::factory(rand(20, 50))
             ->role('Agent')
             ->create();
         $this->command->info('Seeding Lead factory....');
-        Lead::factory(rand(500, 700))->create();
-        $this->command->info('Seeding Property factory....');
-        Property::factory(rand(200, 300))->create();
+        Lead::factory(rand(500, 700))->create([
+            'is_owner' => true,
+            'interest' => fake()->randomElement([LeadInterest::Selling, LeadInterest::Renting]),
+        ]);
+        // $this->command->info('Seeding Property factory....');
         // $this->call([
         //     PropertySeeder::class,
         // ]);

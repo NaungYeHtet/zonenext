@@ -9,8 +9,7 @@ enum PropertyStatus: string implements HasColor, HasLabel
 {
     case Draft = 'Draft';
     case Posted = 'Posted';
-    case SoldOut = 'Sold out';
-    case Rented = 'Rented';
+    case Purchased = 'Purchased';
     case Completed = 'Completed';
 
     public function getLabel(): string
@@ -23,9 +22,8 @@ enum PropertyStatus: string implements HasColor, HasLabel
         return match ($this) {
             self::Draft => 'gray',
             self::Posted => 'primary',
-            self::SoldOut => 'warning',
-            self::Rented => 'warning',
-            self::Completed => 'success',
+            self::Purchased => 'success',
+            self::Completed => 'gray',
         };
     }
 }

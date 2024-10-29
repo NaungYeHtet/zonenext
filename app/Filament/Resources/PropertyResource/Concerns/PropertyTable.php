@@ -16,17 +16,13 @@ trait PropertyTable
                 ->badge(),
             Tables\Columns\TextColumn::make('address')
                 ->wrap(),
-            Tables\Columns\TextColumn::make('price_detail')
+            Tables\Columns\TextColumn::make('price')
                 ->label(__('Price'))
                 ->formatStateUsing(fn (string $state) => $state)
                 ->wrap(),
-            Tables\Columns\TextColumn::make('sold_price')
-                ->label(__('Sold price'))
+            Tables\Columns\TextColumn::make('purchased_price')
+                ->label(__('Purchased price'))
                 ->formatStateUsing(fn (string $state) => number_format_price($state))
-                ->wrap(),
-            Tables\Columns\TextColumn::make('rented_price')
-                ->label(__('Rented price'))
-                ->formatStateUsing(fn (int $state) => $state == '' ? '' : number_format_price($state))
                 ->wrap(),
         ];
     }

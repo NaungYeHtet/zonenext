@@ -20,7 +20,7 @@ class PropertyResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'cover_image' => is_valid_url($this->cover_image) ? $this->cover_image : Storage::disk('public')->url($this->cover_image),
-            'price' => $this->price_detail,
+            'price' => $this->price,
             'address' => $this->address,
             'gallery' => collect($this->images)->map(fn ($image) => is_valid_url($image) ? $image : Storage::disk('public')->url($image)),
             'square_feet' => number_format($this->square_feet),

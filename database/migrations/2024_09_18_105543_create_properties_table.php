@@ -15,6 +15,7 @@ return new class extends Migration
 
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('township_id')->nullable()->constrained('townships');
             $table->foreignId('owner_id')->nullable()->constrained('leads');
             $table->foreignId('customer_id')->nullable()->constrained('leads');
             $table->json('title');
@@ -39,29 +40,18 @@ return new class extends Migration
             $table->unsignedSmallInteger('bathrooms_count')->nullable();
 
             // rent price detail
-            $table->boolean('is_rentable')->default(false);
-            $table->string('rent_price_type', 30)->nullable();
-            $table->integer('rent_price_from')->default(0);
-            $table->integer('rent_price_to')->default(0);
-            $table->boolean('rent_negotiable')->default(false);
-            $table->decimal('landlord_commission', 5, 2)->default(0);
-            $table->decimal('renter_commission', 5, 2)->default(0);
-            $table->integer('rented_price')->nullable();
-            $table->integer('rented_commission')->nullable();
-
-            // sale price detail
-            $table->boolean('is_saleable')->default(false);
-            $table->string('sale_price_type', 30)->nullable();
-            $table->integer('sale_price_from')->default(0);
-            $table->integer('sale_price_to')->default(0);
-            $table->boolean('sale_negotiable')->default(false);
-            $table->decimal('seller_commission', 5, 2)->default(0);
-            $table->integer('sold_price')->nullable();
-            $table->integer('sold_commission')->nullable();
+            $table->string('acquisition_type', 5)->nullable();
+            $table->string('price_type', 30)->nullable();
+            $table->integer('price_from')->default(0);
+            $table->integer('price_to')->default(0);
+            $table->boolean('negotiable')->default(false);
+            $table->decimal('owner_commission', 5, 2)->default(0);
+            $table->decimal('customer_commission', 5, 2)->default(0);
+            $table->integer('purchased_price')->nullable();
+            $table->integer('purchased_commission')->nullable();
 
             $table->dateTime('posted_at')->nullable();
-            $table->dateTime('sold_at')->nullable();
-            $table->dateTime('rented_at')->nullable();
+            $table->dateTime('purchased_at')->nullable();
             $table->dateTime('completed_at')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -5,7 +5,6 @@ namespace App\Filament\Resources\PropertyResource\Pages;
 use App\Enums\PropertyStatus;
 use App\Filament\Resources\PropertyResource;
 use App\Models\Property;
-use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,13 +12,6 @@ use Illuminate\Database\Eloquent\Builder;
 class ListProperties extends ListRecords
 {
     protected static string $resource = PropertyResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
-    }
 
     public function getTabs(): array
     {
@@ -29,9 +21,13 @@ class ListProperties extends ListRecords
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PropertyStatus::Draft))
                 ->badgeColor(PropertyStatus::Draft->getColor()),
             'posted' => Tab::make(PropertyStatus::Posted->getLabel())
-                ->badge(Property::query()->whereIn('status', [PropertyStatus::Posted, PropertyStatus::Rented, PropertyStatus::SoldOut])->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [PropertyStatus::Posted, PropertyStatus::Rented, PropertyStatus::SoldOut]))
+                ->badge(Property::query()->where('status', PropertyStatus::Posted)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PropertyStatus::Posted))
                 ->badgeColor(PropertyStatus::Posted->getColor()),
+            'purchased' => Tab::make(PropertyStatus::Purchased->getLabel())
+                ->badge(Property::query()->where('status', PropertyStatus::Purchased)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PropertyStatus::Purchased))
+                ->badgeColor(PropertyStatus::Purchased->getColor()),
             'completed' => Tab::make(PropertyStatus::Completed->getLabel())
                 ->badge(Property::query()->where('status', PropertyStatus::Completed)->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PropertyStatus::Completed))

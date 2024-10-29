@@ -14,15 +14,12 @@
             "user": ["view_user"],
             "property": [
                 "view_property",
-                "create_property",
-                "update_property",
                 "delete_property",
                 "restore_property"
             ],
             "update_property_status": [
                 "posted_update::property::status",
-                "rented_update::property::status",
-                "sold_out_update::property::status"
+                "purchased_update::property::status"
             ],
             "project": [
                 "view_project",
@@ -49,13 +46,7 @@
                 "update_group",
                 "delete_group"
             ],
-            "leads": [
-                "view_lead",
-                "create_lead",
-                "update_lead",
-                "deleted_lead",
-                "status_lead"
-            ]
+            "leads": ["view_lead", "deleted_lead"]
         }
     },
     {

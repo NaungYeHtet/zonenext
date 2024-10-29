@@ -28,7 +28,7 @@ class AdminFactory extends Factory
             'email_verified_at' => $this->faker->dateTime(),
             'phone' => $this->faker->phoneNumber(),
             'phone_verified_at' => $this->faker->dateTime(),
-            'password' => $this->faker->password(),
+            'password' => bcrypt('password'),
             'image' => $this->faker->imageUrl(),
             'language' => $this->faker->randomElement(Language::cases()),
         ];

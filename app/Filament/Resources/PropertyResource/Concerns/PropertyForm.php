@@ -4,47 +4,50 @@ namespace App\Filament\Resources\PropertyResource\Concerns;
 
 use App\Enums\AreaType;
 use App\Enums\AreaUnit;
+use App\Enums\Lead\LeadInterest;
 use App\Enums\PropertyAcquisitionType;
 use App\Enums\PropertyPriceType;
 use App\Enums\PropertyType;
+use App\Models\Lead;
 use App\Models\Property;
 use App\Models\Township;
 use Filament\Forms;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 trait PropertyForm
 {
-    public static function getFormSchema(): array
+    public static function getPropertyForm(?Lead $lead = null): array
     {
         return [
             Forms\Components\Wizard::make([
-                self::getGeneralFormStep(),
+                self::getGeneralFormStep($lead),
                 self::getAddressFormStep(),
-                self::getPriceFormStep(),
+                self::getPriceFormStep($lead),
                 self::getAreaFormStep(),
                 self::getGalleryFormStep(),
             ])
-                ->skippable()
+                // ->skippable()
                 ->startOnStep(1)
                 ->submitAction(self::getSubmitAction()),
         ];
     }
 
-    public static function getGeneralFormStep(): Forms\Components\Wizard\Step
+    public static function getGeneralFormStep(?Lead $lead): Forms\Components\Wizard\Step
     {
         return Forms\Components\Wizard\Step::make('General')
             ->schema([
+                Forms\Components\Placeholder::make('lead')
+                    ->label(__('Lead'))
+                    ->content(fn (?Model $record) => $lead ? $lead->name : $record->owner->name),
                 Forms\Components\Select::make('type')
                     ->options(PropertyType::class)
-                    ->default(PropertyType::Apartment)
+                    ->default(fn () => $lead?->property_type?->value)
                     ->required(),
-                Forms\Components\Select::make('owner_id')
-                    ->relationship('owner', 'name')
-                    ->searchable()
-                    ->preload(),
                 Forms\Components\Select::make('tags')
                     ->multiple()
+                    ->model(Property::class)
                     ->relationship('tags', 'name')
                     ->preload()
                     ->searchable()
@@ -203,177 +206,101 @@ trait PropertyForm
             ->columns(3);
     }
 
-    public static function getPriceFormStep(): Forms\Components\Wizard\Step
+    public static function getPriceFormStep(?Lead $lead): Forms\Components\Wizard\Step
     {
         return Forms\Components\Wizard\Step::make('Price')
             ->schema([
-                Forms\Components\Toggle::make('is_saleable')
-                    ->label(__('Sale'))
-                    ->rules([
-                        'required_if:rentable,false',
-                        'boolean',
-                    ])
-                    ->default(true)
-                    ->live()
-                    ->afterStateUpdated(fn (bool $state, Forms\Set $set) => ! $state ? $set('is_rentable', true) : ''),
-                Forms\Components\Section::make(__('Sale'))
-                    ->schema([
-                        Forms\Components\Select::make('sale_price_type')
-                            ->label(__('Type'))
-                            ->options(PropertyPriceType::class)
-                            ->default(PropertyPriceType::Fix->value)
-                            ->required()
-                            ->rules([
-                                'required',
-                            ])
-                            ->live(),
-                        Forms\Components\TextInput::make('sale_price_from')
-                            ->label(fn (Forms\Get $get) => $get('sale_price_type') === PropertyPriceType::Range->value ? __('From') : __('Price'))
-                            ->default(get_stepped_random_number(60000000, 600000000 / 2, 5000000))
-                            ->required()
-                            ->numeric()
-                            ->rules([
-                                'required',
-                                'integer',
-                                'min:1',
-                            ])
-                            ->live(true),
-                        Forms\Components\TextInput::make('sale_price_to')
-                            ->label(__('To'))
-                            ->required()
-                            ->numeric()
-                            ->rules([
-                                'required',
-                                'integer',
-                                'min:1',
-                            ])
-                            ->visible(fn (Forms\Get $get) => $get('sale_price_type') === PropertyPriceType::Range->value),
-                        Forms\Components\Toggle::make('sale_negotiable')
-                            ->label(__('Negotiable'))
-                            ->required()
-                            ->rules([
-                                'required',
-                                'boolean',
-                            ])
-                            ->columnStart(1),
-                        Forms\Components\TextInput::make('seller_commission')
-                            ->label(__('Commission').' ('.__('Seller').')')
-                            ->required()
-                            ->default(1)
-                            ->numeric()
-                            ->rules([
-                                'required',
-                                'numeric',
-                                'min:1',
-                                'max:50',
-                            ])
-                            ->live(true),
-                        Forms\Components\Placeholder::make('commission_detail')
-                            ->label('')
-                            ->content(function (Forms\Get $get): string {
-                                $sellerCommission = (float) $get('seller_commission') ?? 0;
-                                $priceType = PropertyPriceType::from($get('sale_price_type'));
-                                $price = (float) $get('sale_price_from') ?? 0;
-
-                                return Property::getCommissionDescription(PropertyAcquisitionType::Sale, __('Seller'), $priceType, $price, $sellerCommission);
-                            })
-                            ->columnSpanFull(),
-                    ])
-                    ->visible(fn (Forms\Get $get) => (bool) $get('is_saleable'))
-                    ->columns(3),
-                Forms\Components\Toggle::make('is_rentable')
-                    ->label(__('Rent'))
+                Forms\Components\Hidden::make('acquisition_type')
+                    ->default(fn () => $lead?->interest === LeadInterest::Selling ? PropertyAcquisitionType::Sale->value : PropertyAcquisitionType::Rent->value)
                     ->required()
                     ->rules([
-                        'required_if:is_saleable,false',
+                        'required',
+                    ])
+                    ->live(),
+                Forms\Components\Select::make('price_type')
+                    ->label(__('Type'))
+                    ->options(PropertyPriceType::class)
+                    ->default(PropertyPriceType::Fix->value)
+                    ->required()
+                    ->rules([
+                        'required',
+                    ])
+                    ->live(),
+                Forms\Components\TextInput::make('price_from')
+                    ->label(fn (Forms\Get $get) => $get('price_type') === PropertyPriceType::Range->value ? __('From') : __('Price'))
+                    ->default(get_stepped_random_number(60000000, 600000000 / 2, 5000000))
+                    ->required()
+                    ->numeric()
+                    ->rules([
+                        'required',
+                        'integer',
+                        'min:1',
+                    ])
+                    ->live(true),
+                Forms\Components\TextInput::make('price_to')
+                    ->label(__('To'))
+                    ->required()
+                    ->numeric()
+                    ->rules([
+                        'required',
+                        'integer',
+                        'min:1',
+                    ])
+                    ->visible(fn (Forms\Get $get) => $get('price_type') === PropertyPriceType::Range->value),
+                Forms\Components\Toggle::make('negotiable')
+                    ->required()
+                    ->rules([
                         'required',
                         'boolean',
                     ])
-                    ->live()
-                    ->columnStart(1)
-                    ->afterStateUpdated(fn (bool $state, Forms\Set $set) => ! $state ? $set('is_saleable', true) : '')
-                    ->default(true),
-                Forms\Components\Section::make(__('Rent'))
-                    ->schema([
-                        Forms\Components\Select::make('rent_price_type')
-                            ->label(__('Type'))
-                            ->options(PropertyPriceType::class)
-                            ->default(PropertyPriceType::Fix->value)
-                            ->required()
-                            ->rules([
-                                'required',
-                            ])
-                            ->live(),
-                        Forms\Components\TextInput::make('rent_price_from')
-                            ->label(fn (Forms\Get $get) => $get('rent_price_type') === PropertyPriceType::Range->value ? __('From') : __('Price'))
-                            ->default(get_stepped_random_number(300000, 6000000 / 2, 50000))
-                            ->required()
-                            ->numeric()
-                            ->rules([
-                                'required',
-                                'integer',
-                                'min:1',
-                            ])
-                            ->live(true),
-                        Forms\Components\TextInput::make('rent_price_to')
-                            ->label(__('To'))
-                            ->required()
-                            ->numeric()
-                            ->rules([
-                                'required',
-                                'integer',
-                                'min:1',
-                            ])
-                            ->visible(fn (Forms\Get $get) => $get('rent_price_type') === PropertyPriceType::Range->value),
-                        Forms\Components\Toggle::make('rent_negotiable')
-                            ->label(__('Negotiable'))
-                            ->required()
-                            ->rules([
-                                'required',
-                                'boolean',
-                            ])
-                            ->columnStart(1),
-                        Forms\Components\TextInput::make('landlord_commission')
-                            ->label(__('Commission').' ('.__('Landlord').')')
-                            ->required()
-                            ->default(100)
-                            ->numeric()
-                            ->rules([
-                                'required',
-                                'numeric',
-                                'min:0',
-                                'max:300',
-                            ])
-                            ->live(true),
-                        Forms\Components\TextInput::make('renter_commission')
-                            ->label(__('Commission').' ('.__('Renter').')')
-                            ->required()
-                            ->default(100)
-                            ->numeric()
-                            ->rules([
-                                'required',
-                                'numeric',
-                                'min:0',
-                                'max:300',
-                            ])
-                            ->live(true),
-                        Forms\Components\Placeholder::make('commission_detail')
-                            ->label('')
-                            ->content(function (Forms\Get $get): string {
-                                $landlordCommission = (float) $get('landlord_commission') ?? 0;
-                                $renterCommission = (float) $get('renter_commission') ?? 0;
-                                $priceType = PropertyPriceType::from($get('rent_price_type'));
-                                $price = (float) $get('rent_price_from') ?? 0;
-
-                                $landlordCommission = Property::getCommissionDescription(PropertyAcquisitionType::Rent, __('Landlord'), $priceType, $price, $landlordCommission);
-                                $renterDescription = Property::getCommissionDescription(PropertyAcquisitionType::Rent, __('Renter'), $priceType, $price, $renterCommission);
-
-                                return $landlordCommission.', '.$renterDescription;
-                            })
-                            ->columnSpanFull(),
+                    ->columnStart(1),
+                Forms\Components\TextInput::make('owner_commission')
+                    ->label(__('Commission').' ('.__('Owner').')')
+                    ->required()
+                    ->default(1)
+                    ->numeric()
+                    ->rules([
+                        'required',
+                        'numeric',
+                        'min:1',
+                        'max:50',
                     ])
-                    ->visible(fn (Forms\Get $get) => (bool) $get('is_rentable'))
-                    ->columns(2),
+                    ->live(true),
+                Forms\Components\TextInput::make('customer_commission')
+                    ->label(__('Commission').' ('.__('Renter').')')
+                    ->required()
+                    ->default(1)
+                    ->numeric()
+                    ->rules([
+                        'required',
+                        'numeric',
+                        'min:1',
+                        'max:50',
+                    ])
+                    ->live(true)
+                    ->visible(fn (Forms\Get $get) => $get('acquisition_type') === PropertyAcquisitionType::Rent->value),
+                Forms\Components\Placeholder::make('commission_detail')
+                    ->label('')
+                    ->content(function (Forms\Get $get): string {
+                        $content = '';
+                        $ownerCommission = (float) $get('owner_commission') ?? 0;
+                        $priceType = PropertyPriceType::from($get('price_type'));
+                        $price = (float) $get('price_from') ?? 0;
+                        $acquisitionType = PropertyAcquisitionType::from($get('acquisition_type'));
+                        $ownerLabel = __('Owner');
+
+                        $content .= Property::getCommissionDescription($acquisitionType, $ownerLabel, $priceType, $price, $ownerCommission);
+
+                        if ($acquisitionType == PropertyAcquisitionType::Rent) {
+                            $customerCommission = (float) $get('customer_commission') ?? 0;
+                            $customerCommissionText = Property::getCommissionDescription($acquisitionType, __('Renter'), $priceType, $price, $customerCommission);
+                            $ownerLabel = __('Landlord');
+                            $content .= ", {$customerCommissionText}";
+                        }
+
+                        return $content;
+                    })
+                    ->columnSpanFull(),
             ])
             ->columns(3);
     }

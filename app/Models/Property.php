@@ -44,29 +44,23 @@ class Property extends Model
         'latitude' => 'float',
         'longitude' => 'float',
         'posted_at' => 'datetime',
-        'sold_at' => 'datetime',
-        'rented_at' => 'datetime',
+        'purchased_at' => 'datetime',
         'completed_at' => 'datetime',
+        'acquisition_type' => PropertyAcquisitionType::class,
         'type' => PropertyType::class,
         'status' => PropertyStatus::class,
         'area_type' => AreaType::class,
         'area_unit' => AreaUnit::class,
         'bathrooms_count' => 'integer',
         'is_rentable' => 'boolean',
-        'rent_price_type' => PropertyPriceType::class,
-        'rent_price_from' => 'integer',
-        'rented_price' => 'integer',
-        'rent_price_to' => 'integer',
-        'rent_negotiable' => 'boolean',
-        'landlord_commission' => 'float',
-        'renter_commission' => 'float',
-        'is_saleable' => 'boolean',
-        'sold_price' => 'integer',
-        'sale_price_type' => PropertyPriceType::class,
-        'sale_price_from' => 'integer',
-        'sale_price_to' => 'integer',
-        'sale_negotiable' => 'boolean',
-        'seller_commission' => 'float',
+        'price_type' => PropertyPriceType::class,
+        'price_from' => 'integer',
+        'price_to' => 'integer',
+        'negotiable' => 'boolean',
+        'owner_commission' => 'float',
+        'customer_commission' => 'float',
+        'purchased_price' => 'integer',
+        'purchased_commission' => 'integer',
     ];
 
     public function getRouteKeyName(): string
@@ -128,12 +122,10 @@ class Property extends Model
     public function scopeFilterPrice(Builder $query, $priceFrom, $priceTo)
     {
         if ($priceFrom) {
-            $query->where('rent_price_from', '>=', $priceFrom);
-            $query->where('sale_price_from', '>=', $priceFrom);
+            $query->where('price_from', '>=', $priceFrom);
         }
         if ($priceTo) {
-            $query->where('rent_price_to', '<=', $priceTo);
-            $query->where('sale_price_to', '<=', $priceTo);
+            $query->where('price_to', '<=', $priceTo);
         }
     }
 
@@ -216,16 +208,16 @@ class Property extends Model
         return $this->hasMany(Lead::class);
     }
 
-    protected function salePrice(): Attribute
+    protected function price(): Attribute
     {
         return Attribute::make(
             get: function ($value, $attributes): string {
-                if ($attributes['sale_price_type'] == PropertyPriceType::Fix->value) {
-                    return number_format_price($attributes['sale_price_from']);
+                if ($attributes['price_type'] == PropertyPriceType::Fix->value) {
+                    return number_format_price($attributes['price_from']);
                 }
 
-                if ($attributes['sale_price_type'] == PropertyPriceType::Range->value) {
-                    return number_format_price($attributes['sale_price_from']).' - '.number_format_price($attributes['sale_price_to']);
+                if ($attributes['price_type'] == PropertyPriceType::Range->value) {
+                    return number_format_price($attributes['price_from']).' - '.number_format_price($attributes['price_to']);
                 }
 
                 return '';
@@ -233,63 +225,18 @@ class Property extends Model
         );
     }
 
-    protected function rentPrice(): Attribute
-    {
-        return Attribute::make(
-            get: function ($value, $attributes): string {
-                if ($attributes['rent_price_type'] == PropertyPriceType::Fix->value) {
-                    return number_format_price($attributes['rent_price_from']);
-                }
-
-                if ($attributes['rent_price_type'] == PropertyPriceType::Range->value) {
-                    return number_format_price($attributes['rent_price_from']).' - '.number_format_price($attributes['rent_price_to']);
-                }
-
-                return '';
-            },
-        );
-    }
-
-    protected function priceDetail(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                $detail = [];
-
-                if ($this->is_saleable) {
-                    $acquisitionType = PropertyAcquisitionType::Sale;
-
-                    $detail[str($acquisitionType->value)->camel()->toString()] = "{$this->sale_price} ({$acquisitionType->getLabel()})";
-                }
-
-                if ($this->is_rentable) {
-                    $acquisitionType = PropertyAcquisitionType::Rent;
-
-                    $detail[str($acquisitionType->value)->camel()->toString()] = "{$this->rent_price} ({$acquisitionType->getLabel()})";
-                }
-
-                return $detail;
-            },
-        );
-    }
-
-    protected function saleCommissionDescription(): Attribute
+    protected function commissionDescription(): Attribute
     {
         return Attribute::make(
             get: function ($value, $attributes) {
-                return $this->getCommissionDescription(PropertyAcquisitionType::Sale, __('Seller'), $this->sale_price_type, $this->sale_price_from, $this->seller_commission);
-            },
-        );
-    }
+                if ($this->acquisition_type == PropertyAcquisitionType::Sale) {
+                    return $this->getCommissionDescription(PropertyAcquisitionType::Sale, __('Seller'), $this->price_type, $this->price_from, $this->owner_commission);
+                }
 
-    protected function rentCommissionDescription(): Attribute
-    {
-        return Attribute::make(
-            get: function ($value, $attributes) {
-                $landloardDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Landloard'), $this->rent_price_type, $this->rent_price_from, $this->landlord_commission);
-                $renterDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Renter'), $this->rent_price_type, $this->rent_price_from, $this->renter_commission);
+                $ownerDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Landloard'), $this->price_type, $this->price_from, $this->owner_commission);
+                $customerDescription = $this->getCommissionDescription(PropertyAcquisitionType::Rent, __('Renter'), $this->price_type, $this->price_from, $this->customer_commission);
 
-                return $landloardDescription.', '.$renterDescription;
+                return $ownerDescription.', '.$customerDescription;
             },
         );
     }

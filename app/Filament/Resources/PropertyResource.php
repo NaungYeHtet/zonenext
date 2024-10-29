@@ -7,6 +7,7 @@ use App\Filament\Resources\PropertyResource\Concerns\PropertyForm;
 use App\Filament\Resources\PropertyResource\Concerns\PropertyInfolist;
 use App\Filament\Resources\PropertyResource\Concerns\PropertyTable;
 use App\Filament\Resources\PropertyResource\Pages;
+use App\Models\Admin;
 use App\Models\Property;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
@@ -43,17 +44,17 @@ class PropertyResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(self::getFormSchema())
+            ->schema(self::getPropertyForm())
             ->columns(1);
     }
 
     public static function table(Table $table): Table
     {
-
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (Filament::auth()->user()->hasRole('Agent')) {
-                    $query->whereRelation('leads', 'admin_id', Filament::auth()->id());
+                $authUser = Filament::auth()->user();
+                if ($authUser instanceof Admin && $authUser->hasRole('Agent')) {
+                    $query->whereRelation('leads', 'admin_id', $authUser);
                 }
 
                 $query->orderBy('created_at', 'desc');

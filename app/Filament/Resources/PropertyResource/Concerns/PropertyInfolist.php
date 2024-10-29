@@ -35,29 +35,15 @@ trait PropertyInfolist
                         ]),
                     Infolists\Components\Tabs\Tab::make('Price')
                         ->schema([
-                            Infolists\Components\Fieldset::make('Sale')
-                                ->schema([
-                                    Infolists\Components\TextEntry::make('sale_price')
-                                        ->label(__('Price')),
-                                    Infolists\Components\IconEntry::make('sale_negotiable')
-                                        ->label(__('Negotiable'))
-                                        ->boolean(),
-                                    Infolists\Components\TextEntry::make('sale_commission_description')
-                                        ->label(__('Commission')),
-                                ])
-                                ->visible(fn (Model $record) => $record->is_saleable),
-                            Infolists\Components\Fieldset::make('Rent')
-                                ->schema([
-                                    Infolists\Components\TextEntry::make('rent_price')
-                                        ->label(__('Price')),
-                                    Infolists\Components\IconEntry::make('rent_negotiable')
-                                        ->label(__('Negotiable'))
-                                        ->boolean(),
-                                    Infolists\Components\TextEntry::make('rent_commission_description')
-                                        ->label(__('Commission')),
-                                ])
-                                ->visible(fn (Model $record) => $record->is_rentable),
-                        ]),
+                            Infolists\Components\TextEntry::make('price')
+                                ->label(__('Price')),
+                            Infolists\Components\IconEntry::make('negotiable')
+                                ->label(__('Negotiable'))
+                                ->boolean(),
+                            Infolists\Components\TextEntry::make('commission_description')
+                                ->label(__('Commission')),
+                        ])
+                        ->columns(3),
                     Infolists\Components\Tabs\Tab::make('Gallery')
                         ->schema([
                             Infolists\Components\ImageEntry::make('cover_image'),

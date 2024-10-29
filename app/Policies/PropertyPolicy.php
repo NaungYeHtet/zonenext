@@ -20,7 +20,7 @@ class PropertyPolicy
     public function view(Admin $user, Property $property): bool
     {
         if ($user->hasRole('Agent')) {
-            return (bool) $user->leads()->where('property_id', $property->id)->first() ?? false;
+            return $user->leads()->where('property_id', $property->id)->exists();
         }
 
         return $user->can('view_property');
@@ -37,17 +37,21 @@ class PropertyPolicy
 
     public function update(Admin $user, Property $property): bool
     {
-        if ($user->hasRole('Agent')) {
-            return $user->leads()->where('property_id', $property->id)->first() ?? false;
+        if ($property->status != PropertyStatus::Completed) {
+            return false;
         }
 
-        return $user->can('update_property') && $property->status != PropertyStatus::Completed;
+        if ($user->hasRole('Agent')) {
+            return $user->leads()->where('property_id', $property->id)->exists();
+        }
+
+        return $user->can('update_property');
     }
 
     public function delete(Admin $user, Property $property): bool
     {
         if ($user->hasRole('Agent')) {
-            return $user->leads()->where('property_id', $property->id)->first() ?? false;
+            return $user->leads()->where('property_id', $property->id)->exists();
         }
 
         return $user->can('delete_property') && ! $property->trashed();
@@ -55,41 +59,40 @@ class PropertyPolicy
 
     public function restore(Admin $user, Property $property): bool
     {
-        if ($user->hasRole('Agent')) {
-            return $user->leads()->where('property_id', $property->id)->first() ?? false;
+        if (! $property->trashed()) {
+            return false;
         }
 
-        return $user->can('restore_property') && $property->trashed();
+        if ($user->hasRole('Agent')) {
+            return $user->leads()->where('property_id', $property->id)->exists();
+        }
+
+        return $user->can('restore_property');
     }
 
     public function updatePosted(Admin $user, Property $property): bool
     {
-        if ($user->hasRole('Agent')) {
-            return $user->leads()->where('property_id', $property->id)->first() ?? false;
-        }
-
-        if ($user->hasRole('Agent')) {
+        if ($property->status != PropertyStatus::Draft) {
             return false;
         }
 
-        return $user->can('posted_update::property::status') && $property->status == PropertyStatus::Draft;
-    }
-
-    public function updateSoldOut(Admin $user, Property $property): bool
-    {
         if ($user->hasRole('Agent')) {
-            return $user->leads()->where('property_id', $property->id)->first() ?? false;
+            return $user->leads()->where('property_id', $property->id)->exists();
         }
 
-        return $user->can('sold_out_update::property::status') && ($property->status == PropertyStatus::Posted || $property->status == PropertyStatus::Rented) && $property->is_saleable;
+        return $user->can('posted_update::property::status');
     }
 
-    public function updateRented(Admin $user, Property $property): bool
+    public function updatePurchased(Admin $user, Property $property): bool
     {
-        if ($user->hasRole('Agent')) {
-            return $user->leads()->where('property_id', $property->id)->first() ?? false;
+        if ($property->status != PropertyStatus::Posted) {
+            return false;
         }
 
-        return $user->can('sold_out_update::property::status') && ($property->status == PropertyStatus::Posted || $property->status == PropertyStatus::SoldOut) && $property->is_rentable;
+        if ($user->hasRole('Agent')) {
+            return $user->leads()->where('property_id', $property->id)->exists();
+        }
+
+        return $user->can('purchased_update::property::status');
     }
 }
