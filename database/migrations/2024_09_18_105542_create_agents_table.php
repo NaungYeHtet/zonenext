@@ -22,6 +22,12 @@ return new class extends Migration
             $table->dateTime('phone_verified_at')->nullable();
             $table->string('password');
             $table->string('image')->nullable();
+            $table->string('language');
+
+            $table->json('preferred_notification_channels')->nullable();
+            $table->json('preferred_lead_interests')->nullable();
+            $table->json('preferred_property_types')->nullable();
+            $table->json('preferred_townships')->nullable();
             $table->timestamps();
         });
 

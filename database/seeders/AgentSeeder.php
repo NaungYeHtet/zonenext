@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Language;
 use App\Models\Agent;
 use Illuminate\Database\Seeder;
 
@@ -18,6 +19,7 @@ class AgentSeeder extends Seeder
             'phone' => '+959775330805',
             'password' => bcrypt('agent@123'),
             'phone_verified_at' => now(),
+            'language' => Language::Myanmar,
         ]);
     }
 }

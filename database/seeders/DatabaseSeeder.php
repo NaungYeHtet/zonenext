@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\Agent::factory(rand(30, 80))
             ->create();
         $this->command->info('Seeding Lead factory....');
-        Lead::factory(rand(300, 400))->create();
+        Lead::factory(rand(500, 700))->create();
         $this->command->info('Seeding Property factory....');
         Property::factory(rand(200, 300))->create();
         // $this->call([

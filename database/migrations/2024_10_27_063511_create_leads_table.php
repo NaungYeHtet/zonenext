@@ -14,13 +14,15 @@ return new class extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('agent_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('property_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('township_id')->nullable()->constrained();
             $table->string('property_type');
             $table->string('interest');
-            $table->boolean('is_owner');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->boolean('is_owner')->default(true);
             $table->string('address')->nullable();
-            $table->string('name');
             $table->string('status')->default(LeadStatus::New);
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
@@ -29,8 +31,8 @@ return new class extends Migration
             $table->boolean('send_updates')->default(false);
             $table->integer('max_price')->nullable();
             $table->mediumInteger('square_feet')->nullable();
-            $table->integer('bedrooms')->nullable();
-            $table->integer('bathrooms')->nullable();
+            $table->tinyInteger('bedrooms')->nullable();
+            $table->tinyInteger('bathrooms')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

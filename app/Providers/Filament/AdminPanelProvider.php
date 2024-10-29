@@ -72,6 +72,7 @@ class AdminPanelProvider extends PanelProvider
                         'lg' => 2,
                     ]),
             ])
-            ->viteTheme('resources/css/filament/admin/theme.css');
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->databaseNotifications();
     }
 }

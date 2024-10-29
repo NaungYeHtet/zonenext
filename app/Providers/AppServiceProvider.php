@@ -11,6 +11,7 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Actions\Action as TableAction;
@@ -79,6 +80,10 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         JsonResource::withoutWrapping();
+
+        Notification::configureUsing(function (Notification $notification): void {
+            $notification->view('notifications.notification');
+        });
 
         // filament configurations
         Field::configureUsing(function (Field $component) {

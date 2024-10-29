@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Enums\AreaType;
 use App\Enums\AreaUnit;
 use App\Enums\Lead\LeadInterest;
+use App\Enums\LeadStatus;
 use App\Enums\PropertyPriceType;
 use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
@@ -128,7 +129,7 @@ class PropertyFactory extends Factory
 
             $customer = match ($type) {
                 'user' => User::all()->random(),
-                'lead' => Lead::where('property_type', $property->type->value)->where('interest', LeadInterest::Buying->value)->where('is_owner', false)->get()->random(),
+                'lead' => Lead::where('property_type', $property->type->value)->where('interest', LeadInterest::Buying->value)->whereIn('status', [LeadStatus::Converted->value, LeadStatus::Closed->value])->where('is_owner', false)->get()->random(),
                 default => null,
             };
 

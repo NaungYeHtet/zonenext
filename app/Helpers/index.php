@@ -56,6 +56,34 @@ if (! function_exists('get_weighted_random_element')) {
     }
 }
 
+if (! function_exists('get_weighted_random_elements')) {
+    function get_weighted_random_elements(array $weightedItems, int $min = 1): array
+    {
+        $choices = [];
+        foreach ($weightedItems as $key => $weight) {
+            for ($i = 0; $i < $weight; $i++) {
+                $choices[] = $key;
+            }
+        }
+
+        $max = count($weightedItems);
+        $count = rand($min, $max);
+
+        $selectedItems = [];
+        $selectedKeys = array_rand(array_flip($choices), $count);
+
+        if (is_array($selectedKeys)) {
+            foreach ($selectedKeys as $key) {
+                $selectedItems[] = $key;
+            }
+        } else {
+            $selectedItems[] = $selectedKeys;
+        }
+
+        return $selectedItems;
+    }
+}
+
 if (! function_exists('number_format_price')) {
     function number_format_price(float $number, $locale = null): string
     {
@@ -110,5 +138,18 @@ if (! function_exists('is_valid_url')) {
     function is_valid_url(string $string): bool
     {
         return (bool) filter_var($string, FILTER_VALIDATE_URL);
+    }
+}
+
+if (! function_exists('is_json')) {
+    function is_json(?string $string): bool
+    {
+        if (! $string) {
+            return false;
+        }
+
+        json_decode($string);
+
+        return json_last_error() === JSON_ERROR_NONE;
     }
 }

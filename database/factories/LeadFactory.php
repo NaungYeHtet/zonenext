@@ -6,6 +6,7 @@ use App\Enums\Lead\LeadInterest;
 use App\Enums\LeadStatus;
 use App\Enums\PropertyPriceType;
 use App\Enums\PropertyType;
+use App\Models\Lead;
 use App\Models\Township;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -48,8 +49,17 @@ class LeadFactory extends Factory
             'interest' => $interest,
             'is_owner' => $this->faker->boolean(),
             'address' => $this->faker->optional()->streetAddress(),
-            'name' => $this->faker->name(),
-            'status' => $this->faker->randomElement(LeadStatus::cases()),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'status' => get_weighted_random_element([
+                LeadStatus::New->value => 10,
+                LeadStatus::Assigned->value => 10,
+                LeadStatus::Contacted->value => 10,
+                LeadStatus::Scheduled->value => 5,
+                LeadStatus::UnderNegotiation->value => 5,
+                LeadStatus::Converted->value => 30,
+                LeadStatus::Closed->value => 30,
+            ]),
             'phone' => $phone,
             'email' => ! $phone ? $this->faker->email() : $this->faker->optional()->email(),
             'send_updates' => $this->faker->boolean(),
@@ -59,5 +69,12 @@ class LeadFactory extends Factory
             'bathrooms' => $this->faker->optional()->randomNumber(1),
             'notes' => $this->faker->optional()->sentence(),
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (Lead $lead) {
+            event(new \App\Events\LeadSubmitted($lead));
+        });
     }
 }

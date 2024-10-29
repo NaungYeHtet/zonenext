@@ -32,6 +32,9 @@
     "Property management": "အိမ်ခြံမြေခန့်ခွဲမှု",
     "Account management": "အကောင့်ခန့်ခွဲမှု",
     "Authorization": "လုပ်ပိုင်ခွင့်များ",
+    "Morning": "မနက်ခင်း",
+    "Afternoon": "နေ့လည်ခင်း",
+    "Evening": "ညနေခင်း",
 
     "East": "အရှေ့",
     "West": "အနောက်",
@@ -46,6 +49,9 @@
     "Sale": "အရောင်း",
     "Bought": "ဝယ်ပြီး",
     "Rented & Sold out": "ငှားပြီး၊ရောင်းပြီး",
+    "Buying": "ဝယ်ယူခြင်း",
+    "Selling": "ရောင်းချခြင်း",
+    "Renting": "ငှားရမ်းခြင်း",
 
     "Seller": "ရောင်းသူ",
     "Buyer": "ဝယ်သူ",
@@ -141,5 +147,12 @@
     "Myanmar": "မြန်မာ",
     "Update property status": "အိမ်ခြံမြေ အခြေအနေပြင်ဆင်ခြင်း",
     "Property": "အိမ်ခြံမြေ",
-    "Views count": "ကြည့်ခဲ့သည့်အကြိမ်"
+    "Views count": "ကြည့်ခဲ့သည့်အကြိမ်",
+    "Assigned": "အသစ်",
+    "Contacted": "ဆက်သွယ်ပြီး",
+    "Scheduled": "စီစဥ်ပြီး",
+    "UnderNegotiation": "ညှိနှိုင်းဆဲ",
+    "Converted": "ပြောင်းလဲပြီး",
+    "Closed": "ပိတ်ပြီး",
+    "Interest": "စိတ်ဝင်စားမှု"
 }
