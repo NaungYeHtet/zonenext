@@ -29,8 +29,10 @@ trait PropertyForm
                 self::getGalleryFormStep(),
             ])
                 // ->skippable()
-                ->startOnStep(1)
-                ->submitAction(self::getSubmitAction()),
+                ->startOnStep(2)
+                ->submitAction(self::getSubmitAction())
+                ->columns(1)
+                ->columnSpanFull(),
         ];
     }
 
@@ -38,112 +40,102 @@ trait PropertyForm
     {
         return Forms\Components\Wizard\Step::make('General')
             ->schema([
-                Forms\Components\Placeholder::make('lead')
-                    ->label(__('Lead'))
-                    ->content(fn (?Model $record) => $lead ? $lead->name : $record->owner->name),
-                Forms\Components\Select::make('type')
-                    ->options(PropertyType::class)
-                    ->default(fn () => $lead?->property_type?->value)
-                    ->required(),
-                Forms\Components\Select::make('tags')
-                    ->multiple()
-                    ->model(Property::class)
-                    ->relationship('tags', 'name')
-                    ->preload()
-                    ->searchable()
-                    ->maxItems(5)
-                    ->required(),
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->default(fake()->sentence)
-                    ->rules([
-                        'required',
-                        'string',
-                    ])
-                    ->translatable()
-                    ->columnSpan(2),
-                Forms\Components\RichEditor::make('description')
-                    ->required()
-                    ->default(fake()->paragraph)
-                    ->rules([
-                        'required',
-                        'max:1000',
-                    ])
-                    ->translatable()
-                    ->columnStart(1)
-                    ->columnSpanFull(),
+                Forms\Components\Grid::make([
+                    'default' => 1,
+                    'md' => 2,
+                    'lg' => 3,
+                ])->schema([
+                    Forms\Components\Placeholder::make('lead_name')
+                        ->label(__('Lead'))
+                        ->content(fn (?Model $record) => $lead ? $lead->name : $record->owner->name)
+                        ->columnSpanFull(),
+                    Forms\Components\Select::make('type')
+                        ->options(PropertyType::class)
+                        ->default(fn () => $lead?->property_type?->value)
+                        ->required()
+                        ->columnStart(1),
+                    Forms\Components\Select::make('tags')
+                        ->multiple()
+                        ->model(Property::class)
+                        ->relationship('tags', 'name')
+                        ->preload()
+                        ->searchable()
+                        ->maxItems(5)
+                        ->required()
+                        ->columnSpan(2),
+                    Forms\Components\TextInput::make('title')
+                        ->required()
+                        ->default(fake()->sentence)
+                        ->rules([
+                            'required',
+                            'string',
+                        ])
+                        ->translatable()
+                        ->columnSpanFull(),
+                    Forms\Components\RichEditor::make('description')
+                        ->required()
+                        ->default(fake()->paragraph)
+                        ->rules([
+                            'required',
+                            'max:1000',
+                        ])
+                        ->translatable()
+                        ->columnStart(1)
+                        ->columnSpanFull(),
+                ]),
             ])
-            ->columns(3);
-    }
-
-    public static function getGalleryFormStep(): Forms\Components\Wizard\Step
-    {
-        return Forms\Components\Wizard\Step::make('Gallery')
-            ->schema([
-                Forms\Components\FileUpload::make('cover_image')
-                    ->required()
-                    ->disk('public')
-                    ->directory('property')
-                    ->image()
-                    ->rules([
-                        'required',
-                    ])
-                    ->maxSize('5000')
-                    ->openable(),
-                Forms\Components\FileUpload::make('images')
-                    ->label(__('Images'))
-                    ->disk('public')
-                    ->directory('property')
-                    ->multiple()
-                    ->image()
-                    ->maxFiles(10)
-                    ->openable(),
-            ])
-            ->columns(3);
+            ->columnSpanFull();
     }
 
     public static function getAddressFormStep(): Forms\Components\Wizard\Step
     {
         return Forms\Components\Wizard\Step::make('Address')
             ->schema([
-                Forms\Components\Select::make('township_id')
-                    ->label(__('Township'))
-                    ->relationship('township', 'name')
-                    ->default(Township::where('state_id', 13)->inRandomOrder()->first()->id)
-                    ->rules([
-                        'required',
-                    ])
-                    ->searchable()
-                    ->preload(),
-                Forms\Components\Textarea::make('address')
-                    ->required()
-                    ->default(fake()->address)
-                    ->rules([
-                        'required',
-                        'max:1000',
-                    ])
-                    ->translatable()
-                    ->columnSpan(2),
-                Forms\Components\TextInput::make('latitude')
-                    ->required()
-                    ->numeric()
-                    ->default(16.7983776)
-                    ->rules([
-                        'required',
-                        'numeric',
-                        'between:-90,90',
-                    ]),
-                Forms\Components\TextInput::make('longitude')
-                    ->required()
-                    ->numeric()
-                    ->default(96.1469824)
-                    ->rules([
-                        'required',
-                        'numeric',
-                        'between:-180,180',
-                    ]),
+                Forms\Components\Grid::make([
+                    'default' => 1,
+                    'md' => 2,
+                    'lg' => 3,
+                ])->schema([
+                    Forms\Components\Select::make('township_id')
+                        ->label(__('Township'))
+                        ->relationship('township', 'name')
+                        ->default(Township::where('state_id', 13)->inRandomOrder()->first()->id)
+                        ->rules([
+                            'required',
+                        ])
+                        ->searchable()
+                        ->preload(),
+                    Forms\Components\Textarea::make('address')
+                        ->required()
+                        ->default(fake()->address)
+                        ->rules([
+                            'required',
+                            'max:1000',
+                        ])
+                        ->translatable()
+                        ->columnSpanFull(),
+                    Forms\Components\TextInput::make('latitude')
+                        ->required()
+                        ->numeric()
+                        ->default(16.7983776)
+                        ->rules([
+                            'required',
+                            'numeric',
+                            'between:-90,90',
+                        ]),
+                    Forms\Components\TextInput::make('longitude')
+                        ->required()
+                        ->numeric()
+                        ->default(96.1469824)
+                        ->rules([
+                            'required',
+                            'numeric',
+                            'between:-180,180',
+                        ]),
+                ]),
             ])
-            ->columns(3);
+            ->columnSpanFull()
+            ->columns(1);
     }
 
     public static function getAreaFormStep(): Forms\Components\Wizard\Step
@@ -303,6 +295,37 @@ trait PropertyForm
                     ->columnSpanFull(),
             ])
             ->columns(3);
+    }
+
+    public static function getGalleryFormStep(): Forms\Components\Wizard\Step
+    {
+        return Forms\Components\Wizard\Step::make('Gallery')
+            ->schema([
+                Forms\Components\Grid::make([
+                    'default' => 1,
+                    'md' => 2,
+                ])->schema([
+                    Forms\Components\FileUpload::make('cover_image')
+                        ->required()
+                        ->disk('public')
+                        ->directory('property')
+                        ->image()
+                        ->rules([
+                            'required',
+                        ])
+                        ->maxSize('5000')
+                        ->openable(),
+                    Forms\Components\FileUpload::make('images')
+                        ->label(__('Images'))
+                        ->disk('public')
+                        ->directory('property')
+                        ->multiple()
+                        ->image()
+                        ->maxFiles(10)
+                        ->openable(),
+                ]),
+            ])
+            ->columns(1);
     }
 
     public static function getSubmitAction(): HtmlString

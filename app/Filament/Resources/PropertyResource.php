@@ -7,9 +7,7 @@ use App\Filament\Resources\PropertyResource\Concerns\PropertyForm;
 use App\Filament\Resources\PropertyResource\Concerns\PropertyInfolist;
 use App\Filament\Resources\PropertyResource\Concerns\PropertyTable;
 use App\Filament\Resources\PropertyResource\Pages;
-use App\Models\Admin;
 use App\Models\Property;
-use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -52,11 +50,6 @@ class PropertyResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                $authUser = Filament::auth()->user();
-                if ($authUser instanceof Admin && $authUser->hasRole('Agent')) {
-                    $query->whereRelation('leads', 'admin_id', $authUser);
-                }
-
                 $query->orderBy('created_at', 'desc');
             })
             ->columns(self::getColumns())

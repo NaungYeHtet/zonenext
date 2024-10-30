@@ -7,10 +7,12 @@ use App\Enums\Lead\LeadContactTime;
 use App\Enums\Lead\LeadInterest;
 use App\Enums\LeadStatus;
 use App\Enums\PropertyType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class Lead extends Model
 {
@@ -52,5 +54,20 @@ class Lead extends Model
         return Attribute::make(
             get: fn () => implode(', ', [$this->phone, $this->email]),
         );
+    }
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('agent', function (Builder $builder) {
+            if (Auth::check()) {
+                $user = Auth::user();
+                if ($user instanceof Admin && $user->hasRole('Agent')) {
+                    $builder->where('admin_id', $user->id);
+                }
+            }
+        });
     }
 }

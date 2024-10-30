@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Enums\AreaType;
 use App\Enums\AreaUnit;
 use App\Enums\Lead\LeadInterest;
+use App\Enums\LeadStatus;
 use App\Enums\PropertyAcquisitionType;
 use App\Enums\PropertyPriceType;
 use App\Enums\PropertyStatus;
@@ -88,6 +89,7 @@ class PropertyFactory extends Factory
             $bathroomsCount = $this->createBedroomTypes($property);
             $this->createRateable($property);
             $viewsCount = $this->createViewable($property);
+            $this->createCustomerLeads($property);
             $customer = $this->createCustomer($property);
 
             $priceDetails = $this->fakePriceDetails($property->acquisition_type, status: $property->status);
@@ -100,25 +102,41 @@ class PropertyFactory extends Factory
         });
     }
 
+    protected function createCustomerLeads(Property $property)
+    {
+        if ($property->status == PropertyStatus::Draft) {
+            return null;
+        }
+
+        $leadInterest = $property->acquisition_type == PropertyAcquisitionType::Rent ? LeadInterest::Renting : LeadInterest::Buying;
+
+        $count = rand(0, 10);
+
+        while ($count > 0) {
+            Lead::factory(rand(0, 10))->create([
+                'status' => get_weighted_random_element([
+                    LeadStatus::Assigned->value => 40,
+                    LeadStatus::Contacted->value => 40,
+                    LeadStatus::Scheduled->value => 10,
+                    LeadStatus::UnderNegotiation->value => 10,
+                ]),
+                'property_id' => $property->id,
+                'property_type' => $property->type,
+                'interest' => $leadInterest,
+                'is_owner' => false,
+            ]);
+
+            $count--;
+        }
+    }
+
     protected function createCustomer(Property $property): ?Lead
     {
         if ($property->status == PropertyStatus::Draft || $property->status == PropertyStatus::Posted) {
             return null;
         }
 
-        $lead = null;
-
-        $leadInterest = $property->acquisition_type == PropertyAcquisitionType::Rent ? LeadInterest::Renting : LeadInterest::Buying;
-
-        $lead = Lead::factory()->create([
-            'property_id' => $property->id,
-            'property_type' => $property->type,
-            'interest' => $leadInterest,
-            'is_owner' => false,
-        ]);
-
-        return $lead->refresh();
-
+        return $property->leads()->inRandomOrder()->whereIn('status', [LeadStatus::Scheduled->value, LeadStatus::UnderNegotiation->value])->first();
     }
 
     protected function getAreaDetails(Property $property)

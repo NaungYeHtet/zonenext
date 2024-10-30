@@ -32,6 +32,33 @@ class LeadPolicy
         return $user->hasRole('Agent');
     }
 
+    public function update(Admin $user, Lead $lead): bool
+    {
+        if ($lead->status === LeadStatus::Closed || $lead->status === LeadStatus::Converted) {
+            return false;
+        }
+
+        return $user->hasRole('Agent') && $user->id === $lead->admin_id;
+    }
+
+    public function contacted(Admin $user, Lead $lead): bool
+    {
+        if ($lead->status != LeadStatus::Assigned) {
+            return false;
+        }
+
+        return $user->hasRole('Agent') && $user->id === $lead->admin_id;
+    }
+
+    public function scheduled(Admin $user, Lead $lead): bool
+    {
+        if ($lead->status != LeadStatus::Contacted) {
+            return false;
+        }
+
+        return $user->hasRole('Agent') && $user->id === $lead->admin_id;
+    }
+
     public function createProperty(Admin $user, Lead $lead): bool
     {
         if (! in_array($lead->status, [LeadStatus::Scheduled, LeadStatus::UnderNegotiation])) {
@@ -45,8 +72,12 @@ class LeadPolicy
         return $user->hasRole('Agent') && $user->id === $lead->admin_id;
     }
 
-    public function update(Admin $user, Lead $lead): bool
+    public function close(Admin $user, Lead $lead): bool
     {
+        if ($lead->status === LeadStatus::Closed) {
+            return false;
+        }
+
         return $user->hasRole('Agent') && $user->id === $lead->admin_id;
     }
 

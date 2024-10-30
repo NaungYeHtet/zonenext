@@ -34,6 +34,7 @@ return new class extends Migration
             $table->tinyInteger('bedrooms')->nullable();
             $table->tinyInteger('bathrooms')->nullable();
             $table->text('notes')->nullable();
+            $table->text('remark')->nullable();
             $table->timestamps();
         });
     }

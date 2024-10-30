@@ -20,7 +20,7 @@ class PropertyPolicy
     public function view(Admin $user, Property $property): bool
     {
         if ($user->hasRole('Agent')) {
-            return $user->leads()->where('property_id', $property->id)->exists();
+            return $property->leads()->where('admin_id', $user->id)->exists();
         }
 
         return $user->can('view_property');

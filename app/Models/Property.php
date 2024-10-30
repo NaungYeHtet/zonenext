@@ -315,7 +315,9 @@ class Property extends Model
             if (Auth::check()) {
                 $user = Auth::user();
                 if ($user instanceof Admin && $user->hasRole('Agent')) {
-                    $builder->whereRelation('leads', 'admin_id', $user->id);
+                    $builder->whereHas('leads', function (Builder $q) use ($user) {
+                        $q->where('admin_id', $user->id);
+                    });
                 }
             }
         });

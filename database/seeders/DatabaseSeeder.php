@@ -43,10 +43,24 @@ class DatabaseSeeder extends Seeder
             ->role('Agent')
             ->create();
         $this->command->info('Seeding Lead factory....');
-        Lead::factory(rand(500, 700))->create([
-            'is_owner' => true,
-            'interest' => fake()->randomElement([LeadInterest::Selling, LeadInterest::Renting]),
-        ]);
+        Lead::factory()
+            ->count(rand(100, 300))
+            ->state(function (array $attributes) {
+                return [
+                    'is_owner' => true,
+                    'interest' => LeadInterest::Selling,
+                ];
+            })
+            ->create();
+        Lead::factory()
+            ->count(rand(300, 500))
+            ->state(function (array $attributes) {
+                return [
+                    'is_owner' => true,
+                    'interest' => LeadInterest::Renting,
+                ];
+            })
+            ->create();
         // $this->command->info('Seeding Property factory....');
         // $this->call([
         //     PropertySeeder::class,

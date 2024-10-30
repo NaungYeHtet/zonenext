@@ -25,26 +25,6 @@ class LeadFactory extends Factory
      */
     public function definition(): array
     {
-        $phone = $this->faker->optional()->phoneNumber();
-        $interest = get_weighted_random_element([
-            LeadInterest::Selling->value => 50,
-            LeadInterest::Renting->value => 50,
-        ]);
-        $hasMaxPrice = fake()->boolean();
-        $maxPrice = null;
-
-        if ($hasMaxPrice) {
-            $acquisitionType = $interest == LeadInterest::Renting ? PropertyAcquisitionType::Rent : PropertyAcquisitionType::Sale;
-
-            $maxPrice = PropertyFactory::fakePriceDetails($acquisitionType, PropertyPriceType::Fix)['price_from'];
-        }
-
-        $isOwner = match ($interest) {
-            LeadInterest::Buying->value => false,
-            LeadInterest::Selling->value => true,
-            LeadInterest::Renting->value => $this->faker->boolean(60),
-        };
-
         return [
             'township_id' => Township::all()->random(),
             'property_type' => get_weighted_random_element([
@@ -56,8 +36,8 @@ class LeadFactory extends Factory
                 PropertyType::Land->value => 10,
                 PropertyType::Storage->value => 10,
             ]),
-            'interest' => $interest,
-            'is_owner' => $isOwner,
+            // 'interest' => $interest,
+            // 'is_owner' => $isOwner,
             'address' => $this->faker->optional()->streetAddress(),
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
@@ -69,10 +49,21 @@ class LeadFactory extends Factory
                 LeadStatus::Converted->value => 30,
                 LeadStatus::Closed->value => 30,
             ]),
-            'phone' => $phone,
+            'phone' => $this->faker->optional()->e164PhoneNumber(),
             'email' => ! $phone ? $this->faker->email() : $this->faker->optional()->email(),
             'send_updates' => $this->faker->boolean(),
-            'max_price' => $maxPrice,
+            'max_price' => function (array $attributes) {
+                $hasMaxPrice = fake()->boolean();
+                $maxPrice = null;
+
+                if ($hasMaxPrice) {
+                    $acquisitionType = $attributes['interest'] == LeadInterest::Renting->value ? PropertyAcquisitionType::Rent : PropertyAcquisitionType::Sale;
+
+                    $maxPrice = PropertyFactory::fakePriceDetails($acquisitionType, PropertyPriceType::Fix)['price_from'];
+                }
+
+                return $maxPrice;
+            },
             'square_feet' => $this->faker->optional()->randomNumber(3),
             'bedrooms' => $this->faker->optional()->randomNumber(1),
             'bathrooms' => $this->faker->optional()->randomNumber(1),
@@ -95,7 +86,7 @@ class LeadFactory extends Factory
                     ->create([
                         'owner_id' => $lead->id,
                         'type' => $lead->property_type,
-                        'acquisition_type' => LeadInterest::Selling ? PropertyAcquisitionType::Sale : PropertyAcquisitionType::Rent,
+                        'acquisition_type' => $lead->interest == LeadInterest::Selling ? PropertyAcquisitionType::Sale : PropertyAcquisitionType::Rent,
                     ]);
             }
         });

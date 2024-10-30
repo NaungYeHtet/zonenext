@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PropertyResource\Concerns;
 
+use App\Models\Property;
 use Filament\Tables;
 
 trait PropertyTable
@@ -13,7 +14,8 @@ trait PropertyTable
                 ->searchable()
                 ->wrap(),
             Tables\Columns\TextColumn::make('type')
-                ->badge(),
+                ->badge()
+                ->formatStateUsing(fn (Property $record) => $record->type->getLabel().' | '.$record->acquisition_type->getLabel()),
             Tables\Columns\TextColumn::make('address')
                 ->wrap(),
             Tables\Columns\TextColumn::make('price')
