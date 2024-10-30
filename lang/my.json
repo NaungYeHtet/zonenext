@@ -182,7 +182,8 @@
     "Preferred contact method": "ဆက်သွယ်နိုင်မည့် နည်းလမ်း",
     "Preferred contact time": "ဆက်သွယ်နိုင်မည့် အချိန်",
     "Send updates": "အသစ်များပေးပို့မည်",
-    "Preferred lead interests": "အသားပေးမည့် အလားအလာရှိသူအမျိုးအစားများ",
+    "Preferred lead types": "အသားပေးမည့် အလားအလာရှိသူအမျိုးအစားများ",
     "Preferred property types": "အသားပေးမည့် အိမ်ခြံမြေအမျိုးအစားများ",
-    "Preferred township": "အသားပေးမည့် မြို့နယ်များ"
+    "Preferred townships": "အသားပေးမည့် မြို့နယ်များ",
+    "Agent metric": "အေးဂျင့်တိုင်းတာခြင်း"
 }

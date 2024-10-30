@@ -7,9 +7,16 @@ use Filament\Pages\Dashboard\Actions\FilterAction;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Pages\Dashboard\Concerns\HasFiltersAction;
 
-class Dashboard extends BaseDashboard
+class AgentMetricDashbaord extends BaseDashboard
 {
     use HasFiltersAction;
+
+    protected static string $routePath = '/agent-metric';
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Agent metric');
+    }
 
     protected function getHeaderActions(): array
     {
@@ -21,5 +28,10 @@ class Dashboard extends BaseDashboard
                     // ...
                 ]),
         ];
+    }
+
+    public function getWidgets(): array
+    {
+        return [];
     }
 }

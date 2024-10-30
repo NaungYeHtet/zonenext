@@ -40,10 +40,10 @@ class Admin extends Authenticatable implements FilamentUser
         'email_verified_at' => 'datetime',
         'phone_verified_at' => 'datetime',
         'password' => 'hashed',
-        'preferred_property_types' => 'array',
-        'preferred_lead_interests' => 'array',
-        'preferred_townships' => 'array',
         'preferred_notification_channels' => 'array',
+        'preferred_lead_types' => 'array',
+        'preferred_property_types' => 'array',
+        'preferred_townships' => 'array',
         'language' => Language::class,
     ];
 

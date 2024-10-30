@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\Lead\LeadInterest;
+use App\Enums\Lead\LeadType;
+use App\Enums\PropertyType;
 use App\Filament\Resources\AgentResource\Pages;
 use App\Models\Admin;
+use App\Models\Township;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -43,7 +45,8 @@ class AgentResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->default(fake()->name())
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->columnStart(1),
                 Forms\Components\TextInput::make('email')
                     ->default(fake()->email())
                     ->autocomplete('new-email')
@@ -70,16 +73,23 @@ class AgentResource extends Resource
                     ])
                     ->required(),
                 Forms\Components\Select::make('preferred_lead_types')
-                    ->options(LeadInterest::class)
-                    ->multiple()
-                    ->required(),
-            ]);
+                    ->options(LeadType::class)
+                    ->multiple(),
+                Forms\Components\Select::make('preferred_property_types')
+                    ->options(PropertyType::class)
+                    ->multiple(),
+                Forms\Components\Select::make('preferred_townships')
+                    ->options(Township::all()->pluck('name', 'id'))
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->whereRelation('roles', 'name', 'Agent'))
+            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at', 'desc')->whereRelation('roles', 'name', 'Agent'))
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label(__('Avatar'))
