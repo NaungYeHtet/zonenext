@@ -17,4 +17,13 @@ enum LeadInterest: string implements HasLabel
     {
         return __($this->value);
     }
+
+    public function getLeadType(bool $isOwner): LeadType
+    {
+        return match ($this) {
+            self::Buying => LeadType::Buyers,
+            self::Selling => LeadType::Sellers,
+            self::Renting => $isOwner ? LeadType::Landloards : LeadType::Renters,
+        };
+    }
 }

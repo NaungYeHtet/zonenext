@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Listeners\LocaleChangedListener;
+use BezhanSalleh\FilamentLanguageSwitch\Events\LocaleChanged;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Section;
@@ -19,6 +21,7 @@ use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -126,5 +129,10 @@ class AppServiceProvider extends ServiceProvider
                 ])
                 ->circular();
         });
+
+        Event::listen(
+            LocaleChanged::class,
+            LocaleChangedListener::class,
+        );
     }
 }

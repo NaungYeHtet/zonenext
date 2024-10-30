@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\Language;
-use App\Enums\Lead\LeadInterest;
+use App\Enums\Lead\LeadType;
 use App\Enums\PropertyType;
 use App\Models\Admin;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -42,7 +42,7 @@ class AdminFactory extends Factory
 
                 $admin->update([
                     'preferred_notification_channels' => $this->faker->optional()->randomElements(['email', 'sms']),
-                    'preferred_lead_interests' => $this->faker->optional()->randomElements(LeadInterest::cases()),
+                    'preferred_lead_types' => $this->faker->optional()->randomElements(LeadType::cases()),
                     'preferred_property_types' => get_weighted_random_elements([
                         PropertyType::Independent->value => 15,
                         PropertyType::Condo->value => 15,

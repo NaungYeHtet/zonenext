@@ -9,17 +9,14 @@
                 "view_admin",
                 "create_admin",
                 "update_admin",
-                "delete_admin"
+                "delete_admin",
+                "view_agent_dashboard"
             ],
             "user": ["view_user"],
             "property": [
                 "view_property",
                 "delete_property",
                 "restore_property"
-            ],
-            "update_property_status": [
-                "posted_update::property::status",
-                "purchased_update::property::status"
             ],
             "project": [
                 "view_project",
@@ -46,7 +43,12 @@
                 "update_group",
                 "delete_group"
             ],
-            "leads": ["view_lead", "deleted_lead"]
+            "leads": [
+                "view_lead",
+                "create_lead",
+                "assign_agent_lead",
+                "delete_lead"
+            ]
         }
     },
     {

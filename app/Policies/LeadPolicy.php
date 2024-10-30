@@ -27,9 +27,18 @@ class LeadPolicy
         return $user->can('view_lead');
     }
 
+    public function assignAgent(Admin $user, Lead $lead): bool
+    {
+        if ($lead->status != LeadStatus::New) {
+            return false;
+        }
+
+        return $user->can('assign_agent_lead');
+    }
+
     public function create(Admin $user): bool
     {
-        return $user->hasRole('Agent');
+        return $user->hasRole('Agent') || $user->can('create_lead');
     }
 
     public function update(Admin $user, Lead $lead): bool

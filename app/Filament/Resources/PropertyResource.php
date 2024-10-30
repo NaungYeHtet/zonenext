@@ -25,7 +25,7 @@ class PropertyResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Property');
+        return __('property.label');
     }
 
     public static function getNavigationGroup(): ?string

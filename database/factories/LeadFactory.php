@@ -25,6 +25,8 @@ class LeadFactory extends Factory
      */
     public function definition(): array
     {
+        $phone = $this->faker->optional()->phoneNumber();
+
         return [
             'township_id' => Township::all()->random(),
             'property_type' => get_weighted_random_element([
@@ -74,7 +76,16 @@ class LeadFactory extends Factory
     public function configure()
     {
         return $this->afterCreating(function (Lead $lead) {
-            $admin = Admin::leadAssignment($lead->interest, $lead->property_type, $lead->township_id)->first();
+            // handle lead without assignments
+            if (fake()->boolean(5)) {
+                $lead->update([
+                    'status' => LeadStatus::New,
+                ]);
+
+                return;
+            }
+
+            $admin = Admin::leadAssignment($lead)->first();
 
             $lead->update([
                 'admin_id' => $admin->id,

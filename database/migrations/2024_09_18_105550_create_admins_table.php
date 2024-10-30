@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('language')->default(Language::English);
 
             $table->json('preferred_notification_channels')->nullable();
-            $table->json('preferred_lead_interests')->nullable();
+            $table->json('preferred_lead_types')->nullable();
             $table->json('preferred_property_types')->nullable();
             $table->json('preferred_townships')->nullable();
 

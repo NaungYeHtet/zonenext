@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Enums\Lead\LeadContactMethod;
 use App\Enums\Lead\LeadContactTime;
-use App\Enums\Lead\LeadInterest;
 use App\Enums\LeadStatus;
 use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
@@ -20,7 +19,9 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class LeadResource extends Resource
@@ -30,6 +31,8 @@ class LeadResource extends Resource
     protected static ?string $model = Lead::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static bool $isDiscovered = false;
 
     public static function getNavigationLabel(): string
     {
@@ -46,6 +49,18 @@ class LeadResource extends Resource
         return __('Property management');
     }
 
+    public static function getNavigationBadgeQuery(): Builder
+    {
+        $authUser = Filament::auth()->user();
+        if (! $authUser instanceof Admin) {
+            abort(403);
+        }
+
+        $leadStatus = $authUser->hasRole('Agent') ? LeadStatus::Assigned : LeadStatus::New;
+
+        return static::getModel()::where('status', $leadStatus->value);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -54,22 +69,12 @@ class LeadResource extends Resource
                     ->tabs([
                         Forms\Components\Tabs\Tab::make(__('General'))
                             ->schema([
-                                Forms\Components\Select::make('interest')
-                                    ->options(LeadInterest::class)
-                                    ->required()
-                                    ->live(),
-                                Forms\Components\Toggle::make('is_owner')
-                                    ->default(true)
-                                    ->required()
-                                    ->visible(fn (Forms\Get $get) => $get('interest') ? LeadInterest::from($get('interest')) == LeadInterest::Renting : false)
-                                    ->inline(false),
                                 Forms\Components\Select::make('property_type')
                                     ->options(PropertyType::class)
                                     ->required(),
                                 Forms\Components\TextInput::make('first_name')
                                     ->required()
-                                    ->maxLength(255)
-                                    ->columnStart(1),
+                                    ->maxLength(255),
                                 Forms\Components\TextInput::make('last_name')
                                     ->required()
                                     ->maxLength(255),
@@ -78,8 +83,7 @@ class LeadResource extends Resource
                                     ->maxLength(255)
                                     ->rule([
                                         'required_without:phone',
-                                    ])
-                                    ->columnStart(1),
+                                    ]),
                                 Forms\Components\TextInput::make('phone')
                                     ->tel()
                                     ->maxLength(255),
@@ -156,17 +160,53 @@ class LeadResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(['first_name', 'last_name']),
+                Tables\Columns\TextColumn::make('admin.name')
+                    ->label(__('Agent'))
+                    ->searchable()
+                    ->hidden($authUser instanceof Admin && $authUser->hasRole('Agent')),
                 Tables\Columns\TextColumn::make('property_type')
                     ->badge(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge(),
             ])
             ->filters([
-
-            ])
+                Tables\Filters\SelectFilter::make('status')
+                    ->options(LeadStatus::class)
+                    ->multiple()
+                    ->native(false),
+            ], FiltersLayout::AboveContent)
             ->actions([
+                Tables\Actions\Action::make('assign_agent')
+                    ->label(__('Assign'))
+                    ->icon('gmdi-person-add')
+                    ->button()
+                    ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('assignAgent', $record))
+                    ->form(fn (Lead $record) => [
+                        Forms\Components\Select::make('admin_id')
+                            ->label(__('Agent'))
+                            ->options(Admin::whereRelation('roles', 'name', 'Agent')->pluck('name', 'id'))
+                            ->preload()
+                            ->searchable()
+                            ->required(),
+                    ])
+                    ->modalWidth(MaxWidth::Medium)
+                    ->modalSubmitActionLabel(__('Assign'))
+                    ->action(function (array $data, Lead $record, Tables\Actions\Action $action) {
+                        $admin = \App\Models\Admin::find($data['admin_id']);
+                        $record->update([
+                            'status' => LeadStatus::Assigned,
+                            'admin_id' => $admin->id,
+                        ]);
+
+                        $admin->notify(new \App\Notifications\LeadAssignedNotification($record));
+
+                        Notification::make()
+                            ->title(__('lead.notification.agent_assigned.title', ['agent' => $admin->name]))
+                            ->success()
+                            ->send();
+                    }),
                 Tables\Actions\Action::make('create_property')
-                    ->label(__('Property'))
+                    ->label(__('Property.label'))
                     ->successNotification(Notification::make()->title(__('lead.notification.property_created.title'))->success())
                     ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('createProperty', $record))
                     ->icon('gmdi-add')

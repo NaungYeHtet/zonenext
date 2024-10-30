@@ -165,7 +165,8 @@
     "Update property status": "အိမ်ခြံမြေ အခြေအနေပြင်ဆင်ခြင်း",
     "Property": "အိမ်ခြံမြေ",
     "Views count": "ကြည့်ခဲ့သည့်အကြိမ်",
-    "Assigned": "အသစ်",
+    "Assigned": "တာဝန်ချထားပြီး",
+    "Assign": "တာဝန်ပေးမည်",
     "Contacted": "ဆက်သွယ်ပြီး",
     "Contact": "ဆက်သွယ်မည်",
     "Scheduled": "စီစဥ်ပြီး",
@@ -180,5 +181,8 @@
     "Is owner": "ပိုင်ရှင်ဖြစ်ပါသလား?",
     "Preferred contact method": "ဆက်သွယ်နိုင်မည့် နည်းလမ်း",
     "Preferred contact time": "ဆက်သွယ်နိုင်မည့် အချိန်",
-    "Send updates": "အသစ်များပေးပို့မည်"
+    "Send updates": "အသစ်များပေးပို့မည်",
+    "Preferred lead interests": "အသားပေးမည့် အလားအလာရှိသူအမျိုးအစားများ",
+    "Preferred property types": "အသားပေးမည့် အိမ်ခြံမြေအမျိုးအစားများ",
+    "Preferred township": "အသားပေးမည့် မြို့နယ်များ"
 }

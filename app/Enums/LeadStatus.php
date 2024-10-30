@@ -32,4 +32,17 @@ enum LeadStatus: string implements HasColor, HasLabel
             self::Closed => 'gray',
         };
     }
+
+    public function getOrder(): int
+    {
+        return match ($this) {
+            self::New => 1,
+            self::Assigned => 2,
+            self::Contacted => 3,
+            self::Scheduled => 4,
+            self::UnderNegotiation => 5,
+            self::Converted => 6,
+            self::Closed => 7,
+        };
+    }
 }

@@ -56,6 +56,26 @@ class Lead extends Model
         );
     }
 
+    public function scopeBuyer(Builder $query)
+    {
+        $query->where('interest', LeadInterest::Buying);
+    }
+
+    public function scopeSeller(Builder $query)
+    {
+        $query->where('interest', LeadInterest::Selling);
+    }
+
+    public function scopeLandlord(Builder $query)
+    {
+        $query->where('interest', LeadInterest::Renting)->where('is_owner', true);
+    }
+
+    public function scopeRenter(Builder $query)
+    {
+        $query->where('interest', LeadInterest::Renting)->where('is_owner', false);
+    }
+
     /**
      * The "booted" method of the model.
      */

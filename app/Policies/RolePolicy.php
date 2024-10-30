@@ -23,7 +23,7 @@ class RolePolicy
      */
     public function view(Admin $user, Role $role): bool
     {
-        return $user->can('view_role');
+        return $user->can('view_role') && $role->name != 'Agent';
     }
 
     /**
@@ -39,7 +39,7 @@ class RolePolicy
      */
     public function update(Admin $user, Role $role): bool
     {
-        return $user->can('update_role');
+        return $user->can('update_role') && ! in_array($role->name, ['Agent', 'Super admin']);
     }
 
     /**
@@ -47,7 +47,7 @@ class RolePolicy
      */
     public function delete(Admin $user, Role $role): bool
     {
-        return $user->can('delete_role');
+        return $user->can('delete_role') && ! in_array($role->name, ['Agent', 'Super admin']);
     }
 
     /**

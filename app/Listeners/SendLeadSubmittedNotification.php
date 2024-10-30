@@ -23,7 +23,7 @@ class SendLeadSubmittedNotification implements ShouldQueue
     public function handle(LeadSubmitted $event): void
     {
         $lead = $event->lead;
-        $admin = Admin::leadAssignment($lead->interest, $lead->property_type, $lead->township_id)->first();
+        $admin = Admin::leadAssignment($lead)->first();
 
         if ($admin) {
             $lead->update([

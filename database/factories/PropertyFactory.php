@@ -113,7 +113,12 @@ class PropertyFactory extends Factory
         $count = rand(0, 10);
 
         while ($count > 0) {
-            Lead::factory(rand(0, 10))->create([
+            Lead::factory(get_weighted_random_element([
+                0 => 50,
+                rand(1, 3) => 40,
+                rand(3, 10) => 15,
+                rand(10, 20) => 5,
+            ]))->create([
                 'status' => get_weighted_random_element([
                     LeadStatus::Assigned->value => 40,
                     LeadStatus::Contacted->value => 40,

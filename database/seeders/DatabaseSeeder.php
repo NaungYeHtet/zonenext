@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\Admin::factory(rand(20, 50))
             ->role('Agent')
             ->create();
-        $this->command->info('Seeding Lead factory....');
+        $this->command->info('Seeding Lead Sellers....');
         Lead::factory()
             ->count(rand(100, 300))
             ->state(function (array $attributes) {
@@ -52,6 +52,7 @@ class DatabaseSeeder extends Seeder
                 ];
             })
             ->create();
+        $this->command->info('Seeding Lead Landloards....');
         Lead::factory()
             ->count(rand(300, 500))
             ->state(function (array $attributes) {

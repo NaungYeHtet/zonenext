@@ -57,21 +57,23 @@ class Admin extends Authenticatable implements FilamentUser
         return $this->hasMany(Lead::class);
     }
 
-    public function scopeLeadAssignment(Builder $query, ?LeadInterest $leadInterest, ?PropertyType $propertyType, $townshipId)
+    public function scopeLeadAssignment(Builder $query, ?Lead $lead)
     {
-        $query->withCount('leads')
-            ->whereRelation('roles', 'name', 'Agent')
-            ->preferredLeadInterests($leadInterest)
-            ->preferredPropertyTypes($propertyType)
-            ->preferredTownships($townshipId)
-            ->orderBy('leads_count', 'asc');
+        if ($lead) {
+            $query->withCount('leads')
+                ->whereRelation('roles', 'name', 'Agent')
+                ->preferredLeadTypes($lead->interest, $lead->is_owner)
+                ->preferredPropertyTypes($lead->property_type)
+                ->preferredTownships($lead->township_id)
+                ->orderBy('leads_count', 'asc');
+        }
     }
 
-    public function scopePreferredLeadInterests(Builder $query, ?LeadInterest $leadInterest = null)
+    public function scopePreferredLeadTypes(Builder $query, ?LeadInterest $leadInterest = null, ?bool $isOwner = null)
     {
-        if ($leadInterest) {
-            $query->whereJsonContains('preferred_lead_interests', $leadInterest->value)
-                ->orWhere('preferred_lead_interests', null);
+        if ($leadInterest && $isOwner != null) {
+            $query->whereJsonContains('preferred_lead_types', $leadInterest->getLeadType($isOwner)->value)
+                ->orWhere('preferred_lead_types', null);
         }
     }
 

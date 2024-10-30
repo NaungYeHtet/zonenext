@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Filament\Resources\LeadResource;
 use App\Models\Lead;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
@@ -14,12 +13,14 @@ class LeadAssignedNotification extends Notification
 {
     use Queueable;
 
+    private string $resource;
+
     /**
      * Create a new notification instance.
      */
     public function __construct(public Lead $lead)
     {
-        //
+        $this->resource = $this->lead->interest->getLeadType($lead->is_owner)->getResource();
     }
 
     /**
@@ -45,9 +46,9 @@ class LeadAssignedNotification extends Notification
                 'lead_name' => $this->lead->name,
                 'contact' => $this->lead->contact,
             ]))
-            ->action([
+            ->actions([
                 Action::make('view_lead')
-                    ->url(LeadResource::getUrl('edit', ['record' => $this->lead]))
+                    ->url($this->resource::getUrl('edit', ['record' => $this->lead]))
                     ->color('info')
                     ->button(),
             ])
@@ -73,7 +74,7 @@ class LeadAssignedNotification extends Notification
             ]))
             ->actions([
                 Action::make('view_lead')
-                    ->url(LeadResource::getUrl('edit', ['record' => $this->lead]))
+                    ->url($this->resource::getUrl('edit', ['record' => $this->lead]))
                     ->color('info')
                     ->button(),
             ])

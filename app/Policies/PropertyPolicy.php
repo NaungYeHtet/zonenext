@@ -76,11 +76,7 @@ class PropertyPolicy
             return false;
         }
 
-        if ($user->hasRole('Agent')) {
-            return $user->leads()->where('property_id', $property->id)->exists();
-        }
-
-        return $user->can('posted_update::property::status');
+        return $user->hasRole('Agent') && $user->leads()->where('property_id', $property->id)->exists();
     }
 
     public function updatePurchased(Admin $user, Property $property): bool
@@ -89,10 +85,6 @@ class PropertyPolicy
             return false;
         }
 
-        if ($user->hasRole('Agent')) {
-            return $user->leads()->where('property_id', $property->id)->exists();
-        }
-
-        return $user->can('purchased_update::property::status');
+        return $user->hasRole('Agent') && $user->leads()->where('property_id', $property->id)->exists();
     }
 }

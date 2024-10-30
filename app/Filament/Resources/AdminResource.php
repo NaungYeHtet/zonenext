@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Password;
 
 class AdminResource extends Resource
@@ -38,6 +39,11 @@ class AdminResource extends Resource
                     ->avatar()
                     ->imageEditor()
                     ->circleCropper(),
+                Forms\Components\Select::make('roles')
+                    ->relationship('roles', 'name', modifyQueryUsing: fn (Builder $query) => $query->where('name', '!=', 'Agent'))
+                    ->preload()
+                    ->searchable()
+                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->default(fake()->name())
                     ->required()
@@ -73,11 +79,16 @@ class AdminResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereRelation('roles', 'name', '!=', 'Agent'))
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label(__('Avatar'))
                     ->defaultImageUrl(asset('images/avatars/admin.png'))
                     ->circular(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label(__('Role'))
+                    ->badge()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
