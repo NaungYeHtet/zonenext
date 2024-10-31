@@ -57,11 +57,16 @@ class Admin extends Authenticatable implements FilamentUser
         return $this->hasMany(Lead::class);
     }
 
+    public function scopeAgent(Builder $query)
+    {
+        $query->whereRelation('roles', 'name', 'Agent');
+    }
+
     public function scopeLeadAssignment(Builder $query, ?Lead $lead)
     {
         if ($lead) {
             $query->withCount('leads')
-                ->whereRelation('roles', 'name', 'Agent')
+                ->agent()
                 ->preferredLeadTypes($lead->interest, $lead->is_owner)
                 ->preferredPropertyTypes($lead->property_type)
                 ->preferredTownships($lead->township_id)

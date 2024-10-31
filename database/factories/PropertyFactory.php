@@ -141,7 +141,15 @@ class PropertyFactory extends Factory
             return null;
         }
 
-        return $property->leads()->inRandomOrder()->whereIn('status', [LeadStatus::Scheduled->value, LeadStatus::UnderNegotiation->value])->first();
+        $lead = $property->leads()->inRandomOrder()->whereIn('status', [LeadStatus::Scheduled->value, LeadStatus::UnderNegotiation->value])->first();
+
+        if ($lead) {
+            $lead->update([
+                'status' => LeadStatus::Converted,
+            ]);
+        }
+
+        return $lead;
     }
 
     protected function getAreaDetails(Property $property)
@@ -286,24 +294,27 @@ class PropertyFactory extends Factory
         $purchasedCommission = null;
 
         $priceType = $priceType ?? fake()->randomElement(PropertyPriceType::cases());
-        $ownerCommission = fake()->randomNumber(1);
+        $ownerCommission = 1;
         $negotiable = fake()->boolean();
-        $priceFrom = get_stepped_random_number(60000000, 600000000 / 2, 5000000);
+        $priceStep = $acquisitionType == PropertyAcquisitionType::Sale ? 5000000 : 50000;
 
-        if ($acquisitionType == PropertyAcquisitionType::Rent) {
-            $customerCommission = fake()->randomElement([30, 50, 70, 100, 200]);
+        if ($acquisitionType == PropertyAcquisitionType::Sale) {
+            $priceFrom = get_stepped_random_number(60000000, 600000000, $priceStep);
+        } else {
+            $priceFrom = get_stepped_random_number(200000, 3000000, $priceStep);
+            $customerCommission = get_weighted_random_element([
+                50 => 15,
+                100 => 70,
+                200 => 15,
+            ]);
         }
 
         if ($priceType == PropertyPriceType::Range) {
-            $priceTo = get_stepped_random_number($priceFrom, $priceFrom * 2, 5000000);
+            $priceTo = get_stepped_random_number($priceFrom, $priceFrom * 2, $priceStep);
         }
 
         if ($status && in_array($status, [PropertyStatus::Purchased, PropertyStatus::Completed])) {
-            if ($priceType === PropertyPriceType::Fix) {
-                $purchasedPrice = $priceFrom;
-            } else {
-                $purchasedPrice = get_stepped_random_number($priceFrom, $priceTo, 5000000);
-            }
+            $purchasedPrice = $priceType === PropertyPriceType::Fix ? $priceFrom : get_stepped_random_number($priceFrom, $priceTo, $priceStep);
 
             $purchasedCommission = ($purchasedPrice * $customerCommission / 100) + ($purchasedPrice * $ownerCommission / 100);
         }

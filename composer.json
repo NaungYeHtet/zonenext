@@ -15,6 +15,7 @@
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "malzariey/filament-daterangepicker-filter": "^3.1",
         "outerweb/filament-translatable-fields": "^2.0",
         "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-sluggable": "^3.6",

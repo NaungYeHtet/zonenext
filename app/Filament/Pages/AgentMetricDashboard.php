@@ -2,14 +2,19 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Forms\Components\DatePicker;
-use Filament\Pages\Dashboard\Actions\FilterAction;
+use App\Filament\Widgets\AgentStatusWidget;
+use App\Models\Admin;
+use Filament\Facades\Filament;
+use Filament\Forms;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Form;
 use Filament\Pages\Dashboard as BaseDashboard;
-use Filament\Pages\Dashboard\Concerns\HasFiltersAction;
+use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
+use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 
 class AgentMetricDashbaord extends BaseDashboard
 {
-    use HasFiltersAction;
+    use HasFiltersForm;
 
     protected static string $routePath = '/agent-metric';
 
@@ -18,20 +23,33 @@ class AgentMetricDashbaord extends BaseDashboard
         return __('Agent metric');
     }
 
-    protected function getHeaderActions(): array
+    public function getWidgets(): array
     {
         return [
-            FilterAction::make()
-                ->form([
-                    DatePicker::make('startDate'),
-                    DatePicker::make('endDate'),
-                    // ...
-                ]),
+            AgentStatusWidget::class,
         ];
     }
 
-    public function getWidgets(): array
+    public function filtersForm(Form $form): Form
     {
-        return [];
+        $authUser = Filament::auth()->user();
+
+        return $form
+            ->schema([
+                Section::make()
+                    ->schema([
+                        Forms\Components\Select::make('agent_id')
+                            ->label('Agent')
+                            ->options(\App\Models\Admin::agent()->pluck('name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->hidden(fn () => $authUser instanceof Admin && $authUser->hasRole('Agent')),
+                        DateRangePicker::make('date_range')
+                            ->startDate(now()->startOfMonth())
+                            ->endDate(now()->addMonth())
+                            ->maxDate(now()),
+                    ])
+                    ->columns(3),
+            ]);
     }
 }

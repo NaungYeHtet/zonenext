@@ -44,12 +44,12 @@ class LeadFactory extends Factory
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'status' => get_weighted_random_element([
-                LeadStatus::Assigned->value => 20,
+                LeadStatus::Assigned->value => 10,
                 LeadStatus::Contacted->value => 10,
                 LeadStatus::Scheduled->value => 5,
                 LeadStatus::UnderNegotiation->value => 5,
                 LeadStatus::Converted->value => 30,
-                LeadStatus::Closed->value => 30,
+                LeadStatus::Closed->value => 40,
             ]),
             'phone' => $this->faker->optional()->e164PhoneNumber(),
             'email' => ! $phone ? $this->faker->email() : $this->faker->optional()->email(),
@@ -76,6 +76,10 @@ class LeadFactory extends Factory
     public function configure()
     {
         return $this->afterCreating(function (Lead $lead) {
+            $lead->update([
+                'max_price' => PropertyFactory::fakePriceDetails($lead->interest->getPropertyAcquisitionType(), PropertyPriceType::Fix)['price_from'],
+            ]);
+
             // handle lead without assignments
             if (fake()->boolean(5)) {
                 $lead->update([
@@ -92,7 +96,7 @@ class LeadFactory extends Factory
             ]);
             $admin->notify(new \App\Notifications\LeadAssignedNotification($lead));
 
-            if ($lead->interest != LeadInterest::Buying && $lead->is_owner && in_array($lead->status, [LeadStatus::Converted, LeadStatus::Closed])) {
+            if ($lead->interest != LeadInterest::Buying && $lead->is_owner && $lead->status == LeadStatus::Converted) {
                 Property::factory()
                     ->create([
                         'owner_id' => $lead->id,

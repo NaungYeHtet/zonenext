@@ -89,7 +89,7 @@ class AgentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at', 'desc')->whereRelation('roles', 'name', 'Agent'))
+            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at', 'desc')->agent())
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label(__('Avatar'))

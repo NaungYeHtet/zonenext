@@ -83,7 +83,7 @@ class LeadPolicy
 
     public function close(Admin $user, Lead $lead): bool
     {
-        if ($lead->status === LeadStatus::Closed) {
+        if ($lead->status === LeadStatus::Closed || $lead->status == LeadStatus::Converted) {
             return false;
         }
 

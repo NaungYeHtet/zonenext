@@ -184,7 +184,7 @@ class LeadResource extends Resource
                     ->form(fn (Lead $record) => [
                         Forms\Components\Select::make('admin_id')
                             ->label(__('Agent'))
-                            ->options(Admin::whereRelation('roles', 'name', 'Agent')->pluck('name', 'id'))
+                            ->options(Admin::agent()->pluck('name', 'id'))
                             ->preload()
                             ->searchable()
                             ->required(),
