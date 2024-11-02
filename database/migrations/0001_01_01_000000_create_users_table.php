@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('language', 5)->default('en');
-            $table->string('social_id')->nullable();
+            $table->string('google_id')->nullable();
             $table->string('password')->nullable();
             $table->json('preferred_notification_channels')->nullable();
             $table->timestamp('deactivated_at')->nullable();

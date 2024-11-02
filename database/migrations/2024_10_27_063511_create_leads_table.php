@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('property_type');
             $table->string('interest');
             $table->string('first_name');
-            $table->string('last_name');
+            $table->string('last_name')->nullable();
             $table->boolean('is_owner')->default(true);
             $table->string('address')->nullable();
             $table->string('status');
@@ -33,8 +33,9 @@ return new class extends Migration
             $table->mediumInteger('square_feet')->nullable();
             $table->tinyInteger('bedrooms')->nullable();
             $table->tinyInteger('bathrooms')->nullable();
-            $table->text('notes')->nullable();
-            $table->text('remark')->nullable();
+            $table->text('message')->nullable(); // for leads
+            $table->text('notes')->nullable(); // for admins
+            $table->text('remark')->nullable(); // for agents
             $table->timestamps();
         });
     }

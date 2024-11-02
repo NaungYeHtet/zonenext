@@ -35,4 +35,9 @@ enum PropertyType: string implements HasColor, HasLabel
             self::Storage => 'gray',
         };
     }
+
+    public function getSlug(): string
+    {
+        return str($this->value)->slug()->toString();
+    }
 }

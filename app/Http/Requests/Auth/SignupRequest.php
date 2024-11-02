@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Enums\Language;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\Password;
 
-class LoginRequest extends FormRequest
+class SignupRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +23,9 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email', 'max:255'],
-            'password' => ['required', 'string'],
-            'language' => ['required', 'string', new Enum(Language::class)],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', Password::defaults(), 'confirmed'],
         ];
     }
 }

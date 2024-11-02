@@ -16,8 +16,10 @@ class PropertyResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'code' => $this->code,
             'slug' => $this->slug,
             'title' => $this->title,
+            'type' => $this->type->getLabel(),
             'description' => $this->description,
             'cover_image' => is_valid_url($this->cover_image) ? $this->cover_image : Storage::disk('public')->url($this->cover_image),
             'price' => $this->price,
@@ -28,6 +30,7 @@ class PropertyResource extends JsonResource
             'bedrooms_count' => (int) $this->bedroomTypes()->sum('quantity'),
             'bathrooms_count' => $this->bathrooms_count,
             'posted_at' => $this->posted_at->shortRelativeDiffForHumans(),
+            'amenities' => $this->tags()->pluck('name')->toArray(),
         ];
     }
 }

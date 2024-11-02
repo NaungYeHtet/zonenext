@@ -7,8 +7,10 @@ use App\Enums\Lead\LeadContactTime;
 use App\Enums\Lead\LeadInterest;
 use App\Enums\LeadStatus;
 use App\Enums\PropertyType;
+use App\Http\Requests\InquiryPropertyRequest;
 use App\Http\Requests\InquiryRequest;
 use App\Models\Lead;
+use App\Models\Property;
 use App\Models\Township;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -37,14 +39,33 @@ class InquiryController extends Controller
             $lead = Lead::create([
                 ...Arr::except($request->validated(), ['township']),
                 'township_id' => $townshipId,
+                'user_id' => $request->user()?->id,
                 'status' => LeadStatus::New,
             ]);
 
             event(new \App\Events\LeadSubmitted($lead));
         });
 
-        return $this->responseSuccess([
-            'message' => 'Inquiry submitted successfully',
-        ]);
+        return $this->responseSuccess([], message: __('lead.notification.submitted.title'));
+    }
+
+    public function submitProperty(InquiryPropertyRequest $request)
+    {
+        DB::transaction(function () use ($request) {
+            $property = Property::where('code', $request->code)->first();
+
+            $lead = Lead::create([
+                ...Arr::except($request->validated(), ['code', 'name']),
+                'property_type' => $property->type,
+                'first_name' => $request->name,
+                'property_id' => $property?->id,
+                'user_id' => $request->user()?->id,
+                'status' => LeadStatus::New,
+            ]);
+
+            event(new \App\Events\LeadSubmitted($lead));
+        });
+
+        return $this->responseSuccess([], message: __('lead.notification.submitted.title'));
     }
 }

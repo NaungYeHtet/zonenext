@@ -19,13 +19,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Sluggable\HasSlug;
-use Spatie\Sluggable\SlugOptions;
+use Illuminate\Support\Str;
 use Spatie\Translatable\HasTranslations;
 
 class Property extends Model
 {
-    use HasFactory, HasSlug, HasTranslations, SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes;
 
     public $translatable = ['title', 'description', 'address'];
 
@@ -65,16 +64,6 @@ class Property extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
-    }
-
-    /**
-     * Get the options for generating the slug.
-     */
-    public function getSlugOptions(): SlugOptions
-    {
-        return SlugOptions::create()
-            ->generateSlugsFrom('title')
-            ->saveSlugsTo('slug');
     }
 
     /**
@@ -216,7 +205,7 @@ class Property extends Model
                 }
 
                 if ($attributes['price_type'] == PropertyPriceType::Range->value) {
-                    return number_format_price($attributes['price_from']).' - '.number_format_price($attributes['price_to']);
+                    return number_format_price($attributes['price_from']).' - '.number_format_price($attributes['price_to'], withSymbol: false);
                 }
 
                 return '';
@@ -310,6 +299,13 @@ class Property extends Model
      */
     protected static function booted(): void
     {
+        static::creating(function (Model $model) {
+            $acquisitionType = $model->acquisition_type;
+            $model->code = str(Str::random(3))->upper()->toString().get_random_digit(6);
+            $townshipSlug = $model->township->slug;
+            $model->slug = $model->type->getSlug().'-'.$acquisitionType->getSlug().'-in-'.$townshipSlug.'-'.$model->code;
+        });
+
         static::addGlobalScope('agent', function (Builder $builder) {
             if (Auth::check()) {
                 $user = Auth::user();

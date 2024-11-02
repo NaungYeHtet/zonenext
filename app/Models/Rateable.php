@@ -12,19 +12,6 @@ class Rateable extends Model
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'user_id',
-        'rateable_id',
-        'rateable_type',
-        'rating',
-        'description',
-    ];
-
-    /**
      * The attributes that should be cast to native types.
      *
      * @var array

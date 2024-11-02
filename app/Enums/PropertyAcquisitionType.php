@@ -11,4 +11,12 @@ enum PropertyAcquisitionType: string
     {
         return __($this->value);
     }
+
+    public function getSlug(): string
+    {
+        return match ($this) {
+            self::Sale => 'for-sale',
+            self::Rent => 'for-rent',
+        };
+    }
 }

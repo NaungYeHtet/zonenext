@@ -3,10 +3,12 @@
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\SignupController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Middleware\LocalizationMiddleware;
 use Illuminate\Support\Facades\Route;
 
+Route::post('signup', [SignupController::class, 'store'])->middleware('guest', 'throttle:6,1');
 Route::post('login', [LoginController::class, 'store'])->middleware('guest', 'throttle:6,1');
 
 Route::middleware('auth:sanctum')->group(function () {

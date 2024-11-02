@@ -8,7 +8,7 @@ return [
     ],
     'notification' => [
         'submitted' => [
-            'title' => 'Thank you for your inquiry! We’ll get back to you shortly.',
+            'title' => "Thank you for submitting the inquiry! We'll get back to you shortly.",
         ],
         'assigned' => [
             'title' => 'New Lead: :lead_name Assigned to You',

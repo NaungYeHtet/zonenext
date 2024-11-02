@@ -21,9 +21,9 @@ class RateableFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::all()->random(),
-            'rating' => $this->faker->numberBetween(1, 10),
-            'description' => $this->faker->optional()->text(),
+            'user_id' => fake()->boolean() ? User::all()->random() : null,
+            'rating' => $this->faker->numberBetween(1, 5),
+            'review' => $this->faker->optional()->text(),
         ];
     }
 }

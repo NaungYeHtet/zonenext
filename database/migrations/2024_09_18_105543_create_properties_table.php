@@ -22,6 +22,7 @@ return new class extends Migration
             $table->json('description');
             $table->string('type', 30);
             $table->string('slug')->unique();
+            $table->string('code')->unique();
             $table->string('status', 30);
             $table->json('address');
             $table->string('cover_image');

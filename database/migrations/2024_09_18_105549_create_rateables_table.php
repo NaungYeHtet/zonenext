@@ -15,11 +15,10 @@ return new class extends Migration
 
         Schema::create('rateables', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->unsignedBigInteger('rateable_id');
-            $table->string('rateable_type', 30);
+            $table->foreignId('user_id')->nullable()->constrained();
+            $table->morphs('rateable');
             $table->integer('rating');
-            $table->string('description')->nullable();
+            $table->text('review')->nullable();
             $table->timestamps();
         });
 

@@ -34,6 +34,7 @@ class LoginController extends Controller
             'access_token' => $token,
             'user' => new UserResource($user),
             'token_type' => 'Bearer',
+            'language' => $request->language,
         ]);
     }
 
