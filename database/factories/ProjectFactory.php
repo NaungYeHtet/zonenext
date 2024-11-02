@@ -21,7 +21,7 @@ class ProjectFactory extends Factory
                 'en' => $this->faker->sentence(),
                 'my' => $this->faker->sentence(),
             ],
-            'image' => $this->faker->imageUrl(),
+            'image' => 'images/project/project'.rand(1, 9).'.jpg',
         ];
     }
 }

@@ -52,7 +52,6 @@ class Property extends Model
         'area_type' => AreaType::class,
         'area_unit' => AreaUnit::class,
         'bathrooms_count' => 'integer',
-        'is_rentable' => 'boolean',
         'price_type' => PropertyPriceType::class,
         'price_from' => 'integer',
         'price_to' => 'integer',
@@ -95,9 +94,9 @@ class Property extends Model
             if ($filterListType == FilterListType::Newest) {
                 $query->orderBy('posted_at', 'desc');
             } elseif ($filterListType == FilterListType::ForSale) {
-                $query->where('is_saleable', true);
+                $query->where('acquisition_type', PropertyAcquisitionType::Sale);
             } elseif ($filterListType == FilterListType::ForRent) {
-                $query->where('is_rentable', true);
+                $query->where('acquisition_type', PropertyAcquisitionType::Rent);
             }
         }
     }

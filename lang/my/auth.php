@@ -13,8 +13,8 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
-    'invalid_otp' => 'Invalid one time passcode, please try again',
+    'failed' => 'အီးမေးလ်(သို့)စကားဝှက် မမှန်ကန်ပါ.',
+    'invalid_otp' => 'တစ်ခါသုံးလျှို့ဝှက်ကုတ် မမှန်ကန်ပါ၊ ကျေးဇူးပြု၍ထပ်မံကြိုးစားပါ',
     'password' => 'The provided password is incorrect.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 

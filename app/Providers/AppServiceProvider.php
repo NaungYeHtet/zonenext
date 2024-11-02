@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Enums\OtpAction;
 use App\Listeners\LocaleChangedListener;
+use App\Services\OtpService;
 use BezhanSalleh\FilamentLanguageSwitch\Events\LocaleChanged;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Filament\Forms\Components\Field;
@@ -18,9 +20,11 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Columns\Column;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -134,5 +138,13 @@ class AppServiceProvider extends ServiceProvider
             LocaleChanged::class,
             LocaleChangedListener::class,
         );
+
+        VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
+            return (new MailMessage)
+                ->subject('Verify Email Address')
+                ->greeting("Hello {$notifiable->name}")
+                ->line('Here is your verification code, please do not share to anyone.')
+                ->line((new OtpService($notifiable->email))->generate(OtpAction::EMAIL_VERIFICATION));
+        });
     }
 }
