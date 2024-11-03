@@ -205,7 +205,7 @@ class Property extends Model
                 }
 
                 if ($attributes['price_type'] == PropertyPriceType::Range->value) {
-                    return number_format_price($attributes['price_from']).' - '.number_format_price($attributes['price_to'], withSymbol: false);
+                    return number_format_price($attributes['price_from']).' - '.number_format_price($attributes['price_to']);
                 }
 
                 return '';

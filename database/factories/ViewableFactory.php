@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use App\Models\Viewable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,9 +20,9 @@ class ViewableFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::all()->random(),
-            'viewable_id' => $this->faker->randomNumber(),
-            'viewable_type' => $this->faker->regexify('[A-Za-z0-9]{30}'),
+            'viewer_id' => $this->faker->uuid(),
+            'user_agent' => $this->faker->userAgent(),
+            'ip_address' => $this->faker->ipv4(),
         ];
     }
 }

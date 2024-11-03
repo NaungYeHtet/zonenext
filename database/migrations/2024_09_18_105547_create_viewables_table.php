@@ -15,8 +15,10 @@ return new class extends Migration
 
         Schema::create('viewables', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->uuid('viewer_id');
             $table->morphs('viewable');
+            $table->string('ip_address');
+            $table->string('user_agent')->nullable();
             $table->timestamps();
         });
 

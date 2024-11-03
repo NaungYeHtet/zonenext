@@ -19,7 +19,8 @@ class PropertyResource extends JsonResource
             'code' => $this->code,
             'slug' => $this->slug,
             'title' => $this->title,
-            'type' => $this->type->getLabel(),
+            'acquisition_type' => $this->acquisition_type->getSlug(),
+            'type' => $this->type->getOption(),
             'description' => $this->description,
             'cover_image' => is_valid_url($this->cover_image) ? $this->cover_image : Storage::disk('public')->url($this->cover_image),
             'price' => $this->price,
@@ -31,6 +32,7 @@ class PropertyResource extends JsonResource
             'bathrooms_count' => $this->bathrooms_count,
             'posted_at' => $this->posted_at->shortRelativeDiffForHumans(),
             'amenities' => $this->tags()->pluck('name')->toArray(),
+            'views_count' => $this->views_count,
         ];
     }
 }
