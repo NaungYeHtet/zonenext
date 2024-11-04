@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
+            FaqSeeder::class,
             TagSeeder::class,
             BedroomTypeSeeder::class,
             ShieldSeeder::class,

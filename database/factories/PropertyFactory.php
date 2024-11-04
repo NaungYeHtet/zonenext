@@ -211,13 +211,13 @@ class PropertyFactory extends Factory
         $coverImage = $property->cover_image;
 
         $coverImage = match ($property->type) {
-            PropertyType::Apartment, PropertyType::Condo, PropertyType::MiniCondo => 'images/property/condo'.rand(1, 35).'.jpg',
+            PropertyType::Apartment, PropertyType::Condo, PropertyType::MiniCondo => 'images/property/condo'.rand(1, 34).'.jpg',
             // PropertyType::Independent => 'images/property/independent'.rand(1, 29).'.jpg',
             default => 'images/property/independent'.rand(1, 29).'.jpg',
         };
 
         while ($count > 0) {
-            $images[] = 'images/property/condo'.rand(1, 35).'.jpg';
+            $images[] = 'images/property/condo'.rand(1, 34).'.jpg';
             // $images[] = match ($property->type) {
             //     PropertyType::Apartment, PropertyType::Condo, PropertyType::MiniCondo, PropertyType::Independent => 'images/property/condo'.rand(1, 36).'.jpg',
             //     default => $this->faker->imageUrl()

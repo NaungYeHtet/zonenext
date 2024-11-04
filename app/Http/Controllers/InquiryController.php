@@ -46,7 +46,7 @@ class InquiryController extends Controller
             event(new \App\Events\LeadSubmitted($lead));
         });
 
-        return $this->responseSuccess([], message: __('lead.notification.submitted.title'));
+        return $this->responseSuccess([], message: __('lead_trans.notification.submitted.title'));
     }
 
     public function submitProperty(InquiryPropertyRequest $request)
@@ -66,6 +66,6 @@ class InquiryController extends Controller
             event(new \App\Events\LeadSubmitted($lead));
         });
 
-        return $this->responseSuccess([], message: __('lead.notification.submitted.title'));
+        return $this->responseSuccess([], message: __('lead_trans.notification.submitted.title'));
     }
 }

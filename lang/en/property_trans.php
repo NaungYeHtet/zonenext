@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'label' => 'Property',
     'status' => [
         'Rent' => 'Rent',
     ],

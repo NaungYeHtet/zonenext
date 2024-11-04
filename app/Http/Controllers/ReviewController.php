@@ -22,6 +22,6 @@ class ReviewController extends Controller
 
         // event(new \App\Events\PropertyRatingSubmitted($property, $request->user()?->id));
 
-        return $this->responseSuccess([], __('rating.notification.submitted.title'));
+        return $this->responseSuccess([], __('rating_trans.notification.submitted.title'));
     }
 }

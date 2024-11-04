@@ -20,6 +20,9 @@ return [
         'property_created' => [
             'title' => 'Property created successfully',
         ],
+        'purchased' => [
+            'title' => 'Property sold/rented successfully',
+        ],
         'contacted' => [
             'title' => 'Lead marked as contacted successfully',
         ],

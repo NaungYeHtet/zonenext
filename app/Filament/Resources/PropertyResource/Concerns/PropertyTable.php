@@ -12,20 +12,21 @@ trait PropertyTable
         return [
             Tables\Columns\TextColumn::make('title')
                 ->searchable()
+                ->description(fn (Property $record) => $record->code)
                 ->wrap(),
             Tables\Columns\TextColumn::make('type')
-                ->badge()
+                ->color('primary')
                 ->formatStateUsing(fn (Property $record) => $record->type->getLabel().' | '.$record->acquisition_type->getLabel()),
             Tables\Columns\TextColumn::make('address')
                 ->wrap(),
             Tables\Columns\TextColumn::make('price')
                 ->label(__('Price'))
                 ->formatStateUsing(fn (string $state) => $state)
-                ->wrap(),
+                ->wrap(false),
             Tables\Columns\TextColumn::make('purchased_price')
                 ->label(__('Purchased price'))
                 ->formatStateUsing(fn (string $state) => number_format_price($state))
-                ->wrap(),
+                ->wrap(false),
         ];
     }
 }

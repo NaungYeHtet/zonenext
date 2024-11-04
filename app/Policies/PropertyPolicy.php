@@ -79,7 +79,7 @@ class PropertyPolicy
         return $user->hasRole('Agent') && $user->leads()->where('property_id', $property->id)->exists();
     }
 
-    public function updatePurchased(Admin $user, Property $property): bool
+    public function updateUnposted(Admin $user, Property $property): bool
     {
         if ($property->status != PropertyStatus::Posted) {
             return false;

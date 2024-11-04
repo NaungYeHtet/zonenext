@@ -81,6 +81,19 @@ class LeadPolicy
         return $user->hasRole('Agent') && $user->id === $lead->admin_id;
     }
 
+    public function purchaseProperty(Admin $user, Lead $lead): bool
+    {
+        if (! in_array($lead->status, [LeadStatus::Scheduled, LeadStatus::UnderNegotiation])) {
+            return false;
+        }
+
+        if ($lead->is_owner || $lead->interest == LeadInterest::Selling) {
+            return false;
+        }
+
+        return $user->hasRole('Agent') && $user->id === $lead->admin_id;
+    }
+
     public function close(Admin $user, Lead $lead): bool
     {
         if ($lead->status === LeadStatus::Closed || $lead->status == LeadStatus::Converted) {

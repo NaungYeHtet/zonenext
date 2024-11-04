@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\Lead\LeadContactMethod;
 use App\Enums\Lead\LeadContactTime;
 use App\Enums\LeadStatus;
+use App\Enums\PropertyAcquisitionType;
 use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
 use App\Filament\Resources\LeadResource\Pages;
@@ -160,6 +161,13 @@ class LeadResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(['first_name', 'last_name']),
+                Tables\Columns\TextColumn::make('property.code')
+                    ->description(function (Lead $record) {
+                        return $record->property?->status->getLabel();
+                    })
+                    ->copyable()
+                    ->copyMessage('Copied to clipboard')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('admin.name')
                     ->label(__('Agent'))
                     ->searchable()
@@ -174,6 +182,18 @@ class LeadResource extends Resource
                     ->options(LeadStatus::class)
                     ->multiple()
                     ->native(false),
+                Tables\Filters\SelectFilter::make('agent')
+                    ->label(__('Agent'))
+                    ->relationship('admin', 'name')
+                    ->multiple()
+                    ->native(false)
+                    ->preload()
+                    ->visible(fn () => $authUser instanceof Admin && ! $authUser->hasRole('Agent')),
+                Tables\Filters\SelectFilter::make('property_code')
+                    ->relationship('property', 'code')
+                    ->multiple()
+                    ->native(false)
+                    ->preload(),
             ], FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\Action::make('assign_agent')
@@ -201,13 +221,13 @@ class LeadResource extends Resource
                         $admin->notify(new \App\Notifications\LeadAssignedNotification($record));
 
                         Notification::make()
-                            ->title(__('lead.notification.agent_assigned.title', ['agent' => $admin->name]))
+                            ->title(__('lead_trans.notification.agent_assigned.title', ['agent' => $admin->name]))
                             ->success()
                             ->send();
                     }),
                 Tables\Actions\Action::make('create_property')
                     ->label(__('Property.label'))
-                    ->successNotification(Notification::make()->title(__('lead.notification.property_created.title'))->success())
+                    ->successNotification(Notification::make()->title(__('lead_trans.notification.property_created.title'))->success())
                     ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('createProperty', $record))
                     ->icon('gmdi-add')
                     ->button()
@@ -233,11 +253,128 @@ class LeadResource extends Resource
 
                         $action->success();
                     }),
+                Tables\Actions\Action::make('purchase')
+                    ->label(__('Sold/Rented'))
+                    ->label(fn (Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('property_trans.actions.sold.label') : __('property_trans.actions.rent.label'))
+                    ->successNotification(Notification::make()->title(__('lead_trans.notification.purchased.title'))->success())
+                    ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('purchaseProperty', $record))
+                    ->icon('gmdi-check')
+                    ->fillForm(fn (Lead $record) => [
+                        'property_id' => $record->property ? ($record->property->status == PropertyStatus::Posted ? $record->property->id : null) : null,
+                        'purchased_price' => $record->property ? $record->property->price_from : null,
+                        'owner_commission' => $record->property ? $record->property->owner_commission : null,
+                        'customer_commission' => $record->property ? $record->property->customer_commission : null,
+                    ])
+                    ->button()
+                    ->color('success')
+                    ->modalSubmitActionLabel(__('filament-actions::modal.actions.confirm.label'))
+                    ->form(fn (Lead $record) => [
+                        Forms\Components\Split::make([
+                            Forms\Components\Section::make([
+                                Forms\Components\Placeholder::make('title')
+                                    ->label(__('Title'))
+                                    ->content(fn (Forms\Get $get) => Property::find($get('property_id'))?->title),
+                                Forms\Components\Placeholder::make('price')
+                                    ->label(__('Price'))
+                                    ->content(fn (Forms\Get $get) => Property::find($get('property_id'))?->price),
+                                Forms\Components\Placeholder::make('commission')
+                                    ->label(__('Commission'))
+                                    ->content(fn (Forms\Get $get) => Property::find($get('property_id'))?->commission_description),
+                            ]),
+                            Forms\Components\Section::make([
+                                Forms\Components\Select::make('property_id')
+                                    ->options(function (Lead $record) {
+                                        return Property::where('status', PropertyStatus::Posted->value)
+                                            ->where('acquisition_type', $record->interest->getPropertyAcquisitionType())->pluck('code', 'id');
+                                    })
+                                    ->label('Property code')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                                        if ($state) {
+                                            $property = Property::find($state);
+                                            $set('purchased_price', $property->price_from);
+                                            $set('owner_percent', $property->owner_commission);
+                                            $set('customer_percent', $property->customer_commission);
+                                        }
+                                    })
+                                    ->live(),
+                                Forms\Components\TextInput::make('purchased_price')
+                                    ->label(fn (Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('Sold price') : __('Rented price'))
+                                    ->numeric()
+                                    ->required()
+                                    ->rules([
+                                        'required',
+                                        'numeric',
+                                        'integer',
+                                        'min:1',
+                                    ])
+                                    ->live(),
+                                Forms\Components\TextInput::make('owner_commission')
+                                    ->label(fn (Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('Commission (Seller)') : __('Commission (Landlord)'))
+                                    ->numeric()
+                                    ->required()
+                                    ->rules([
+                                        'required',
+                                        'numeric',
+                                        'integer',
+                                        'min:1',
+                                    ])
+                                    ->live(),
+                                Forms\Components\TextInput::make('customer_commission')
+                                    ->label(fn () => __('Commission (Renter)'))
+                                    ->numeric()
+                                    ->required()
+                                    ->rules([
+                                        'required',
+                                        'numeric',
+                                        'integer',
+                                        'min:1',
+                                    ])
+                                    ->live()
+                                    ->visible(fn (Forms\Get $get) => Property::find($get('property_id'))?->acquisition_type == PropertyAcquisitionType::Rent),
+                                Forms\Components\Placeholder::make('purchased_commission')
+                                    ->label(fn (Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('Sold commission') : __('Rented commission'))
+                                    ->content(function (Forms\Get $get) {
+                                        $purchasedPrice = (float) $get('purchased_price') ?? 0;
+                                        $ownerCommission = (float) $get('owner_commission') ?? 0;
+                                        $customerCommission = (float) $get('customer_commission') ?? 0;
+
+                                        return number_format_price(($purchasedPrice * $ownerCommission / 100) + ($purchasedPrice * $customerCommission / 100));
+                                    }),
+                            ]),
+
+                        ])->from('md'),
+                    ])
+                    ->modalWidth(MaxWidth::FiveExtraLarge)
+                    ->action(function (array $data, Lead $record, Tables\Actions\Action $action) {
+                        DB::transaction(function () use ($data, $record) {
+                            $property = Property::find($data['property_id']);
+                            $purchasedPrice = $data['purchased_price'];
+                            $ownerCommission = $data['owner_commission'];
+                            $customerCommission = $data['customer_commission'];
+
+                            $property->update([
+                                'customer_id' => $record->id,
+                                'purchased_price' => $purchasedPrice,
+                                'purchased_commission' => ($purchasedPrice * $ownerCommission / 100) + ($purchasedPrice * $customerCommission / 100),
+                                'status' => PropertyStatus::Purchased,
+                            ]);
+
+                            $record->update([
+                                'property_id' => $property->id,
+                                'status' => LeadStatus::Converted,
+                            ]);
+                        });
+
+                        $action->success();
+                    }),
                 Tables\Actions\Action::make('contacted_lead')
                     ->label(__('Contact'))
                     ->iconButton()
                     ->modalSubmitActionLabel(__('Contacted'))
-                    ->successNotification(Notification::make()->title(__('lead.notification.contacted.title'))->success())
+                    ->successNotification(Notification::make()->title(__('lead_trans.notification.contacted.title'))->success())
                     ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('contacted', $record))
                     ->icon('gmdi-phone')
                     ->button()
@@ -272,7 +409,7 @@ class LeadResource extends Resource
                 Tables\Actions\Action::make('scheduled_lead')
                     ->label(__('Scheduled'))
                     ->iconButton()
-                    ->successNotification(Notification::make()->title(__('lead.notification.scheduled.title'))->success())
+                    ->successNotification(Notification::make()->title(__('lead_trans.notification.scheduled.title'))->success())
                     ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('scheduled', $record))
                     ->icon('gmdi-calendar-month-o')
                     ->button()
@@ -298,7 +435,7 @@ class LeadResource extends Resource
                     ->label(__('Close'))
                     ->modalSubmitActionLabel(__('Confirm'))
                     ->iconButton()
-                    ->successNotification(Notification::make()->title(__('lead.notification.closed.title'))->success())
+                    ->successNotification(Notification::make()->title(__('lead_trans.notification.closed.title'))->success())
                     ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('close', $record))
                     ->icon('gmdi-close-o')
                     ->button()
@@ -327,10 +464,12 @@ class LeadResource extends Resource
                 //     ->color('warning'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
+            ])
+            ->recordAction(null)
+            ->recordUrl(null);
     }
 
     public static function getRelations(): array

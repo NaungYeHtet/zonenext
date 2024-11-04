@@ -2,12 +2,9 @@
 
 namespace App\Filament\Resources\PropertyResource\Concerns;
 
-use App\Enums\PropertyPriceType;
 use App\Enums\PropertyStatus;
 use Filament\Facades\Filament;
-use Filament\Forms;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,6 +21,7 @@ trait PropertyAction
             Tables\Actions\Action::make('post')
                 ->iconButton()
                 ->color('primary')
+                ->requiresConfirmation()
                 ->successNotification(Notification::make()->title(__('Posted successfully'))->success())
                 ->visible(fn (Model $record): bool => Filament::auth()->user()->can('updatePosted', $record))
                 ->icon('gmdi-post-add-o')
@@ -33,51 +31,17 @@ trait PropertyAction
                     ]);
                     $action->success();
                 }),
-            Tables\Actions\Action::make('purchased')
+            Tables\Actions\Action::make('unpost')
                 ->iconButton()
-                ->icon('bi-house-check')
-                ->color('success')
-                ->successNotification(Notification::make()->title(__('Updated property status to purchased.'))->success())
-                ->visible(fn (Model $record): bool => Filament::auth()->user()->can('purchased', $record))
-                ->modalSubmitActionLabel(__('filament-actions::modal.actions.confirm.label'))
-                ->form([
-                    Forms\Components\Placeholder::make('price')
-                        ->label(__('Price'))
-                        ->content(function (Model $record) {
-                            return $record->price;
-                        }),
-                    Forms\Components\Placeholder::make('commission')
-                        ->label(__('Commission'))
-                        ->content(function (Model $record) {
-                            return $record->commission_description;
-                        }),
-                    Forms\Components\TextInput::make('purchased_price')
-                        ->numeric()
-                        ->required()
-                        ->default(fn (Model $record) => $record->price_type == PropertyPriceType::Fix ? $record->price_from : 0)
-                        ->rules([
-                            'required',
-                            'numeric',
-                            'integer',
-                            'min:1',
-                        ]),
-                    Forms\Components\TextInput::make('purchased_commission')
-                        ->numeric()
-                        ->required()
-                        ->default(fn (Model $record) => $record->price_type == PropertyPriceType::Fix ? ($record->price_from * $record->owner_commission / 100) + ($record->price_from * $record->customer_commission / 100) : 0)
-                        ->rules([
-                            'required',
-                            'numeric',
-                            'integer',
-                            'min:1',
-                        ]),
-                ])
-                ->modalWidth(MaxWidth::Medium)
+                ->color('primary')
+                ->requiresConfirmation()
+                ->successNotification(Notification::make()->title(__('Unposted successfully'))->success())
+                ->visible(fn (Model $record): bool => Filament::auth()->user()->can('updateUnposted', $record))
+                ->icon('gmdi-playlist-remove-o')
                 ->action(function (Model $record, Tables\Actions\Action $action): void {
                     $record->update([
-                        'status' => PropertyStatus::Purchased,
+                        'status' => PropertyStatus::Draft,
                     ]);
-
                     $action->success();
                 }),
             Tables\Actions\Action::make('trash')

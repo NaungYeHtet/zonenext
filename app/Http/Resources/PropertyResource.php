@@ -15,11 +15,16 @@ class PropertyResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $agent = $this->owner->admin;
+
         return [
             'code' => $this->code,
             'slug' => $this->slug,
             'title' => $this->title,
-            'acquisition_type' => $this->acquisition_type->getSlug(),
+            'acquisition_type' => [
+                'value' => $this->acquisition_type->getSlug(),
+                'label' => $this->acquisition_type->getLabel(),
+            ],
             'type' => $this->type->getOption(),
             'description' => $this->description,
             'cover_image' => is_valid_url($this->cover_image) ? $this->cover_image : Storage::disk('public')->url($this->cover_image),
@@ -33,6 +38,10 @@ class PropertyResource extends JsonResource
             'posted_at' => $this->posted_at->shortRelativeDiffForHumans(),
             'amenities' => $this->tags()->pluck('name')->toArray(),
             'views_count' => $this->views_count,
+            'agent_phone' => $agent->phone,
+            'agent_name' => $agent->name,
+            'agent_image' => $agent->image,
+            'agent_email' => $agent->email,
         ];
     }
 }

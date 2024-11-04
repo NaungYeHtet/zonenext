@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AgentController;
 use App\Http\Controllers\Auth\ProfileController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\PropertyController;
@@ -40,5 +42,11 @@ Route::prefix('properties')->controller(PropertyController::class)->group(functi
     Route::get('/', 'index');
     Route::get('/{property}', 'show');
 });
+
+Route::prefix('agents')->controller(AgentController::class)->group(function () {
+    Route::get('/', 'index');
+});
+
+Route::get('faqs', FaqController::class);
 
 Route::get('groups', GroupController::class);

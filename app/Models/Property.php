@@ -247,7 +247,7 @@ class Property extends Model
                 $tranKey = 'by_month_'.(int) ($commission);
             }
 
-            $commissionDescription = __("property.acquisition.commission.{$tranKey}", [
+            $commissionDescription = __("property_trans.acquisition.commission.{$tranKey}", [
                 'percentage' => number_format_tran($commission).'%',
             ]);
         }
@@ -257,7 +257,7 @@ class Property extends Model
             $totalDescription = " ({$total})";
         }
 
-        return __('property.acquisition.commission.by', [
+        return __('property_trans.acquisition.commission.by', [
             'commission' => $commissionDescription,
             'commission_by' => $by,
         ]).$totalDescription;

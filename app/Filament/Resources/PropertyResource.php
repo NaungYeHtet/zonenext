@@ -25,7 +25,7 @@ class PropertyResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('property.label');
+        return __('Property');
     }
 
     public static function getNavigationGroup(): ?string
@@ -61,7 +61,9 @@ class PropertyResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->recordAction(null)
+            ->recordUrl(null);
     }
 
     public static function getRelations(): array

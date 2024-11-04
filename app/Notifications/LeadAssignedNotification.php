@@ -42,10 +42,10 @@ class LeadAssignedNotification extends Notification
 
         return FilamentNotification::make()
             ->success()
-            ->title(__('lead.notification.assigned.title', [
+            ->title(__('lead_trans.notification.assigned.title', [
                 'lead_name' => $this->lead->name,
             ]))
-            ->body(__('lead.notification.assigned.body', [
+            ->body(__('lead_trans.notification.assigned.body', [
                 'lead_name' => $this->lead->name,
                 'contact' => $this->lead->contact,
             ]))
@@ -63,13 +63,13 @@ class LeadAssignedNotification extends Notification
         return FilamentNotification::make()
             ->success()
             ->title(json_encode([
-                'key' => 'lead.notification.assigned.title',
+                'key' => 'lead_trans.notification.assigned.title',
                 'replace' => [
                     'lead_name' => $this->lead->name,
                 ],
             ]))
             ->body(json_encode([
-                'key' => 'lead.notification.assigned.body',
+                'key' => 'lead_trans.notification.assigned.body',
                 'replace' => [
                     'lead_name' => $this->lead->name,
                     'contact' => $this->lead->contact,
