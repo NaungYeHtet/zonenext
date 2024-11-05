@@ -13,6 +13,8 @@ use App\Filament\Resources\PropertyResource\Concerns\PropertyForm;
 use App\Models\Admin;
 use App\Models\Lead;
 use App\Models\Property;
+use App\Notifications\PropertyCreatedNotification;
+use App\Notifications\PropertyPurchasedNotification;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -226,7 +228,7 @@ class LeadResource extends Resource
                             ->send();
                     }),
                 Tables\Actions\Action::make('create_property')
-                    ->label(__('Property.label'))
+                    ->label(__('Property'))
                     ->successNotification(Notification::make()->title(__('lead_trans.notification.property_created.title'))->success())
                     ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('createProperty', $record))
                     ->icon('gmdi-add')
@@ -236,11 +238,10 @@ class LeadResource extends Resource
                     ->modalSubmitAction(false)
                     ->modalWidth(MaxWidth::FiveExtraLarge)
                     ->action(function (array $data, Lead $record, Tables\Actions\Action $action) {
-                        $data['status'] = PropertyStatus::Draft;
-                        $data['square_feet'] = null;
-
                         DB::transaction(function () use ($data, $record) {
                             $property = Property::create([
+                                'status' => PropertyStatus::Posted,
+                                'square_feet' => null,
                                 'owner_id' => $record->id,
                                 ...$data,
                             ]);
@@ -249,6 +250,8 @@ class LeadResource extends Resource
                                 'property_id' => $property->refresh()->id,
                                 'status' => LeadStatus::Converted,
                             ]);
+
+                            $record->notify(new PropertyCreatedNotification($property));
                         });
 
                         $action->success();
@@ -357,6 +360,7 @@ class LeadResource extends Resource
 
                             $property->update([
                                 'customer_id' => $record->id,
+                                'purchased_at' => now(),
                                 'purchased_price' => $purchasedPrice,
                                 'purchased_commission' => ($purchasedPrice * $ownerCommission / 100) + ($purchasedPrice * $customerCommission / 100),
                                 'status' => PropertyStatus::Purchased,
@@ -366,6 +370,9 @@ class LeadResource extends Resource
                                 'property_id' => $property->id,
                                 'status' => LeadStatus::Converted,
                             ]);
+
+                            $property->owner->notify(new PropertyPurchasedNotification($property));
+                            $record->notify(new PropertyPurchasedNotification($property));
                         });
 
                         $action->success();
@@ -459,9 +466,9 @@ class LeadResource extends Resource
                     }),
                 Tables\Actions\ViewAction::make()
                     ->button(),
-                // Tables\Actions\EditAction::make()
-                //     ->button()
-                //     ->color('warning'),
+                Tables\Actions\EditAction::make()
+                    ->button()
+                    ->color('warning'),
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([

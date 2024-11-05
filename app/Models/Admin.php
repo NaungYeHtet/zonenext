@@ -64,18 +64,19 @@ class Admin extends Authenticatable implements FilamentUser
 
     public function scopeLeadAssignment(Builder $query, ?Lead $lead)
     {
-        if ($lead) {
-            if ($lead->property_id) {
-                $query->where('id', $lead->property->owner->admin_id);
-            } else {
-                $query->withCount('leads')
-                    ->agent()
-                    ->preferredLeadTypes($lead->interest, $lead->is_owner)
-                    ->preferredPropertyTypes($lead->property_type)
-                    ->preferredTownships($lead->township_id)
-                    ->orderBy('leads_count', 'asc');
-            }
-        }
+        $query->where('email', 'naungyehtet.zonenextagent@gmail.com');
+        // if ($lead) {
+        //     if ($lead->property_id) {
+        //         $query->where('id', $lead->property->owner->admin_id);
+        //     } else {
+        //         $query->withCount('leads')
+        //             ->agent()
+        //             ->preferredLeadTypes($lead->interest, $lead->is_owner)
+        //             ->preferredPropertyTypes($lead->property_type)
+        //             ->preferredTownships($lead->township_id)
+        //             ->orderBy('leads_count', 'asc');
+        //     }
+        // }
     }
 
     public function scopePreferredLeadTypes(Builder $query, ?LeadInterest $leadInterest = null, ?bool $isOwner = null)

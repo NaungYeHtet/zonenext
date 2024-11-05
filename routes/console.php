@@ -6,6 +6,7 @@ use App\Models\Lead;
 use App\Models\Property;
 use App\Models\Township;
 use App\Models\User;
+use App\Notifications\LeadConvertedNotification;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -23,8 +24,10 @@ Artisan::command('inspire', function () {
 
     // dd($admin->leads->pluck('property_id')->toArray());
 
-    $user = User::where('email', 'naungyehtet.zonenextuser@gmail.com')->first();
+    // $user = User::where('email', 'naungyehtet.zonenextuser@gmail.com')->first();
 
-    $user->sendEmailVerificationNotification();
+    $lead = Lead::find(1550);
+
+    $lead->notify(new LeadConvertedNotification);
 
 })->purpose('Display an inspiring quote')->hourly();

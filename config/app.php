@@ -84,6 +84,7 @@ return [
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
     'frontent_url' => env('FRONTEND_URL', 'http://localhost:3000'),
+    'support_email' => env('SUPPORT_EMAIL', 'naungyehtet717@gmail.com'),
 
     /*
     |--------------------------------------------------------------------------
