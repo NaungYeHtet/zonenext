@@ -74,6 +74,16 @@ class Property extends Model
         $query->where('status', PropertyStatus::Posted->value);
     }
 
+    public function scopeSale(Builder $query)
+    {
+        $query->where('acquisition_type', PropertyAcquisitionType::Sale);
+    }
+
+    public function scopeRent(Builder $query)
+    {
+        $query->where('acquisition_type', PropertyAcquisitionType::Rent);
+    }
+
     // Scope for list type filtering (Newest, ForSale, ForRent)
     public function scopeFilterListType(Builder $query, $listType)
     {

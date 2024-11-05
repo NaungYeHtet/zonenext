@@ -39,7 +39,7 @@ class GroupSeeder extends Seeder
             [
                 'name' => [
                     'en' => 'Most popular properties',
-                    'my' => 'လူကြိုက်များသေား အိမ်ခြံမြေအရောင်းများ',
+                    'my' => 'လူကြိုက်များသော အိမ်ခြံမြေအရောင်းများ',
                 ],
                 'updatable' => false,
                 'is_project' => false,

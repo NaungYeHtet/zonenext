@@ -33,6 +33,19 @@ enum LeadStatus: string implements HasColor, HasLabel
         };
     }
 
+    public function getHexColor(): string|array|null
+    {
+        return match ($this) {
+            self::New => '#6B7280',
+            self::Assigned => '#3e32a8',
+            self::Contacted => '#92a832',
+            self::Scheduled => '#fcf819',
+            self::UnderNegotiation => '#fc7819',
+            self::Converted => '#47ff56',
+            self::Closed => '#004a06',
+        };
+    }
+
     public function getOrder(): int
     {
         return match ($this) {

@@ -27,6 +27,10 @@ trait PropertyTable
                 ->label(__('Purchased price'))
                 ->formatStateUsing(fn (string $state) => number_format_price($state))
                 ->wrap(false),
+            Tables\Columns\TextColumn::make('purchased_commission')
+                ->label(__('Purchased commission'))
+                ->formatStateUsing(fn (string $state) => number_format_price($state))
+                ->wrap(false),
         ];
     }
 }

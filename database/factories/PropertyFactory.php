@@ -147,6 +147,14 @@ class PropertyFactory extends Factory
             $lead->update([
                 'status' => LeadStatus::Converted,
             ]);
+        } else {
+            $lead = Lead::factory()->create([
+                'status' => LeadStatus::Converted,
+                'property_id' => $property->id,
+                'property_type' => $property->type,
+                'interest' => $property->acquisition_type == PropertyAcquisitionType::Rent ? LeadInterest::Renting : LeadInterest::Buying,
+                'is_owner' => false,
+            ]);
         }
 
         return $lead;

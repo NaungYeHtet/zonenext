@@ -5,49 +5,23 @@ namespace App\Filament\Widgets;
 use App\Enums\Lead\LeadInterest;
 use App\Enums\LeadStatus;
 use App\Models\Admin;
-use Carbon\Carbon;
-use Filament\Facades\Filament;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use App\Models\Lead;
+use App\Traits\FilamentWidgetHelper;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class AgentStatusWidget extends BaseWidget
 {
-    use InteractsWithPageFilters;
+    use FilamentWidgetHelper;
 
     protected static ?string $pollingInterval = '300s';
 
     protected function getStats(): array
     {
         $stats = [];
-        $authUser = Filament::auth()->user();
+        $agent = $this->getAgent();
 
-        if (! $authUser instanceof Admin) {
-            abort(403);
-        }
-
-        if (! ($this->filters)) {
-            return [];
-        }
-
-        if ($authUser->hasRole('Agent')) {
-            $agent = $authUser;
-        } elseif (array_key_exists('agent_id', $this->filters)) {
-            $agent = Admin::find($this->filters['agent_id']);
-        }
-
-        if (! $agent) {
-            return [];
-        }
-
-        $startDate = now()->startOfMonth()->format('Y-m-d');
-        $endDate = now()->format('Y-m-d 23:59:59');
-        if (array_key_exists('date_range', $this->filters) && $this->filters['date_range']) {
-            $dates = explode(' - ', $this->filters['date_range']);
-
-            $startDate = Carbon::createFromFormat('d/m/Y', $dates[0])->format('Y-m-d');
-            $endDate = Carbon::createFromFormat('d/m/Y', $dates[1])->format('Y-m-d 23:59:59');
-        }
+        [$startDate, $endDate] = $this->getDateRanges();
 
         // Get the lead assigned and converted counts
         $leadAssigned = $this->getLeadCount($agent, $startDate, $endDate);
@@ -80,9 +54,11 @@ class AgentStatusWidget extends BaseWidget
         return $stats;
     }
 
-    protected function getLeadCount(Admin $agent, string $startDate, string $endDate, ?array $status = null)
+    protected function getLeadCount(?Admin $agent, string $startDate, string $endDate, ?array $status = null)
     {
-        $query = $agent->leads()->whereBetween('leads.created_at', [$startDate, $endDate]);
+        $query = Lead::when($agent, function ($query) use ($agent) {
+            $query->where('admin_id', $agent->id);
+        })->whereBetween('leads.created_at', [$startDate, $endDate]);
 
         if (! is_null($status)) {
             $query->whereIn('leads.status', $status);
@@ -92,9 +68,11 @@ class AgentStatusWidget extends BaseWidget
     }
 
     // Define a function to calculate total sale or rent value based on interest type
-    protected function getTotalValue(Admin $agent, string $startDate, string $endDate, array $interestTypes, ?string $column = 'purchased_price')
+    protected function getTotalValue(?Admin $agent, string $startDate, string $endDate, array $interestTypes, ?string $column = 'purchased_price')
     {
-        return $agent->leads()
+        return Lead::when($agent, function ($query) use ($agent) {
+            $query->where('admin_id', $agent->id);
+        })
             ->whereBetween('leads.created_at', [$startDate, $endDate])
             ->join('properties', 'leads.property_id', '=', 'properties.id')
             ->where('leads.status', LeadStatus::Converted)

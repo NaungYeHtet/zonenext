@@ -70,6 +70,7 @@ class LeadFactory extends Factory
             'bedrooms' => $this->faker->optional()->randomNumber(1),
             'bathrooms' => $this->faker->optional()->randomNumber(1),
             'notes' => $this->faker->optional()->sentence(),
+            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }
 
@@ -97,12 +98,22 @@ class LeadFactory extends Factory
             $admin->notify(new \App\Notifications\LeadAssignedNotification($lead));
 
             if ($lead->interest != LeadInterest::Buying && $lead->is_owner && $lead->status == LeadStatus::Converted) {
-                Property::factory()
+                $property = Property::factory()
                     ->create([
                         'owner_id' => $lead->id,
                         'type' => $lead->property_type,
                         'acquisition_type' => $lead->interest == LeadInterest::Selling ? PropertyAcquisitionType::Sale : PropertyAcquisitionType::Rent,
                     ]);
+
+                $lead->update([
+                    'created_at' => $property->created_at->subDays(rand(1, 30)),
+                ]);
+            } else {
+                if ($lead->property_id && $lead->property->posted_at) {
+                    $lead->update([
+                        'created_at' => $lead->property->posted_at->addDays(rand(1, 30)),
+                    ]);
+                }
             }
         });
     }
