@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\LeadBuyerResource\Widgets\AppointmentWidget;
 use App\Filament\Resources\LeadRenterResource\Pages;
 use App\Models\Lead;
 use Filament\Forms\Form;
@@ -43,13 +44,20 @@ class LeadRenterResource extends Resource
     public static function table(Table $table): Table
     {
         return LeadResource::table($table)
-            ->modifyQueryUsing(fn (Builder $query) => $query->renter());
+            ->modifyQueryUsing(fn(Builder $query) => $query->renter());
     }
 
     public static function getRelations(): array
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            AppointmentWidget::class
         ];
     }
 

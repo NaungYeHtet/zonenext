@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\LeadBuyerResource\Pages;
+use App\Filament\Resources\LeadBuyerResource\Widgets\AppointmentWidget;
 use App\Models\Lead;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -50,6 +51,13 @@ class LeadBuyerResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets():array
+    {
+        return [
+            AppointmentWidget::class
         ];
     }
 

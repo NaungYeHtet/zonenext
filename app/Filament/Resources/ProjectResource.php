@@ -39,14 +39,15 @@ class ProjectResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->default(fake()->sentence())
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->translatable(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at', 'desc'))
+            ->modifyQueryUsing(fn(Builder $query) => $query->orderBy('created_at', 'desc'))
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->height(100),

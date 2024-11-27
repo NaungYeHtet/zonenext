@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\LeadBuyerResource\Pages;
 
 use App\Filament\Resources\LeadBuyerResource;
+use App\Filament\Resources\LeadBuyerResource\Widgets\AppointmentWidget;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,6 +15,13 @@ class ListLeadBuyers extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            AppointmentWidget::make(),
         ];
     }
 }

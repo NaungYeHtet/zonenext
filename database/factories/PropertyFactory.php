@@ -37,8 +37,8 @@ class PropertyFactory extends Factory
 
         $township = Township::whereRelation('state', 'slug', 'yangon')->get()->random();
         $address = [
-            'en' => $this->faker->streetAddress().', '.$township->full_address_detail['en'],
-            'my' => $this->faker->streetAddress().', '.$township->full_address_detail['my'],
+            'en' => $this->faker->streetAddress() . ', ' . $township->full_address_detail['en'],
+            'my' => $this->faker->streetAddress() . ', ' . $township->full_address_detail['my'],
         ];
 
         return [
@@ -122,7 +122,7 @@ class PropertyFactory extends Factory
                 'status' => get_weighted_random_element([
                     LeadStatus::Assigned->value => 40,
                     LeadStatus::Contacted->value => 40,
-                    LeadStatus::Scheduled->value => 10,
+                    LeadStatus::FollowedUp->value => 10,
                     LeadStatus::UnderNegotiation->value => 10,
                 ]),
                 'property_id' => $property->id,
@@ -141,7 +141,7 @@ class PropertyFactory extends Factory
             return null;
         }
 
-        $lead = $property->leads()->inRandomOrder()->whereIn('status', [LeadStatus::Scheduled->value, LeadStatus::UnderNegotiation->value])->first();
+        $lead = $property->leads()->inRandomOrder()->whereIn('status', [LeadStatus::FollowedUp->value, LeadStatus::UnderNegotiation->value])->first();
 
         if ($lead) {
             $lead->update([
@@ -219,13 +219,13 @@ class PropertyFactory extends Factory
         $coverImage = $property->cover_image;
 
         $coverImage = match ($property->type) {
-            PropertyType::Apartment, PropertyType::Condo, PropertyType::MiniCondo => 'images/property/condo'.rand(1, 34).'.jpg',
-            // PropertyType::Independent => 'images/property/independent'.rand(1, 29).'.jpg',
-            default => 'images/property/independent'.rand(1, 29).'.jpg',
+            PropertyType::Apartment, PropertyType::Condo, PropertyType::MiniCondo => 'images/property/condo' . rand(1, 34) . '.jpg',
+                // PropertyType::Independent => 'images/property/independent'.rand(1, 29).'.jpg',
+            default => 'images/property/independent' . rand(1, 29) . '.jpg',
         };
 
         while ($count > 0) {
-            $images[] = 'images/property/condo'.rand(1, 34).'.jpg';
+            $images[] = 'images/property/condo' . rand(1, 34) . '.jpg';
             // $images[] = match ($property->type) {
             //     PropertyType::Apartment, PropertyType::Condo, PropertyType::MiniCondo, PropertyType::Independent => 'images/property/condo'.rand(1, 36).'.jpg',
             //     default => $this->faker->imageUrl()

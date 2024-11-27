@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\AppointmentStatus;
 use App\Enums\Lead\LeadInterest;
 use App\Enums\LeadStatus;
 use App\Models\Admin;
@@ -59,6 +60,36 @@ class LeadPolicy
         return $user->hasRole('Agent') && $user->id === $lead->admin_id;
     }
 
+    public function appointment(Admin $user, Lead $lead): bool
+    {
+        if ($lead->status != LeadStatus::Contacted) {
+            return false;
+        }
+
+        $appointment = $lead->appointments()->where('status', AppointmentStatus::Pending)->first();
+
+        if ($appointment) {
+            return false;
+        }
+
+        return $user->hasRole('Agent') && $user->id === $lead->admin_id;
+    }
+
+    public function updateAppointment(Admin $user, Lead $lead): bool
+    {
+        if ($lead->status != LeadStatus::Contacted) {
+            return false;
+        }
+
+        $appointment = $lead->appointments()->where('status', AppointmentStatus::Pending)->first();
+
+        if (! $appointment) {
+            return false;
+        }
+
+        return $user->hasRole('Agent') && $user->id === $lead->admin_id;
+    }
+
     public function scheduled(Admin $user, Lead $lead): bool
     {
         if ($lead->status != LeadStatus::Contacted) {
@@ -70,7 +101,7 @@ class LeadPolicy
 
     public function createProperty(Admin $user, Lead $lead): bool
     {
-        if (! in_array($lead->status, [LeadStatus::Scheduled, LeadStatus::UnderNegotiation])) {
+        if (! in_array($lead->status, [LeadStatus::FollowedUp, LeadStatus::UnderNegotiation])) {
             return false;
         }
 
@@ -83,7 +114,7 @@ class LeadPolicy
 
     public function purchaseProperty(Admin $user, Lead $lead): bool
     {
-        if (! in_array($lead->status, [LeadStatus::Scheduled, LeadStatus::UnderNegotiation])) {
+        if (! in_array($lead->status, [LeadStatus::FollowedUp, LeadStatus::UnderNegotiation])) {
             return false;
         }
 

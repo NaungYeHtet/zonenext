@@ -29,6 +29,18 @@ return [
         'scheduled' => [
             'title' => 'Lead marked as scheduled successfully',
         ],
+        'appointment_created' => [
+            'title' => 'Appointment scheduled successfully',
+        ],
+        'appointment_updated' => [
+            'title' => 'Appointment updated successfully',
+        ],
+        'appointment_cancelled' => [
+            'title' => 'Appointment cancelled successfully',
+        ],
+        'appointment_followed_up' => [
+            'title' => 'Lead marked as followed up successfully',
+        ],
         'closed' => [
             'title' => 'Lead closed successfully',
         ],

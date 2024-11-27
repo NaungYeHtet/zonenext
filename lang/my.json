@@ -43,6 +43,9 @@
     "Property code": "အိမ်ခြံမြေကုတ်ဒ်",
     "Date": "ရက်စွဲ",
     "Date range": "ရက်စွဲအပိုင်းအခြား",
+    "Cancel": "ပယ်ဖျက်မည်",
+    "Edit": "ပြင်မည်",
+    "Appointment": "ရက်ချိန်း",
 
     "East": "အရှေ့",
     "West": "အနောက်",
@@ -181,7 +184,7 @@
     "Assign": "တာဝန်ပေးမည်",
     "Contacted": "ဆက်သွယ်ပြီး",
     "Contact": "ဆက်သွယ်မည်",
-    "Scheduled": "စီစဥ်ပြီး",
+    "Followed up": "ဆောင်ရွက်ပြီး",
     "Schedule": "အချိန်ဇယား",
     "Under negotiation": "ညှိနှိုင်းဆဲ",
     "Converted": "ပြောင်းလဲပြီး",

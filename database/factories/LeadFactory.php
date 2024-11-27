@@ -2,12 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Enums\AppointmentStatus;
 use App\Enums\Lead\LeadInterest;
 use App\Enums\LeadStatus;
 use App\Enums\PropertyAcquisitionType;
 use App\Enums\PropertyPriceType;
 use App\Enums\PropertyType;
 use App\Models\Admin;
+use App\Models\Appointment;
 use App\Models\Lead;
 use App\Models\Property;
 use App\Models\Township;
@@ -46,7 +48,7 @@ class LeadFactory extends Factory
             'status' => get_weighted_random_element([
                 LeadStatus::Assigned->value => 10,
                 LeadStatus::Contacted->value => 10,
-                LeadStatus::Scheduled->value => 5,
+                LeadStatus::FollowedUp->value => 5,
                 LeadStatus::UnderNegotiation->value => 5,
                 LeadStatus::Converted->value => 30,
                 LeadStatus::Closed->value => 40,
@@ -112,6 +114,24 @@ class LeadFactory extends Factory
                 if ($lead->property_id && $lead->property->posted_at) {
                     $lead->update([
                         'created_at' => $lead->property->posted_at->addDays(rand(1, 30)),
+                    ]);
+                }
+            }
+
+            if (in_array($lead->status, [LeadStatus::Contacted, LeadStatus::UnderNegotiation, LeadStatus::Converted])) {
+                $status = $lead->status == LeadStatus::Converted ? AppointmentStatus::Completed : AppointmentStatus::Pending;
+
+                Appointment::factory()->create([
+                    'lead_id' => $lead->id,
+                    'date' => $lead->created_at->addDays(rand(1, 10)),
+                    'status' => $status
+                ]);
+
+                if ($status == AppointmentStatus::Completed) {
+                    Appointment::factory(rand(0, 3))->create([
+                        'lead_id' => $lead->id,
+                        'date' => $lead->created_at->addDays(rand(1, 10)),
+                        'status' => AppointmentStatus::Cancelled
                     ]);
                 }
             }

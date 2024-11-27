@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class FaqResource extends Resource
 {
@@ -43,6 +44,7 @@ class FaqResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->orderBy('updated_at', 'desc'))
             ->columns([
                 Tables\Columns\TextColumn::make('question')
                     ->searchable()

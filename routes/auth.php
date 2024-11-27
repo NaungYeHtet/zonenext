@@ -13,7 +13,7 @@ Route::post('login', [LoginController::class, 'store'])->middleware('guest', 'th
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])
-        ->name('logout');
+        ->name('logout')->withoutMiddleware(LocalizationMiddleware::class);
 
     Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')

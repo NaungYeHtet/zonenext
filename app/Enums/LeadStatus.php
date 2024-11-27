@@ -10,7 +10,7 @@ enum LeadStatus: string implements HasColor, HasLabel
     case New = 'New';
     case Assigned = 'Assigned';
     case Contacted = 'Contacted';
-    case Scheduled = 'Scheduled';
+    case FollowedUp = 'Followed up';
     case UnderNegotiation = 'Under negotiation';
     case Converted = 'Converted';
     case Closed = 'Closed';
@@ -26,7 +26,7 @@ enum LeadStatus: string implements HasColor, HasLabel
             self::New => 'gray',
             self::Assigned => 'primary',
             self::Contacted => 'primary',
-            self::Scheduled => 'primary',
+            self::FollowedUp => 'primary',
             self::UnderNegotiation => 'primary',
             self::Converted => 'success',
             self::Closed => 'gray',
@@ -39,7 +39,7 @@ enum LeadStatus: string implements HasColor, HasLabel
             self::New => '#6B7280',
             self::Assigned => '#3e32a8',
             self::Contacted => '#92a832',
-            self::Scheduled => '#fcf819',
+            self::FollowedUp => '#fcf819',
             self::UnderNegotiation => '#fc7819',
             self::Converted => '#47ff56',
             self::Closed => '#004a06',
@@ -52,7 +52,7 @@ enum LeadStatus: string implements HasColor, HasLabel
             self::New => 1,
             self::Assigned => 2,
             self::Contacted => 3,
-            self::Scheduled => 4,
+            self::FollowedUp => 4,
             self::UnderNegotiation => 5,
             self::Converted => 6,
             self::Closed => 7,

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\LeadLandlordResource\Pages;
 
+use App\Filament\Resources\LeadBuyerResource\Widgets\AppointmentWidget;
 use App\Filament\Resources\LeadLandlordResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -14,6 +15,13 @@ class ListLeadLandlords extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            AppointmentWidget::make(),
         ];
     }
 }

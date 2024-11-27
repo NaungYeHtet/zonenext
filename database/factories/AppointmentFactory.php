@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Appointment;
+use App\Models\Lead;
 use App\Models\Property;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,8 +23,7 @@ class AppointmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'property_id' => Property::factory(),
-            'user_id' => User::factory(),
+            'lead_id' => Lead::factory(),
             'date' => $this->faker->dateTime(),
             'status' => $this->faker->regexify('[A-Za-z0-9]{30}'),
         ];

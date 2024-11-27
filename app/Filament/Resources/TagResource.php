@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\TagType;
 use App\Filament\Resources\TagResource\Pages;
 use App\Models\Tag;
 use Filament\Forms;
@@ -9,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class TagResource extends Resource
 {
@@ -37,15 +39,21 @@ class TagResource extends Resource
                 Forms\Components\FileUpload::make('icon')
                     ->image()
                     ->required(),
+                Forms\Components\Select::make('type')
+                    ->options(TagType::class)
+                    ->required(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->orderBy('updated_at', 'desc'))
             ->columns([
                 Tables\Columns\ImageColumn::make('icon'),
                 Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('type')
+                    ->badge(),
             ])
             ->filters([
                 //

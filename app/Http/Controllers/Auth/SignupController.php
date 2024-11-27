@@ -22,6 +22,8 @@ class SignupController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        $user->sendEmailVerificationNotification();
+
         return $this->responseSuccess([
             'access_token' => $token,
             'user' => new UserResource($user),

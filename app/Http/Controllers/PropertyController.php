@@ -35,12 +35,12 @@ class PropertyController extends Controller
             ->filterType($request->validated('type'))
             ->filterTownship($request->validated('township'));
 
-        $url = '/search/'.str($request->validated('list_type'))->replace('_', '-')->toString();
+        $url = '/search/' . str($request->validated('list_type'))->replace('_', '-')->toString();
         $fields = $request->validated();
         unset($fields['list_type']);
 
         return $this->responseSuccess([
-            'properties' => PropertyResource::collection($properties->paginate(10)->appends($fields)->setPath($url))->resource,
+            'properties' => PropertyResource::collection($properties->paginate(5)->appends($fields)->setPath($url))->resource,
         ]);
     }
 

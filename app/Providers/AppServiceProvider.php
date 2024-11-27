@@ -27,6 +27,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -145,6 +146,14 @@ class AppServiceProvider extends ServiceProvider
                 ->greeting("Hello {$notifiable->name}")
                 ->line('Here is your verification code, please do not share to anyone.')
                 ->line((new OtpService($notifiable->email))->generate(OtpAction::EMAIL_VERIFICATION));
+        });
+
+        Password::defaults(function () {
+            $rule = Password::min(8)->max(15)->letters()->numbers();
+
+            return app()->isProduction()
+                ? $rule->mixedCase()
+                : $rule;
         });
     }
 }

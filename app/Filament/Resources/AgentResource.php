@@ -62,11 +62,11 @@ class AgentResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
-                    ->hidden(fn (string $operation) => $operation === 'edit')
+                    ->hidden(fn(string $operation) => $operation === 'edit')
                     ->autocomplete('new-password')
                     ->password()
-                    ->dehydrateStateUsing(fn (string $state): string => bcrypt($state))
-                    ->dehydrated(fn (?string $state): bool => filled($state))
+                    ->dehydrateStateUsing(fn(string $state): string => bcrypt($state))
+                    ->dehydrated(fn(?string $state): bool => filled($state))
                     ->revealable()
                     ->rules([
                         Password::defaults(),
@@ -89,7 +89,7 @@ class AgentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at', 'desc')->agent())
+            ->modifyQueryUsing(fn(Builder $query) => $query->orderBy('created_at', 'desc')->agent())
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label(__('Avatar'))

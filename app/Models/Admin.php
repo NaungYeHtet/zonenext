@@ -108,13 +108,13 @@ class Admin extends Authenticatable implements FilamentUser
         return Attribute::make(
             get: function (?string $value) {
 
-                if ($value == null) {
+                if ($value == null || is_valid_url($value)) {
                     return asset('images/avatars/admin.png');
                 }
 
-                return asset('images/avatars/admin.png');
+                // return asset('images/avatars/admin.png');
 
-                // return is_valid_url($value) ? $value : Storage::disk('public')->url($value);
+                return Storage::disk('public')->url($value);
             }
         );
     }

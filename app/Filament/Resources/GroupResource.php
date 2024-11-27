@@ -78,7 +78,6 @@ class GroupResource extends Resource
     {
         return [
             'index' => Pages\ListGroups::route('/'),
-            'create' => Pages\CreateGroup::route('/create'),
             'edit' => Pages\EditGroup::route('/{record}/edit'),
         ];
     }

@@ -17,15 +17,11 @@ class LoginController extends Controller
     {
         $user = User::where('email', $request->email)->first();
         if (! $user) {
-            return $this->responseError([
-                'message' => __('auth.failed'),
-            ], status: 422);
+            return $this->responseError(message: __('auth.failed'), status: 422);
         }
 
         if (! password_verify($request->password, $user->password)) {
-            return $this->responseError([
-                'message' => __('auth.failed'),
-            ], status: 422);
+            return $this->responseError(message: __('auth.failed'), status: 422);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -35,7 +31,7 @@ class LoginController extends Controller
             'user' => new UserResource($user),
             'token_type' => 'Bearer',
             'language' => $request->language,
-        ]);
+        ], 'Login success');
     }
 
     public function destroy(Request $request)

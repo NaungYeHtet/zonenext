@@ -29,7 +29,7 @@ trait PropertyForm
                 self::getGalleryFormStep(),
             ])
                 // ->skippable()
-                ->startOnStep(2)
+                ->startOnStep(1)
                 ->submitAction(self::getSubmitAction())
                 ->columns(1)
                 ->columnSpanFull(),
@@ -47,13 +47,11 @@ trait PropertyForm
                 ])->schema([
                     Forms\Components\Placeholder::make('lead_name')
                         ->label(__('Lead'))
-                        ->content(fn (?Model $record) => $lead ? $lead->name : $record->owner->name)
-                        ->columnSpanFull(),
+                        ->content(fn(?Model $record) => $lead ? $lead->name : $record->owner->name),
                     Forms\Components\Select::make('type')
                         ->options(PropertyType::class)
-                        ->default(fn () => $lead?->property_type?->value)
-                        ->required()
-                        ->columnStart(1),
+                        ->default(fn() => $lead?->property_type?->value)
+                        ->required(),
                     Forms\Components\Select::make('tags')
                         ->multiple()
                         ->model(Property::class)
@@ -61,8 +59,7 @@ trait PropertyForm
                         ->preload()
                         ->searchable()
                         ->maxItems(5)
-                        ->required()
-                        ->columnSpan(2),
+                        ->required(),
                     Forms\Components\TextInput::make('title')
                         ->required()
                         ->default(fake()->sentence)
@@ -150,7 +147,8 @@ trait PropertyForm
                     ->rules([
                         'required',
                     ])
-                    ->live(),
+                    ->live()
+                    ->selectablePlaceholder(false),
                 Forms\Components\Section::make(__('Length width'))
                     ->schema([
                         Forms\Components\TextInput::make('length')
@@ -161,6 +159,7 @@ trait PropertyForm
                                 'required',
                                 'numeric',
                                 'min:1',
+                                'integer'
                             ]),
                         Forms\Components\TextInput::make('width')
                             ->required()
@@ -170,9 +169,10 @@ trait PropertyForm
                                 'required',
                                 'numeric',
                                 'min:1',
+                                'integer'
                             ]),
                     ])
-                    ->visible(fn (Forms\Get $get) => $get('area_type') === AreaType::LengthWidth->value)
+                    ->visible(fn(Forms\Get $get) => $get('area_type') === AreaType::LengthWidth->value)
                     ->columns(2),
                 Forms\Components\Section::make(__('Area'))
                     ->schema([
@@ -190,9 +190,10 @@ trait PropertyForm
                                 'required',
                                 'numeric',
                                 'min:1',
+                                'integer'
                             ]),
                     ])
-                    ->visible(fn (Forms\Get $get) => $get('area_type') === AreaType::Area->value)
+                    ->visible(fn(Forms\Get $get) => $get('area_type') === AreaType::Area->value)
                     ->columns(2),
             ])
             ->columns(3);
@@ -203,7 +204,7 @@ trait PropertyForm
         return Forms\Components\Wizard\Step::make('Price')
             ->schema([
                 Forms\Components\Hidden::make('acquisition_type')
-                    ->default(fn () => $lead?->interest === LeadInterest::Selling ? PropertyAcquisitionType::Sale->value : PropertyAcquisitionType::Rent->value)
+                    ->default(fn() => $lead?->interest === LeadInterest::Selling ? PropertyAcquisitionType::Sale->value : PropertyAcquisitionType::Rent->value)
                     ->required()
                     ->rules([
                         'required',
@@ -217,9 +218,10 @@ trait PropertyForm
                     ->rules([
                         'required',
                     ])
-                    ->live(),
+                    ->live()
+                    ->selectablePlaceholder(false),
                 Forms\Components\TextInput::make('price_from')
-                    ->label(fn (Forms\Get $get) => $get('price_type') === PropertyPriceType::Range->value ? __('From') : __('Price'))
+                    ->label(fn(Forms\Get $get) => $get('price_type') === PropertyPriceType::Range->value ? __('From') : __('Price'))
                     ->default(get_stepped_random_number(60000000, 600000000 / 2, 5000000))
                     ->required()
                     ->numeric()
@@ -238,7 +240,7 @@ trait PropertyForm
                         'integer',
                         'min:1',
                     ])
-                    ->visible(fn (Forms\Get $get) => $get('price_type') === PropertyPriceType::Range->value),
+                    ->visible(fn(Forms\Get $get) => $get('price_type') === PropertyPriceType::Range->value),
                 Forms\Components\Toggle::make('negotiable')
                     ->required()
                     ->rules([
@@ -247,7 +249,7 @@ trait PropertyForm
                     ])
                     ->columnStart(1),
                 Forms\Components\TextInput::make('owner_commission')
-                    ->label(__('Commission').' ('.__('Owner').')')
+                    ->label(__('Commission') . ' (' . __('Owner') . ')')
                     ->required()
                     ->default(1)
                     ->numeric()
@@ -259,7 +261,7 @@ trait PropertyForm
                     ])
                     ->live(true),
                 Forms\Components\TextInput::make('customer_commission')
-                    ->label(__('Commission').' ('.__('Renter').')')
+                    ->label(__('Commission') . ' (' . __('Renter') . ')')
                     ->required()
                     ->default(1)
                     ->numeric()
@@ -270,7 +272,7 @@ trait PropertyForm
                         'max:50',
                     ])
                     ->live(true)
-                    ->visible(fn (Forms\Get $get) => $get('acquisition_type') === PropertyAcquisitionType::Rent->value),
+                    ->visible(fn(Forms\Get $get) => $get('acquisition_type') === PropertyAcquisitionType::Rent->value),
                 Forms\Components\Placeholder::make('commission_detail')
                     ->label('')
                     ->content(function (Forms\Get $get): string {

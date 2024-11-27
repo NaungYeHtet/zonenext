@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\AppointmentStatus;
 use App\Enums\Lead\LeadContactMethod;
 use App\Enums\Lead\LeadContactTime;
 use App\Enums\LeadStatus;
@@ -159,7 +160,7 @@ class LeadResource extends Resource
         $authUser = Filament::auth()->user();
 
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->orderBy('updated_at', 'desc'))
+            ->modifyQueryUsing(fn($query) => $query->orderBy('updated_at', 'desc'))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(['first_name', 'last_name']),
@@ -190,7 +191,7 @@ class LeadResource extends Resource
                     ->multiple()
                     ->native(false)
                     ->preload()
-                    ->visible(fn () => $authUser instanceof Admin && ! $authUser->hasRole('Agent')),
+                    ->visible(fn() => $authUser instanceof Admin && ! $authUser->hasRole('Agent')),
                 Tables\Filters\SelectFilter::make('property_code')
                     ->relationship('property', 'code')
                     ->multiple()
@@ -202,8 +203,8 @@ class LeadResource extends Resource
                     ->label(__('Assign'))
                     ->icon('gmdi-person-add')
                     ->button()
-                    ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('assignAgent', $record))
-                    ->form(fn (Lead $record) => [
+                    ->visible(fn(Lead $record) => $authUser instanceof Admin && $authUser->can('assignAgent', $record))
+                    ->form(fn(Lead $record) => [
                         Forms\Components\Select::make('admin_id')
                             ->label(__('Agent'))
                             ->options(Admin::agent()->pluck('name', 'id'))
@@ -230,11 +231,11 @@ class LeadResource extends Resource
                 Tables\Actions\Action::make('create_property')
                     ->label(__('Property'))
                     ->successNotification(Notification::make()->title(__('lead_trans.notification.property_created.title'))->success())
-                    ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('createProperty', $record))
+                    ->visible(fn(Lead $record) => $authUser instanceof Admin && $authUser->can('createProperty', $record))
                     ->icon('gmdi-add')
                     ->button()
                     ->color('success')
-                    ->form(fn (Lead $record) => static::getPropertyForm($record))
+                    ->form(fn(Lead $record) => static::getPropertyForm($record))
                     ->modalSubmitAction(false)
                     ->modalWidth(MaxWidth::FiveExtraLarge)
                     ->action(function (array $data, Lead $record, Tables\Actions\Action $action) {
@@ -258,11 +259,11 @@ class LeadResource extends Resource
                     }),
                 Tables\Actions\Action::make('purchase')
                     ->label(__('Sold/Rented'))
-                    ->label(fn (Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('property_trans.actions.sold.label') : __('property_trans.actions.rent.label'))
+                    ->label(fn(Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('property_trans.actions.sold.label') : __('property_trans.actions.rent.label'))
                     ->successNotification(Notification::make()->title(__('lead_trans.notification.purchased.title'))->success())
-                    ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('purchaseProperty', $record))
+                    ->visible(fn(Lead $record) => $authUser instanceof Admin && $authUser->can('purchaseProperty', $record))
                     ->icon('gmdi-check')
-                    ->fillForm(fn (Lead $record) => [
+                    ->fillForm(fn(Lead $record) => [
                         'property_id' => $record->property ? ($record->property->status == PropertyStatus::Posted ? $record->property->id : null) : null,
                         'purchased_price' => $record->property ? $record->property->price_from : null,
                         'owner_commission' => $record->property ? $record->property->owner_commission : null,
@@ -271,18 +272,18 @@ class LeadResource extends Resource
                     ->button()
                     ->color('success')
                     ->modalSubmitActionLabel(__('filament-actions::modal.actions.confirm.label'))
-                    ->form(fn (Lead $record) => [
+                    ->form(fn(Lead $record) => [
                         Forms\Components\Split::make([
                             Forms\Components\Section::make([
                                 Forms\Components\Placeholder::make('title')
                                     ->label(__('Title'))
-                                    ->content(fn (Forms\Get $get) => Property::find($get('property_id'))?->title),
+                                    ->content(fn(Forms\Get $get) => Property::find($get('property_id'))?->title),
                                 Forms\Components\Placeholder::make('price')
                                     ->label(__('Price'))
-                                    ->content(fn (Forms\Get $get) => Property::find($get('property_id'))?->price),
+                                    ->content(fn(Forms\Get $get) => Property::find($get('property_id'))?->price),
                                 Forms\Components\Placeholder::make('commission')
                                     ->label(__('Commission'))
-                                    ->content(fn (Forms\Get $get) => Property::find($get('property_id'))?->commission_description),
+                                    ->content(fn(Forms\Get $get) => Property::find($get('property_id'))?->commission_description),
                             ]),
                             Forms\Components\Section::make([
                                 Forms\Components\Select::make('property_id')
@@ -304,7 +305,7 @@ class LeadResource extends Resource
                                     })
                                     ->live(),
                                 Forms\Components\TextInput::make('purchased_price')
-                                    ->label(fn (Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('Sold price') : __('Rented price'))
+                                    ->label(fn(Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('Sold price') : __('Rented price'))
                                     ->numeric()
                                     ->required()
                                     ->rules([
@@ -315,7 +316,7 @@ class LeadResource extends Resource
                                     ])
                                     ->live(),
                                 Forms\Components\TextInput::make('owner_commission')
-                                    ->label(fn (Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('Commission (Seller)') : __('Commission (Landlord)'))
+                                    ->label(fn(Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('Commission (Seller)') : __('Commission (Landlord)'))
                                     ->numeric()
                                     ->required()
                                     ->rules([
@@ -326,7 +327,7 @@ class LeadResource extends Resource
                                     ])
                                     ->live(),
                                 Forms\Components\TextInput::make('customer_commission')
-                                    ->label(fn () => __('Commission (Renter)'))
+                                    ->label(fn() => __('Commission (Renter)'))
                                     ->numeric()
                                     ->required()
                                     ->rules([
@@ -336,9 +337,9 @@ class LeadResource extends Resource
                                         'min:1',
                                     ])
                                     ->live()
-                                    ->visible(fn (Forms\Get $get) => Property::find($get('property_id'))?->acquisition_type == PropertyAcquisitionType::Rent),
+                                    ->visible(fn(Forms\Get $get) => Property::find($get('property_id'))?->acquisition_type == PropertyAcquisitionType::Rent),
                                 Forms\Components\Placeholder::make('purchased_commission')
-                                    ->label(fn (Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('Sold commission') : __('Rented commission'))
+                                    ->label(fn(Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('Sold commission') : __('Rented commission'))
                                     ->content(function (Forms\Get $get) {
                                         $purchasedPrice = (float) $get('purchased_price') ?? 0;
                                         $ownerCommission = (float) $get('owner_commission') ?? 0;
@@ -356,7 +357,7 @@ class LeadResource extends Resource
                             $property = Property::find($data['property_id']);
                             $purchasedPrice = $data['purchased_price'];
                             $ownerCommission = $data['owner_commission'];
-                            $customerCommission = $data['customer_commission'];
+                            $customerCommission = $data['customer_commission'] ?? 0;
 
                             $property->update([
                                 'customer_id' => $record->id,
@@ -382,21 +383,21 @@ class LeadResource extends Resource
                     ->iconButton()
                     ->modalSubmitActionLabel(__('Contacted'))
                     ->successNotification(Notification::make()->title(__('lead_trans.notification.contacted.title'))->success())
-                    ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('contacted', $record))
+                    ->visible(fn(Lead $record) => $authUser instanceof Admin && $authUser->can('contacted', $record))
                     ->icon('gmdi-phone')
                     ->button()
                     ->color('gray')
-                    ->form(fn (Lead $lead) => [
+                    ->form(fn(Lead $lead) => [
                         Forms\Components\Placeholder::make('first_name')
-                            ->content(fn () => $lead->first_name),
+                            ->content(fn() => $lead->first_name),
                         Forms\Components\Placeholder::make('last_name')
-                            ->content(fn () => $lead->last_name),
+                            ->content(fn() => $lead->last_name),
                         Forms\Components\Placeholder::make('email')
-                            ->content(fn () => $lead->email),
+                            ->content(fn() => $lead->email),
                         Forms\Components\Placeholder::make('phone')
-                            ->content(fn () => $lead->phone),
+                            ->content(fn() => $lead->phone),
                         Forms\Components\Placeholder::make('address')
-                            ->content(fn () => $lead->address),
+                            ->content(fn() => $lead->address),
                         Forms\Components\Textarea::make('remark')
                             ->label(__('Remark'))
                             ->rules([
@@ -413,15 +414,21 @@ class LeadResource extends Resource
 
                         $action->success();
                     }),
-                Tables\Actions\Action::make('scheduled_lead')
-                    ->label(__('Scheduled'))
-                    ->iconButton()
-                    ->successNotification(Notification::make()->title(__('lead_trans.notification.scheduled.title'))->success())
-                    ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('scheduled', $record))
+                Tables\Actions\Action::make('appointment_lead')
+                    ->label(__('Appointment'))
                     ->icon('gmdi-calendar-month-o')
+                    ->iconButton()
+                    ->successNotification(Notification::make()->title(__('lead_trans.notification.appointment_created.title'))->success())
+                    ->visible(fn(Lead $record) => $authUser instanceof Admin && $authUser->can('appointment', $record))
                     ->button()
                     ->color('gray')
                     ->form([
+                        Forms\Components\DateTimePicker::make('date')
+                            ->label(__('Time'))
+                            ->rules([
+                                'required',
+                                'date',
+                            ]),
                         Forms\Components\Textarea::make('remark')
                             ->label(__('Remark'))
                             ->rules([
@@ -431,19 +438,126 @@ class LeadResource extends Resource
                     ])
                     ->modalWidth(MaxWidth::Medium)
                     ->action(function (array $data, Lead $record, Tables\Actions\Action $action) {
+                        $record->appointments()->create([
+                            'date' => $data['date'],
+                            'status' => AppointmentStatus::Pending
+                        ]);
+
                         $record->update([
-                            'status' => LeadStatus::Scheduled,
                             'remark' => $data['remark'],
                         ]);
 
                         $action->success();
                     }),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('edit_appointment')
+                        ->label(__('Edit'))
+                        ->icon('heroicon-m-pencil-square')
+                        ->iconButton()
+                        ->successNotification(Notification::make()->title(__('lead_trans.notification.appointment_updated.title'))->success())
+                        ->button()
+                        ->color('gray')
+                        ->fillForm(fn(Lead $record) => [
+                            'date' => $record->appointments()->active()->first()?->date,
+                            'remark' => $record->remark,
+                        ])
+                        ->form([
+                            Forms\Components\DateTimePicker::make('date')
+                                ->label(__('Time'))
+                                ->rules([
+                                    'required',
+                                    'date',
+                                ]),
+                            Forms\Components\Textarea::make('remark')
+                                ->label(__('Remark'))
+                                ->rules([
+                                    'string',
+                                    'max:1000',
+                                ]),
+                        ])
+                        ->modalWidth(MaxWidth::Medium)
+                        ->action(function (array $data, Lead $record, Tables\Actions\Action $action) {
+                            $record->appointments()->create([
+                                'date' => $data['date'],
+                                'status' => AppointmentStatus::Pending
+                            ]);
+
+                            $record->update([
+                                'remark' => $data['remark'],
+                            ]);
+
+                            $action->success();
+                        }),
+                    Tables\Actions\Action::make('cancel_appointment')
+                        ->label(__('Cancel'))
+                        ->icon('gmdi-close-o')
+                        ->iconButton()
+                        ->successNotification(Notification::make()->title(__('lead_trans.notification.appointment_cancelled.title'))->success())
+                        ->button()
+                        ->color('gray')
+                        ->form([
+                            Forms\Components\Textarea::make('remark')
+                                ->label(__('Remark'))
+                                ->rules([
+                                    'string',
+                                    'max:1000',
+                                ]),
+                        ])
+                        ->modalWidth(MaxWidth::Medium)
+                        ->action(function (array $data, Lead $record, Tables\Actions\Action $action) {
+                            $record->appointments()->create([
+                                'status' => AppointmentStatus::Cancelled
+                            ]);
+
+                            $record->update([
+                                'remark' => $data['remark'],
+                            ]);
+
+                            $action->success();
+                        }),
+                    Tables\Actions\Action::make('followed_up')
+                        ->label(__('Followed up'))
+                        ->icon('gmdi-close-o')
+                        ->iconButton()
+                        ->successNotification(Notification::make()->title(__('lead_trans.notification.appointment_followed_up.title'))->success())
+                        ->button()
+                        ->color('gray')
+                        ->form([
+                            Forms\Components\Textarea::make('remark')
+                                ->label(__('Remark'))
+                                ->rules([
+                                    'string',
+                                    'max:1000',
+                                ]),
+                        ])
+                        ->modalWidth(MaxWidth::Medium)
+                        ->action(function (array $data, Lead $record, Tables\Actions\Action $action) {
+                            $appointment = $record->appointments()->active();
+
+                            if ($appointment) {
+                                $appointment->update([
+                                    'status' => AppointmentStatus::Completed
+                                ]);
+                            }
+
+                            $record->update([
+                                'status' => LeadStatus::FollowedUp,
+                                'remark' => $data['remark'],
+                            ]);
+
+                            $action->success();
+                        }),
+                ])
+                    ->button()
+                    ->icon('heroicon-m-pencil-square')
+                    ->label(__('Appointment'))
+                    ->visible(fn(Lead $record) => $authUser instanceof Admin && ($authUser->can('updateAppointment', $record))),
                 Tables\Actions\Action::make('close_lead')
                     ->label(__('Close'))
                     ->modalSubmitActionLabel(__('Confirm'))
                     ->iconButton()
                     ->successNotification(Notification::make()->title(__('lead_trans.notification.closed.title'))->success())
-                    ->visible(fn (Lead $record) => $authUser instanceof Admin && $authUser->can('close', $record))
+                    ->visible(fn(Lead $record) => $authUser instanceof Admin && $authUser->can('close', $record))
                     ->icon('gmdi-close-o')
                     ->button()
                     ->color('gray')
