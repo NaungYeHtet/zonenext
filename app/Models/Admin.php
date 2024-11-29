@@ -62,28 +62,37 @@ class Admin extends Authenticatable implements FilamentUser
         $query->whereRelation('roles', 'name', 'Agent');
     }
 
+    public function scopeFallbackAgent(Builder $query, bool $condition)
+    {
+        if ($condition) {
+            $query->where('email', '=', 'naungyehtet.fallbackagent@gmail.com');
+        } else {
+            $query->where('email', '!=', 'naungyehtet.fallbackagent@gmail.com');
+        }
+    }
+
     public function scopeLeadAssignment(Builder $query, ?Lead $lead)
     {
-        $query->where('email', 'naungyehtet.zonenextagent@gmail.com');
-        // if ($lead) {
-        //     if ($lead->property_id) {
-        //         $query->where('id', $lead->property->owner->admin_id);
-        //     } else {
-        //         $query->withCount('leads')
-        //             ->agent()
-        //             ->preferredLeadTypes($lead->interest, $lead->is_owner)
-        //             ->preferredPropertyTypes($lead->property_type)
-        //             ->preferredTownships($lead->township_id)
-        //             ->orderBy('leads_count', 'asc');
-        //     }
-        // }
+        if ($lead) {
+            if ($lead->property_id) {
+                $query->where('id', $lead->property->owner->admin_id);
+            } else {
+                $query->withCount('leads')
+                    ->agent()
+                    ->fallbackAgent(false)
+                    ->preferredLeadTypes($lead->interest, $lead->is_owner)
+                    ->preferredPropertyTypes($lead->property_type)
+                    ->preferredTownships($lead->township_id)
+                    ->orderBy('leads_count', 'asc');
+            }
+        }
     }
 
     public function scopePreferredLeadTypes(Builder $query, ?LeadInterest $leadInterest = null, ?bool $isOwner = null)
     {
-        if ($leadInterest && $isOwner != null) {
+        if ($leadInterest && $isOwner !== null) {
             $query->whereJsonContains('preferred_lead_types', $leadInterest->getLeadType($isOwner)->value)
-                ->orWhere('preferred_lead_types', null);
+                ->orWhereNull('preferred_lead_types');
         }
     }
 
@@ -91,16 +100,26 @@ class Admin extends Authenticatable implements FilamentUser
     {
         if ($propertyType) {
             $query->whereJsonContains('preferred_property_types', $propertyType->value)
-                ->orWhere('preferred_property_types', null);
+                ->orWhereNull('preferred_property_types');
         }
     }
 
     public function scopePreferredTownships(Builder $query, $townshipId)
     {
         if ($townshipId) {
-            $query->whereJsonContains('preferred_townships', $townshipId)
-                ->orWhere('preferred_townships', null);
+            $query->whereJsonContains('preferred_townships', (string)$townshipId)
+                ->orWhereNull('preferred_townships');
         }
+    }
+
+    public static function getLeadAssigmentAgent(Lead $lead): Admin
+    {
+        $agent = Admin::leadAssignment($lead)->first();
+
+        if (!$agent) {
+            $agent = Admin::fallbackAgent(true)->first();
+        }
+        return $agent;
     }
 
     protected function image(): Attribute

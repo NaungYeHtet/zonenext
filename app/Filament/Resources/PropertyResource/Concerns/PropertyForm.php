@@ -96,7 +96,7 @@ trait PropertyForm
                     Forms\Components\Select::make('township_id')
                         ->label(__('Township'))
                         ->relationship('township', 'name')
-                        ->default(Township::where('state_id', 13)->inRandomOrder()->first()->id)
+                        // ->default(Township::where('state_id', 13)->inRandomOrder()->first()->id)
                         ->rules([
                             'required',
                         ])

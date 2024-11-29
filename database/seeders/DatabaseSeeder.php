@@ -40,12 +40,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->command->info('Seeding Admin factory....');
-        \App\Models\Admin::factory(rand(1, 4))
+        \App\Models\Admin::factory(rand(5, 10))
             ->role('Agent')
             ->create();
         $this->command->info('Seeding Lead Sellers....');
         Lead::factory()
-            ->count(rand(10, 20))
+            ->count(rand(100, 200))
             ->state(function (array $attributes) {
                 return [
                     'is_owner' => true,
@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
             ->create();
         $this->command->info('Seeding Lead Landloards....');
         Lead::factory()
-            ->count(rand(20, 40))
+            ->count(rand(200, 300))
             ->state(function (array $attributes) {
                 return [
                     'is_owner' => true,
@@ -68,7 +68,7 @@ class DatabaseSeeder extends Seeder
         //     PropertySeeder::class,
         // ]);
         $this->command->info('Seeding Project factory....');
-        Project::factory(5)->create();
+        Project::factory(30)->create();
 
         $this->call([
             GroupSeeder::class,

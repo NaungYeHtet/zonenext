@@ -47,7 +47,7 @@ class Appointment extends Model implements Eventable
 
     public function lead(): BelongsTo
     {
-        return $this->belongsTo(Lead::class);
+        return $this->belongsTo(Lead::class, 'lead_id');
     }
 
     public function user(): BelongsTo

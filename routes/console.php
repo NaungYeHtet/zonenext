@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Lead\LeadInterest;
 use App\Enums\PropertyType;
 use App\Models\Admin;
 use App\Models\Lead;
@@ -12,9 +13,14 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
 Artisan::command('inspire', function () {
-    $lead = Lead::find(229);
+    $admin = Admin::withCount('leads')
+        ->agent()
+        ->preferredLeadTypes(LeadInterest::Buying, false)
+        ->preferredPropertyTypes(PropertyType::Independent)
+        ->preferredTownships(Township::where('slug', 'bahan')->first()->id)
+        ->orderBy('leads_count', 'asc')->first();
+    dd($admin);
 
-    $lead->notify(new PropertyCreatedNotification($lead->property));
 
     // $this->comment(Inspiring::quote());
     // dd(PropertyType::getOptions());

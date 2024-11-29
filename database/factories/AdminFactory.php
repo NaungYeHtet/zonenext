@@ -22,6 +22,8 @@ class AdminFactory extends Factory
      */
     public function definition(): array
     {
+        $townships = \App\Models\Township::whereRelation('state', 'slug', 'yangon')->inRandomOrder()->limit(rand(5, 20))->pluck('id')->toArray();
+
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->safeEmail(),
@@ -31,32 +33,20 @@ class AdminFactory extends Factory
             'password' => bcrypt('password'),
             'image' => $this->faker->imageUrl(),
             'language' => $this->faker->randomElement(Language::cases()),
+            'preferred_notification_channels' => $this->faker->optional()->randomElements(['email', 'sms']),
+            'preferred_lead_types' => $this->faker->optional()->randomElements(LeadType::cases()),
+            'preferred_property_types' => get_weighted_random_elements([
+                PropertyType::Independent->value => 15,
+                PropertyType::Condo->value => 15,
+                PropertyType::MiniCondo->value => 15,
+                PropertyType::Apartment->value => 15,
+                PropertyType::Commercial->value => 8,
+                PropertyType::Land->value => 8,
+                PropertyType::Storage->value => 9,
+                null => 15,
+            ]),
+            'preferred_townships' => fake()->randomElement([null, $townships]),
         ];
-    }
-
-    public function configure()
-    {
-        return $this->afterCreating(function (Admin $admin) {
-            if ($admin->hasRole('Agent')) {
-                $townships = \App\Models\Township::whereRelation('state', 'slug', 'yangon')->inRandomOrder()->limit(rand(5, 20))->pluck('id')->toArray();
-
-                $admin->update([
-                    'preferred_notification_channels' => $this->faker->optional()->randomElements(['email', 'sms']),
-                    'preferred_lead_types' => $this->faker->optional()->randomElements(LeadType::cases()),
-                    'preferred_property_types' => get_weighted_random_elements([
-                        PropertyType::Independent->value => 15,
-                        PropertyType::Condo->value => 15,
-                        PropertyType::MiniCondo->value => 15,
-                        PropertyType::Apartment->value => 15,
-                        PropertyType::Commercial->value => 8,
-                        PropertyType::Land->value => 8,
-                        PropertyType::Storage->value => 9,
-                        null => 15,
-                    ]),
-                    'preferred_townships' => fake()->randomElement([null, $townships]),
-                ]);
-            }
-        });
     }
 
     public function role(string $roleName): Factory

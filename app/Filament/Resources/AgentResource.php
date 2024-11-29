@@ -61,7 +61,6 @@ class AgentResource extends Resource
                     ->default(fake()->e164PhoneNumber())
                     ->tel()
                     ->autocomplete('new-phone')
-                    ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
@@ -103,7 +102,8 @@ class AgentResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->copyable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable()
                     ->sortable(),
@@ -126,7 +126,9 @@ class AgentResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->recordAction(null)
+            ->recordUrl(null);
     }
 
     public static function getRelations(): array

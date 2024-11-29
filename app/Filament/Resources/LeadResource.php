@@ -259,7 +259,6 @@ class LeadResource extends Resource
                         $action->success();
                     }),
                 Tables\Actions\Action::make('purchase')
-                    ->label(__('Sold/Rented'))
                     ->label(fn(Lead $record) => $record->interest->getPropertyAcquisitionType() == PropertyAcquisitionType::Sale ? __('property_trans.actions.sold.label') : __('property_trans.actions.rent.label'))
                     ->successNotification(Notification::make()->title(__('lead_trans.notification.purchased.title'))->success())
                     ->visible(fn(Lead $record) => $authUser instanceof Admin && $authUser->can('purchaseProperty', $record))

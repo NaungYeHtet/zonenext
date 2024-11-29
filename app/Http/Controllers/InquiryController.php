@@ -6,6 +6,7 @@ use App\Enums\Lead\LeadContactMethod;
 use App\Enums\Lead\LeadContactTime;
 use App\Enums\Lead\LeadInterest;
 use App\Enums\LeadStatus;
+use App\Enums\PropertyAcquisitionType;
 use App\Enums\PropertyType;
 use App\Http\Requests\InquiryPropertyRequest;
 use App\Http\Requests\InquiryRequest;
@@ -62,6 +63,8 @@ class InquiryController extends Controller
             $property = Property::where('code', $request->code)->first();
 
             $lead = Lead::create([
+                'interest' => $property->acquisition_type == PropertyAcquisitionType::Rent ? LeadInterest::Renting : LeadInterest::Buying,
+                'is_owner' => false,
                 ...Arr::except($request->validated(), ['code', 'name']),
                 'property_type' => $property->type,
                 'first_name' => $request->name,

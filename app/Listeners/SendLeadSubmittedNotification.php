@@ -7,7 +7,7 @@ use App\Events\LeadSubmitted;
 use App\Models\Admin;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendLeadSubmittedNotification implements ShouldQueue
+class SendLeadSubmittedNotification
 {
     /**
      * Create the event listener.
@@ -23,7 +23,7 @@ class SendLeadSubmittedNotification implements ShouldQueue
     public function handle(LeadSubmitted $event): void
     {
         $lead = $event->lead;
-        $admin = Admin::leadAssignment($lead)->first();
+        $admin = Admin::getLeadAssigmentAgent($lead);
 
         if ($admin) {
             $lead->update([

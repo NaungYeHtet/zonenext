@@ -24,8 +24,6 @@ class InquiryPropertyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'interest' => ['required', new Enum(LeadInterest::class)],
-            'is_owner' => ['required_if:interest,Renting', 'boolean'],
             'code' => ['required', 'string', 'exists:properties,code'],
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required_without:email', 'string', 'max:255'],

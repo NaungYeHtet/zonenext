@@ -92,7 +92,7 @@ class LeadFactory extends Factory
                 return;
             }
 
-            $admin = Admin::leadAssignment($lead)->first();
+            $admin = Admin::getLeadAssigmentAgent($lead);
 
             $lead->update([
                 'admin_id' => $admin->id,
