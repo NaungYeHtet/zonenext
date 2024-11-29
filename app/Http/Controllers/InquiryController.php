@@ -36,8 +36,15 @@ class InquiryController extends Controller
                 Township::findBySlug($request->township)?->id;
             }
 
+            $isOwner = match (LeadInterest::from($request->interest)) {
+                LeadInterest::Renting => $request->is_owner,
+                LeadInterest::Selling => true,
+                LeadInterest::Buying => false
+            };
+
             $lead = Lead::create([
-                ...Arr::except($request->validated(), ['township']),
+                ...Arr::except($request->validated(), ['township', 'is_owner']),
+                'is_owner' => $isOwner,
                 'township_id' => $townshipId,
                 'user_id' => $request->user()?->id,
                 'status' => LeadStatus::New,

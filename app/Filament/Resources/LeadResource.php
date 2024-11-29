@@ -245,6 +245,7 @@ class LeadResource extends Resource
                                 'square_feet' => null,
                                 'owner_id' => $record->id,
                                 ...$data,
+                                'posted_at' => now()
                             ]);
 
                             $record->update([

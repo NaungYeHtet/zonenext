@@ -38,10 +38,10 @@ class Dashboard extends BaseDashboard
         return [
             PropertyStatusWidget::class,
             AgentStatusWidget::class,
-            AgentCommissionChartWidget::class,
-            AgentLeadAssignedChartWidget::class,
-            AgentLeadStatusChartWidget::class,
-            AgentLeadConversionChartWidget::class,
+            // AgentCommissionChartWidget::class,
+            // AgentLeadAssignedChartWidget::class,
+            // AgentLeadStatusChartWidget::class,
+            // AgentLeadConversionChartWidget::class,
         ];
     }
 

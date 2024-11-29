@@ -36,8 +36,7 @@ class AdminPanelProvider extends PanelProvider
                 AgentMetricDashbaord::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -72,6 +71,7 @@ class AdminPanelProvider extends PanelProvider
                     ]),
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->databaseNotifications();
+            ->databaseNotifications()
+            ->databaseNotificationsPolling(30);
     }
 }

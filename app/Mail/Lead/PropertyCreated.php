@@ -36,7 +36,7 @@ class PropertyCreated extends Mailable
                 'contactName' => $owner->admin->name,
                 'contactNumber' => $owner->admin->phone,
                 'contactEmail' => $owner->admin->email,
-                'url' => config('app.frontent_url')."/listing/{$this->property->slug}",
+                'url' => config('app.frontent_url') . "/listing/{$this->property->slug}",
             ],
         );
     }

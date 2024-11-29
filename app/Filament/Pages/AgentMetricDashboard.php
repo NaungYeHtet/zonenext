@@ -27,6 +27,11 @@ class AgentMetricDashbaord extends BaseDashboard
         return __('Agent metric');
     }
 
+    public function getTitle(): string
+    {
+        return __('Agent metric');
+    }
+
     public function getWidgets(): array
     {
         return [
@@ -51,7 +56,7 @@ class AgentMetricDashbaord extends BaseDashboard
                             ->options(\App\Models\Admin::agent()->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
-                            ->hidden(fn () => $authUser instanceof Admin && $authUser->hasRole('Agent')),
+                            ->hidden(fn() => $authUser instanceof Admin && $authUser->hasRole('Agent')),
                         DateRangePicker::make('date_range')
                             ->startDate(now()->startOfMonth())
                             ->endDate(now()->addMonth())

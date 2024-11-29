@@ -32,7 +32,7 @@ class LeadAssignedNotification extends Notification
     {
         return [
             'database',
-            // 'broadcast',
+            'broadcast',
         ];
     }
 

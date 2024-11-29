@@ -13,7 +13,10 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Password;
+
+use function PHPUnit\Framework\isEmpty;
 
 class AgentResource extends Resource
 {
@@ -103,6 +106,14 @@ class AgentResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('preferred_lead_types')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('preferred_property_types')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('preferred_townships')
+                    ->formatStateUsing(fn(Model $record) => implode(', ', Township::whereIn('id', $record->preferred_townships)->pluck('name')->toArray()))
+                    ->wrap()
                     ->sortable(),
             ])
             ->filters([
