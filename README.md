@@ -34,7 +34,15 @@ php artisan queue:work   # in a second terminal, for notifications and jobs
 - API: http://localhost:8000/api
 - Admin: http://localhost:8000/admin
 
-Seeded admin login: `naungyehtet.zonenextadmin@gmail.com` / `admin@123`
+Seeded admin logins (password `admin@123`, see `database/seeders/AdminSeeder.php`):
+
+| Role | Email |
+| --- | --- |
+| Super admin | `naungyehtet.zonenextadmin@gmail.com` |
+| Agent (fallback) | `naungyehtet.fallbackagent@gmail.com` |
+| Agent (sellers) | `naungyehtet.selleragent@gmail.com` |
+| Agent (landlords) | `naungyehtet.renteragent@gmail.com` |
+| Agent (buyers) | `naungyehtet.buyeragent@gmail.com` |
 
 ## Docker (Sail)
 
